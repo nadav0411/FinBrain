@@ -1,9 +1,11 @@
 @import './EditExpenseModal.css';
 
+/* Make the login modal narrower than the default modal */
 .login-modal {
   width: 420px;
 }
 
+/* Style the "Welcome Back" title inside the modal */
 .login-modal h2 {
   font-size: 26px;
   font-weight: 600;
@@ -11,31 +13,36 @@
   color: #2c3e50;
 }
 
+/* Style the row that has the "Sign Up" and "Forgot Password" links */
 .link-row {
-  display: flex;
-  justify-content: space-between;
+  display: flex; /* put the links in one row */
+  justify-content: space-between; /* push them to opposite sides */
   align-items: center;
   margin-bottom: 14px;
 }
 
+/* Style for the actual text links */
 .side-link {
   font-size: 14px;
   color: #4da3ff;
-  text-decoration: none;
-  transition: color 0.2s ease;
+  text-decoration: none;  /* remove underline */
+  transition: color 0.2s ease; /* smooth hover effect */
 }
 
+/* When hovering over the link, make it darker blue and bold */
 .side-link:hover {
-  color: #1676d6;
+  font-weight: 800;
+  color: #0f487c;
 }
 
+/* Style the row that contains both buttons (Login + Demo) */
 .button-group {
   display: flex;
-  flex-direction: column;
-  gap: 12px;
+  flex-direction: column; /* buttons on top of each other */
+  gap: 12px; /* space between them */
 }
 
-/* כפתורים כלליים */
+/* General style for all main buttons */
 .main-button {
   padding: 12px 20px;
   font-size: 15px;
@@ -46,43 +53,46 @@
   border: none;
 }
 
-/* Login רגיל */
+/* Style for the regular Login button */
 .login-button {
   background-color: #5d6369;
   color: white;
 }
 
 .login-button:hover {
-  background-color: #444;
-  transform: scale(1.05);
+  background-color: #444;   /* darker on hover */
+  transform: scale(1.05);   /* small zoom effect */
 }
 
-/* Demo - כפתור מודגש במיוחד */
+/* Special style for the Demo Mode button – looks more shiny */
 .demo-button {
-  background: linear-gradient(to right, #4da3ff, #1676d6);
+  background: linear-gradient(to right, #4da3ff, #1676d6); /* blue gradient */
   color: white;
   font-weight: 600;
-  box-shadow: 0 4px 12px rgba(77, 163, 255, 0.5);
+  box-shadow: 0 4px 12px rgba(77, 163, 255, 0.5); /* glow */
   position: relative;
-  overflow: hidden;
+  overflow: hidden; /* so the shiny animation stays inside */
 }
 
+/* This is the shiny "light" effect that moves on hover */
 .demo-button::before {
   content: '';
   position: absolute;
   top: 0;
-  left: -100%;
+  left: -100%; /* start outside on the left */
   height: 100%;
   width: 100%;
-  background: rgba(255, 255, 255, 0.1);
-  transform: skewX(-20deg);
-  transition: left 0.5s;
+  background: rgba(255, 255, 255, 0.1); /* shiny white stripe */
+  transform: skewX(-20deg); /* make it diagonal */
+  transition: left 0.5s; /* smooth movement */
 }
 
+/* When you hover, the shiny bar moves across */
 .demo-button:hover::before {
-  left: 100%;
+  left: 100%; /* moves to the right */
 }
 
+/* Also make the button zoom slightly on hover */
 .demo-button:hover {
   transform: scale(1.06);
 }

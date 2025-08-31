@@ -10,8 +10,8 @@ function App() {
     <div>
       {/* <EditExpenseModal /> */}
       {/* <LoginModal /> */}
-      {/* <SignupModal /> */}
-      <MainScreen />
+      <SignupModal />
+      {/* <MainScreen /> */}
     </div>
   );
 }

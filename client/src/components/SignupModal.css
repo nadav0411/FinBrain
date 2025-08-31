@@ -1,9 +1,11 @@
 @import './EditExpenseModal.css';
 
+/* Make the signup modal a bit wider than the login modal */
 .signup-modal {
   width: 600px;
 }
 
+/* Style for the title "Create Account" */
 .signup-modal h2 {
   font-size: 26px;
   font-weight: 600;
@@ -12,44 +14,61 @@
 }
 
 .signup-submit {
-  background: linear-gradient(to right, #45c4ff, #1676d6);
+  background: linear-gradient(to right, #4da3ff, #1676d6); /* blue gradient */
   color: white;
   font-weight: 600;
-  border: none;
-  padding: 12px 20px;
-  font-size: 16px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-  box-shadow: 0 4px 12px rgba(22, 118, 214, 0.3);
+  box-shadow: 0 4px 12px rgba(77, 163, 255, 0.5); /* glow */
+  position: relative;
+  overflow: hidden; /* so the shiny animation stays inside */
+}
+
+.signup-submit::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%; /* start outside on the left */
+  height: 100%;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.1); /* shiny white stripe */
+  transform: skewX(-20deg); /* make it diagonal */
+  transition: left 0.5s; /* smooth movement */
+}
+
+.signup-submit:hover::before {
+  left: 100%;
 }
 
 .signup-submit:hover {
-  background: #1676d6;
   transform: scale(1.05);
 }
 
+/* Style for the red error message (if fields are empty or passwords don't match) */
 .error-msg {
-  color: #d9534f;
+  color: #d9534f;            /* red text */
   font-size: 14px;
-  margin-top: -8px;
+  margin-top: -8px;          /* pull it up slightly */
   margin-bottom: 12px;
   text-align: center;
 }
 
+/* Style for the row that contains the "← Back to Login" link */
 .back-row {
   margin-top: 8px;
   display: flex;
-  justify-content: flex-start;
+  justify-content: flex-start; /* align to the left */
 }
 
+/* The actual "← Back to Login" link */
 .back-link {
   font-size: 14px;
   color: #4da3ff;
-  text-decoration: none;
-  transition: color 0.2s ease;
+  text-decoration: none;           /* remove underline */
+  transition: color 0.2s ease;     /* smooth color change on hover */
 }
 
+/* When hovering over the link, make it darker blue and bold */
 .back-link:hover {
-  color: #1676d6;
+  font-weight: 800;
+  color: #0f487c;
 }
+

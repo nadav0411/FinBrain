@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
+
 import './SignupModal.css';
 
+// SignupModal is a component that receives a prop called onBackToLogin
 function SignupModal({ onBackToLogin }) {
+  // formData holds the values of all form fields (first name, last name, etc.)
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -10,44 +13,57 @@ function SignupModal({ onBackToLogin }) {
     confirmPassword: ''
   });
 
+  // error will store error messages to show the user
   const [error, setError] = useState('');
 
+  // This function updates formData when the user types in a field
   const handleChange = (e) => {
     setFormData((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value
+      ...prev, // keep the old fields as they are
+      [e.target.name]: e.target.value // update only the changed field
     }));
   };
 
+  // This function runs when the user clicks "Sign Up"
   const handleSubmit = (e) => {
-    e.preventDefault();
+    e.preventDefault(); // stop page from reloading
     const { firstName, lastName, email, password, confirmPassword } = formData;
 
-    // בדיקת שדות ריקים
+    // Check if any field is empty
     if (!firstName || !lastName || !email || !password || !confirmPassword) {
       setError('All fields are required.');
       return;
     }
 
-    // בדיקת סיסמאות תואמות
+    // Check if the passwords match
     if (password !== confirmPassword) {
       setError('Passwords do not match.');
       return;
     }
 
+    // If everything is OK
     setError('');
     alert('Signup successful! ✅');
-    // כאן אפשר לשלוח ל־backend
+
+    // You could send formData to a backend server here
   };
 
   return (
+    // Gray background behind the modal
     <div className="modal-overlay">
+
+      {/* White signup box */}
       <div className="modal signup-modal">
+
+        {/* Header with title */}
         <div className="modal-header">
           <h2>Create Account</h2>
         </div>
 
+        {/* The form body */}
         <form className="modal-body" onSubmit={handleSubmit}>
+
+          {/* First row: first name and last name */}
           <div className="row">
             <div className="field">
               <label>First Name</label>
@@ -71,6 +87,7 @@ function SignupModal({ onBackToLogin }) {
             </div>
           </div>
 
+          {/* Second row: email input */}
           <div className="row">
             <div className="field">
               <label>Email</label>
@@ -84,6 +101,7 @@ function SignupModal({ onBackToLogin }) {
             </div>
           </div>
 
+          {/* Third row: password and confirm password */}
           <div className="row">
             <div className="field">
               <label>Password</label>
@@ -107,19 +125,28 @@ function SignupModal({ onBackToLogin }) {
             </div>
           </div>
 
+          {/* If there is an error message, show it here */}
           {error && <div className="error-msg">{error}</div>}
 
+          {/* Submit button row */}
           <div className="row button-group">
-            <button type="submit" className="main-button signup-submit">Sign Up</button>
+            <button type="submit" className="main-button signup-submit">
+              Sign Up
+            </button>
           </div>
 
+          {/* Link to go back to the login screen */}
           <div className="row back-row">
-            <a href="#" onClick={onBackToLogin} className="back-link">← Back to Login</a>
+            <a href="#" onClick={onBackToLogin} className="back-link">
+              ← Back to Login
+            </a>
           </div>
+
         </form>
       </div>
     </div>
   );
 }
 
+// Export this component so other files can use it
 export default SignupModal;
