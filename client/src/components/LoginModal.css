@@ -1,0 +1,88 @@
+@import './EditExpenseModal.css';
+
+.login-modal {
+  width: 420px;
+}
+
+.login-modal h2 {
+  font-size: 26px;
+  font-weight: 600;
+  text-align: center;
+  color: #2c3e50;
+}
+
+.link-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.side-link {
+  font-size: 14px;
+  color: #4da3ff;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.side-link:hover {
+  color: #1676d6;
+}
+
+.button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* כפתורים כלליים */
+.main-button {
+  padding: 12px 20px;
+  font-size: 15px;
+  font-weight: 500;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  border: none;
+}
+
+/* Login רגיל */
+.login-button {
+  background-color: #5d6369;
+  color: white;
+}
+
+.login-button:hover {
+  background-color: #444;
+  transform: scale(1.05);
+}
+
+/* Demo - כפתור מודגש במיוחד */
+.demo-button {
+  background: linear-gradient(to right, #4da3ff, #1676d6);
+  color: white;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(77, 163, 255, 0.5);
+  position: relative;
+  overflow: hidden;
+}
+
+.demo-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  height: 100%;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.1);
+  transform: skewX(-20deg);
+  transition: left 0.5s;
+}
+
+.demo-button:hover::before {
+  left: 100%;
+}
+
+.demo-button:hover {
+  transform: scale(1.06);
+}

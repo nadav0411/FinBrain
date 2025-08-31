@@ -1,0 +1,71 @@
+/* מבנה עמוד ראשי */
+.main-container {
+    display: flex;
+    height: 100vh;
+    font-family: 'Segoe UI', sans-serif;
+    color: #1e1e1e;
+  }
+  
+  /* Sidebar */
+  .sidebar {
+    width: 240px;
+    background: #f3f8fd; /* תכלת חלש */
+    padding: 32px 16px;
+    box-shadow: 4px 0 12px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .logo {
+    font-size: 20px;
+    font-weight: 600;
+    color: #1676d6;
+    margin-bottom: 40px;
+    text-align: center;
+  }
+  
+  /* כפתורי תפריט */
+  .menu {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .menu-item {
+    font-size: 16px;
+    color: #4a6fa5;
+    padding: 10px 16px;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background 0.2s, color 0.2s;
+  }
+  
+  .menu-item:hover {
+    background-color: #dbefff;
+    color: #1676d6;
+  }
+  
+  .menu-item.active {
+    background-color: #1676d6;
+    color: white;
+  }
+  
+  /* תוכן מימין */
+  .content {
+    flex: 1;
+    padding: 40px;
+    background-color: #f9fcff;
+    overflow-y: auto;
+  }
+  
+  .content h1 {
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+  
+  .content p {
+    font-size: 16px;
+    color: #4a6fa5;
+  }
+  
