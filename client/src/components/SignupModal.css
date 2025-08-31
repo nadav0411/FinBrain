@@ -62,8 +62,8 @@
 .back-link {
   font-size: 14px;
   color: #4da3ff;
-  text-decoration: none;           /* remove underline */
-  transition: color 0.2s ease;     /* smooth color change on hover */
+  text-decoration: none; /* remove underline */
+  transition: color 0.2s ease; /* smooth color change on hover */
 }
 
 /* When hovering over the link, make it darker blue and bold */
@@ -72,3 +72,28 @@
   color: #0f487c;
 }
 
+.loading-msg {
+  color: #555;
+  font-size: 14px;
+  font-style: italic;
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+/* Spinner animation */
+.spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 3px solid #ccc;
+  border-top: 3px solid #4da3ff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

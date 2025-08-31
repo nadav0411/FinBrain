@@ -1,20 +1,12 @@
 import React from 'react';
-import EditExpenseModal from './components/EditExpenseModal.jsx';
-import LoginModal from './components/LoginModal.jsx';
-import SignupModal from './components/SignupModal.jsx';
-import MainScreen from './components/MainScreen.jsx';
-
+import AuthSwitcher from './components/AuthSwitcher'; // שנה נתיב לפי מיקום הקובץ
 
 function App() {
   return (
-    <div>
-      {/* <EditExpenseModal /> */}
-      {/* <LoginModal /> */}
-      <SignupModal />
-      {/* <MainScreen /> */}
+    <div className="App">
+      <AuthSwitcher />
     </div>
   );
 }
 
 export default App;
-

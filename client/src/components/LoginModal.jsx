@@ -4,7 +4,7 @@ import React from 'react';
 import './LoginModal.css';
 
 
-function LoginModal() {
+function LoginModal({onGoToSignup}) {
   return (
     // The dark background that covers the whole screen
     <div className="modal-overlay">
@@ -41,7 +41,7 @@ function LoginModal() {
           {/* Third row: Side links for Sign Up and Forgot Password */}
           <div className="row link-row">
             {/* Link to go to Sign Up page */}
-            <a href="#" className="side-link">Sign Up</a>
+            <a href="#" onClick={onGoToSignup} className="side-link">Sign Up</a>
 
             {/* Link to reset password */}
             <a href="#" className="side-link">Forgot Password?</a>

@@ -13,6 +13,8 @@ function SignupModal({ onBackToLogin }) {
     confirmPassword: ''
   });
 
+  const [loading, setLoading] = useState(false);
+
   // error will store error messages to show the user
   const [error, setError] = useState('');
 
@@ -25,7 +27,7 @@ function SignupModal({ onBackToLogin }) {
   };
 
   // This function runs when the user clicks "Sign Up"
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault(); // stop page from reloading
     const { firstName, lastName, email, password, confirmPassword } = formData;
 
@@ -41,11 +43,39 @@ function SignupModal({ onBackToLogin }) {
       return;
     }
 
-    // If everything is OK
-    setError('');
-    alert('Signup successful! ✅');
+    setLoading(true);
+    try {
+      const response = await fetch('http://localhost:5000/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
 
-    // You could send formData to a backend server here
+      const data = await response.json();
+
+      if (response.status === 201) {
+        alert('Signup successful! ✅');
+        setFormData({
+          firstName: '',
+          lastName: '',
+          email: '',
+          password: '',
+          confirmPassword: '',
+        })
+        onBackToLogin();
+        setError('');
+
+      } else {
+        setError(data.message || 'Something went wrong');
+      }
+
+    } catch (error) {
+      console.error('Signup error:', error);
+      setError('Something went wrong. Please try again.');
+    }
+    setLoading(false);
   };
 
   return (
@@ -135,6 +165,13 @@ function SignupModal({ onBackToLogin }) {
             </button>
           </div>
 
+          {/* Loading message while waiting for server */}
+          {loading && (
+            <div className="loading-msg">
+              <span className="spinner" /> Creating your account...
+            </div>          
+          )}
+          
           {/* Link to go back to the login screen */}
           <div className="row back-row">
             <a href="#" onClick={onBackToLogin} className="back-link">
