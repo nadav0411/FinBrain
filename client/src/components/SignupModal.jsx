@@ -57,7 +57,7 @@ function SignupModal({ onBackToLogin }) {
     setLoading(true);
     // Send request to server
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/login`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/signup`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
