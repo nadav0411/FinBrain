@@ -1,68 +1,120 @@
-import React from 'react';
-
-// Import the CSS file that styles this login modal
+import React, { useState } from 'react';
 import './LoginModal.css';
 
+function LoginModal({ onGoToSignup, onLoginSuccess }) {
+  // States to store form inputs
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
-function LoginModal({onGoToSignup}) {
+  // States for UI feedback
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState(false);
+
+  // Called when the user submits the form
+  const handleSubmit = async (e) => {
+    e.preventDefault(); // prevent page reload
+
+    // Basic validation
+    if (!email || !password) {
+      setError('Both email and password are required.');
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+    try {
+      const response = await fetch('http://localhost:5000/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+
+      const data = await response.json();
+
+      if (response.status === 200) {
+        setSuccess(true);
+        setTimeout(() => {
+          setSuccess(false);
+          setEmail('');
+          setPassword('');
+          onLoginSuccess();
+        }, 2500);
+      } else {
+        setError(data.message || 'Login failed.');
+      }
+
+    } catch (err) {
+      setError('Server error. Please try again later.');
+    }
+
+    setLoading(false);
+  };
+
   return (
-    // The dark background that covers the whole screen
     <div className="modal-overlay">
-
-      {/* The white modal box in the center (with login content) */}
       <div className="modal login-modal">
-
-        {/* Header section with welcome text */}
         <div className="modal-header">
           <h2>Welcome Back</h2>
         </div>
 
-        {/* Main body of the modal (input fields and buttons) */}
-        <div className="modal-body">
-
-          {/* First row: Email input */}
+        <form className="modal-body" onSubmit={handleSubmit}>
           <div className="row">
             <div className="field">
               <label>Email</label>
-              {/* Input for user's email address */}
-              <input type="email" placeholder="you@example.com" />
+              <input
+                type="email"
+                placeholder="you@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
             </div>
           </div>
 
-          {/* Second row: Password input */}
           <div className="row">
             <div className="field">
               <label>Password</label>
-              {/* Input for user's password (hidden text) */}
-              <input type="password" placeholder="••••••••" />
+              <input
+                type="password"
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
             </div>
           </div>
 
-          {/* Third row: Side links for Sign Up and Forgot Password */}
           <div className="row link-row">
-            {/* Link to go to Sign Up page */}
             <a href="#" onClick={onGoToSignup} className="side-link">Sign Up</a>
-
-            {/* Link to reset password */}
             <a href="#" className="side-link">Forgot Password?</a>
           </div>
 
-          {/* Fourth row: Login and Demo buttons */}
-          <div className="row button-group">
-            {/* Main login button */}
-            <button className="main-button login-button">Login</button>
+          {error && <div className="error-msg">{error}</div>}
 
-            {/* Special demo button */}
-            <button className="main-button demo-button">Demo Mode</button>
+          {success && (
+            <div className="success-popup">
+              <div className="checkmark">✓</div>
+              <div className="success-text">Login successful!</div>
+            </div>
+          )}
+
+          <div className="row button-group">
+            <button type="submit" className="main-button login-button">
+              Login
+            </button>
+            <button type="button" className="main-button demo-button">
+              Demo Mode
+            </button>
           </div>
 
-        </div> {/* end of modal-body */}
-
-      </div> {/* end of modal */}
-
-    </div> // end of modal-overlay
+          {loading && (
+            <div className="loading-msg">
+              <span className="spinner" /> Logging you in...
+            </div>
+          )}
+        </form>
+      </div>
+    </div>
   );
 }
 
-// Export this component so I can use it in other parts of the app
 export default LoginModal;

@@ -15,8 +15,8 @@
 
 /* Style the row that has the "Sign Up" and "Forgot Password" links */
 .link-row {
-  display: flex; /* put the links in one row */
-  justify-content: space-between; /* push them to opposite sides */
+  display: flex;
+  justify-content: space-between;
   align-items: center;
   margin-bottom: 14px;
 }
@@ -25,74 +25,160 @@
 .side-link {
   font-size: 14px;
   color: #4da3ff;
-  text-decoration: none;  /* remove underline */
-  transition: color 0.2s ease; /* smooth hover effect */
+  text-decoration: none;
+  transition: color 0.2s ease;
 }
 
-/* When hovering over the link, make it darker blue and bold */
 .side-link:hover {
   font-weight: 800;
   color: #0f487c;
 }
 
-/* Style the row that contains both buttons (Login + Demo) */
+/* Row that holds the buttons */
 .button-group {
   display: flex;
-  flex-direction: column; /* buttons on top of each other */
-  gap: 12px; /* space between them */
+  flex-direction: column; /* buttons stacked vertically */
+  gap: 12px;
 }
 
-/* General style for all main buttons */
+/* General button style */
 .main-button {
   padding: 12px 20px;
   font-size: 15px;
   font-weight: 500;
   border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
   border: none;
+  transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-/* Style for the regular Login button */
+/* Login button – simple dark button */
 .login-button {
   background-color: #5d6369;
   color: white;
 }
 
 .login-button:hover {
-  background-color: #444;   /* darker on hover */
-  transform: scale(1.05);   /* small zoom effect */
+  background-color: #444;
+  transform: scale(1.05);
 }
 
-/* Special style for the Demo Mode button – looks more shiny */
+/* Demo button – shiny blue gradient with glow */
 .demo-button {
-  background: linear-gradient(to right, #4da3ff, #1676d6); /* blue gradient */
+  background: linear-gradient(to right, #4da3ff, #1676d6);
   color: white;
   font-weight: 600;
-  box-shadow: 0 4px 12px rgba(77, 163, 255, 0.5); /* glow */
+  box-shadow: 0 4px 12px rgba(77, 163, 255, 0.5);
   position: relative;
-  overflow: hidden; /* so the shiny animation stays inside */
+  overflow: hidden;
 }
 
-/* This is the shiny "light" effect that moves on hover */
 .demo-button::before {
   content: '';
   position: absolute;
   top: 0;
-  left: -100%; /* start outside on the left */
+  left: -100%;
   height: 100%;
   width: 100%;
-  background: rgba(255, 255, 255, 0.1); /* shiny white stripe */
-  transform: skewX(-20deg); /* make it diagonal */
-  transition: left 0.5s; /* smooth movement */
+  background: rgba(255, 255, 255, 0.1);
+  transform: skewX(-20deg);
+  transition: left 0.5s;
 }
 
-/* When you hover, the shiny bar moves across */
 .demo-button:hover::before {
-  left: 100%; /* moves to the right */
+  left: 100%;
 }
 
-/* Also make the button zoom slightly on hover */
 .demo-button:hover {
   transform: scale(1.06);
+}
+
+/* Error message */
+.error-msg {
+  color: #d9534f;
+  font-size: 14px;
+  margin-top: -8px;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+/* Loading message */
+.loading-msg {
+  color: #555;
+  font-size: 14px;
+  font-style: italic;
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+/* Spinner next to loading text */
+.spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 3px solid #ccc;
+  border-top: 3px solid #4da3ff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Success popup */
+.success-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #e6f9e6;
+  padding: 40px 60px;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  font-size: 28px;
+  color: #2e7d32;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  animation: fadeInScale 0.5s ease-in-out;
+  z-index: 9999;
+}
+
+.checkmark {
+  font-size: 32px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  animation: popIn 0.3s ease;
+}
+
+.success-text {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+@keyframes popIn {
+  0% {
+    transform: scale(0.7);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInScale {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.6);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
 }

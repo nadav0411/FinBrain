@@ -13,6 +13,13 @@ def signup():
     data = request.get_json()
     result = logic_connection.handle_signup(data)
     return result
+
+# Login route - This is where the user will login to their account
+@app.route('/login', methods=['POST'])
+def login():
+    data = request.get_json()
+    result = logic_connection.handle_login(data)
+    return result
     
 
 if __name__ == '__main__':

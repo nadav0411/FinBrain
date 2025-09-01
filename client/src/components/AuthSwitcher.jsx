@@ -1,26 +1,25 @@
 import React, { useState } from 'react';
 import LoginModal from './LoginModal';
 import SignupModal from './SignupModal';
+import MainScreen from './MainScreen';
 
-/**
- * This component switches between Login and Signup modals.
- * It shows one of them based on internal state.
- */
 function AuthSwitcher() {
   const [isSignupMode, setIsSignupMode] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  // Switch to Signup
   const goToSignup = () => setIsSignupMode(true);
-
-  // Switch back to Login
   const goToLogin = () => setIsSignupMode(false);
 
   return (
     <>
-      {isSignupMode ? (
-        <SignupModal onBackToLogin={goToLogin} />
+      {isLoggedIn ? (
+        <MainScreen />
       ) : (
-        <LoginModal onGoToSignup={goToSignup} />
+        isSignupMode ? (
+          <SignupModal onBackToLogin={goToLogin} />
+        ) : (
+          <LoginModal onGoToSignup={goToSignup} onLoginSuccess={() => setIsLoggedIn(true)} />
+        )
       )}
     </>
   );

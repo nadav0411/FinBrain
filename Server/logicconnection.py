@@ -4,6 +4,13 @@ import re
 
 
 def handle_signup(data):
+    """
+    Signup function
+    This function is called when the user wants to signup for an account
+    It checks if all the required fields are present and if the name is valid,
+    the passwords match and if the email is already in use
+    It then creates the user in the database
+    """
     required_fields = ['firstName', 'lastName', 'email', 'password', 'confirmPassword']
 
     # Check if all required fields are present
@@ -35,3 +42,30 @@ def handle_signup(data):
     })
     
     return jsonify({'message': 'Signup successful'}), 201
+
+
+def handle_login(data):
+    """
+    Login function
+    This function is called when the user wants to login to their account
+    It checks if the email and password are present and if the user exists
+    It then checks if the password is correct
+    If everything is correct, it returns a success message
+    """
+    email = data.get('email')
+    password = data.get('password')
+
+    # Check if the email and password are present
+    if not email or not password:
+        return jsonify({'message': 'Email and password are required'}), 400
+    
+    # Check if the user exists
+    user = users_collection.find_one({'email': email})
+    if not user:
+        return jsonify({'message': 'User not found'}), 404
+    
+    # Check if the password is correct
+    if user['password'] != password:
+        return jsonify({'message': 'Incorrect password'}), 401
+    
+    return jsonify({'message': 'Login successful'}), 200
