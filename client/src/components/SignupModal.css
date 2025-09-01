@@ -97,3 +97,71 @@
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+
+.success-popup {
+  position: fixed;             
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);  
+  background-color: #e6f9e6;    
+  padding: 40px 60px;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  font-size: 28px;
+  color: #2e7d32;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  animation: fadeInScale 0.5s ease-in-out;
+  z-index: 9999;
+}
+
+
+.checkmark {
+  font-size: 32px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  animation: popIn 0.3s ease;
+}
+
+.success-text {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+@keyframes popIn {
+  0% {
+    transform: scale(0.7);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+@keyframes fadeInScale {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.6);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}

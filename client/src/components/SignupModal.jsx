@@ -14,6 +14,7 @@ function SignupModal({ onBackToLogin }) {
   });
 
   const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   // error will store error messages to show the user
   const [error, setError] = useState('');
@@ -24,6 +25,13 @@ function SignupModal({ onBackToLogin }) {
       ...prev, // keep the old fields as they are
       [e.target.name]: e.target.value // update only the changed field
     }));
+  };
+
+  const handleNameInput = (e) => {
+    const regex = /^[A-Za-z\s]*$/; 
+    if (regex.test(e.target.value)) {
+      handleChange(e);
+    }
   };
 
   // This function runs when the user clicks "Sign Up"
@@ -56,17 +64,21 @@ function SignupModal({ onBackToLogin }) {
       const data = await response.json();
 
       if (response.status === 201) {
-        alert('Signup successful! ✅');
-        setFormData({
-          firstName: '',
-          lastName: '',
-          email: '',
-          password: '',
-          confirmPassword: '',
-        })
-        onBackToLogin();
-        setError('');
+        setSuccess(true);
 
+        setTimeout(() => {
+          setSuccess(false);
+          setFormData({
+            firstName: '',
+            lastName: '',
+            email: '',
+            password: '',
+            confirmPassword: '',
+          });
+          setError('');
+          onBackToLogin(); 
+        }, 2500);
+        
       } else {
         setError(data.message || 'Something went wrong');
       }
@@ -102,7 +114,7 @@ function SignupModal({ onBackToLogin }) {
                 name="firstName"
                 placeholder="John"
                 value={formData.firstName}
-                onChange={handleChange}
+                onChange={handleNameInput}
               />
             </div>
             <div className="field">
@@ -112,7 +124,7 @@ function SignupModal({ onBackToLogin }) {
                 name="lastName"
                 placeholder="Doe"
                 value={formData.lastName}
-                onChange={handleChange}
+                onChange={handleNameInput}
               />
             </div>
           </div>
@@ -157,6 +169,14 @@ function SignupModal({ onBackToLogin }) {
 
           {/* If there is an error message, show it here */}
           {error && <div className="error-msg">{error}</div>}
+          
+          {/* If the signup is successful, show a success message */}
+          {success && (
+          <div className="success-popup">
+            <div className="checkmark">✓</div>
+            <div className="success-text">Signup successful!</div>
+          </div> )}
+
 
           {/* Submit button row */}
           <div className="row button-group">

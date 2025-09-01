@@ -1,5 +1,5 @@
 import React from 'react';
-import AuthSwitcher from './components/AuthSwitcher'; // שנה נתיב לפי מיקום הקובץ
+import AuthSwitcher from './components/AuthSwitcher'; 
 
 function App() {
   return (
