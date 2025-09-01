@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import logo from '../assets/logo.png';
 import './SignupModal.css';
 
-// SignupModal is a component that receives a prop called onBackToLogin
+
 function SignupModal({ onBackToLogin }) {
-  // formData holds the values of all form fields (first name, last name, etc.)
+  // Store form inputs
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -13,13 +13,15 @@ function SignupModal({ onBackToLogin }) {
     confirmPassword: ''
   });
 
+  // UI feedback
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
 
-  // error will store error messages to show the user
+  // Error message
   const [error, setError] = useState('');
 
-  // This function updates formData when the user types in a field
+  
+  // Handle input changes
   const handleChange = (e) => {
     setFormData((prev) => ({
       ...prev, // keep the old fields as they are
@@ -27,6 +29,7 @@ function SignupModal({ onBackToLogin }) {
     }));
   };
 
+  // Handle name input
   const handleNameInput = (e) => {
     const regex = /^[A-Za-z\s]*$/; 
     if (regex.test(e.target.value)) {
@@ -52,8 +55,9 @@ function SignupModal({ onBackToLogin }) {
     }
 
     setLoading(true);
+    // Send request to server
     try {
-      const response = await fetch('http://localhost:5000/signup', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -63,9 +67,9 @@ function SignupModal({ onBackToLogin }) {
 
       const data = await response.json();
 
+      // if signup is successful
       if (response.status === 201) {
         setSuccess(true);
-
         setTimeout(() => {
           setSuccess(false);
           setFormData({
@@ -79,10 +83,12 @@ function SignupModal({ onBackToLogin }) {
           onBackToLogin(); 
         }, 2500);
         
+      // if signup fails
       } else {
         setError(data.message || 'Something went wrong');
       }
 
+    // if there is an error
     } catch (error) {
       console.error('Signup error:', error);
       setError('Something went wrong. Please try again.');
@@ -90,20 +96,16 @@ function SignupModal({ onBackToLogin }) {
     setLoading(false);
   };
 
+
   return (
-    // Gray background behind the modal
     <div className="modal-overlay">
-
-      {/* White signup box */}
       <div className="modal signup-modal">
-
-        {/* Header with title */}
         <div className="modal-header">
+          {/* Header */}
           <h2>Create Account</h2>
           <img src={logo} alt="Logo" className="modal-logo" />
         </div>
 
-        {/* The form body */}
         <form className="modal-body" onSubmit={handleSubmit}>
 
           {/* First row: first name and last name */}

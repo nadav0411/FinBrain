@@ -36,6 +36,7 @@ function LoginModal({ onGoToSignup, onLoginSuccess }) {
       // wait for response from server
       const data = await response.json();
 
+      // if login is successful
       if (response.status === 200) {
         setSuccess(true);
         setTimeout(() => {
@@ -44,10 +45,13 @@ function LoginModal({ onGoToSignup, onLoginSuccess }) {
           setPassword('');
           onLoginSuccess();
         }, 2500);
+      
+      // if login fails
       } else {
         setError(data.message || 'Login failed.');
       }
 
+    // if there is an error
     } catch (err) {
       setError('Server error. Please try again later.');
     }
@@ -55,19 +59,20 @@ function LoginModal({ onGoToSignup, onLoginSuccess }) {
     setLoading(false);
   };
 
+  
   return (
     <div className="modal-overlay">
       <div className="modal login-modal">
       <div className="modal-header">
+        {/* Header text */}
         <h2 className="header-text">Welcome Back</h2>
         <img src={logo} alt="Logo" className="modal-logo" />
       </div>
 
-
-
         <form className="modal-body" onSubmit={handleSubmit}>
           <div className="row">
             <div className="field">
+              {/* Email input */}
               <label>Email</label>
               <input
                 type="email"
@@ -80,6 +85,7 @@ function LoginModal({ onGoToSignup, onLoginSuccess }) {
 
           <div className="row">
             <div className="field">
+              {/* Password input */}
               <label>Password</label>
               <input
                 type="password"
@@ -91,12 +97,15 @@ function LoginModal({ onGoToSignup, onLoginSuccess }) {
           </div>
 
           <div className="row link-row">
+            {/* Sign up link */}
             <a href="#" onClick={onGoToSignup} className="side-link">Sign Up</a>
             <a href="#" className="side-link">Forgot Password?</a>
           </div>
 
+          {/* Error message */}
           {error && <div className="error-msg">{error}</div>}
 
+          {/* Success message */}
           {success && (
             <div className="success-popup">
               <div className="checkmark">✓</div>
@@ -105,14 +114,17 @@ function LoginModal({ onGoToSignup, onLoginSuccess }) {
           )}
 
           <div className="row button-group">
+            {/* Login button */}
             <button type="submit" className="main-button login-button">
               Login
             </button>
+            {/* Demo button */}
             <button type="button" className="main-button demo-button">
               Demo Mode
             </button>
           </div>
 
+          {/* Loading message */}
           {loading && (
             <div className="loading-msg">
               <span className="spinner" /> Logging you in...
@@ -124,4 +136,5 @@ function LoginModal({ onGoToSignup, onLoginSuccess }) {
   );
 }
 
+// Export this component so other files can use it
 export default LoginModal;
