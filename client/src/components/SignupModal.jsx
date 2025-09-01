@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-
+import logo from '../assets/logo.png';
 import './SignupModal.css';
 
 // SignupModal is a component that receives a prop called onBackToLogin
@@ -100,6 +100,7 @@ function SignupModal({ onBackToLogin }) {
         {/* Header with title */}
         <div className="modal-header">
           <h2>Create Account</h2>
+          <img src={logo} alt="Logo" className="modal-logo" />
         </div>
 
         {/* The form body */}

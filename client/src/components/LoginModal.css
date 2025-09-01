@@ -182,3 +182,26 @@
     transform: translate(-50%, -50%) scale(1);
   }
 }
+
+.modal-header {
+  display: flex;
+  justify-content: space-between; 
+  align-items: center;
+  padding: 0 16px;
+}
+
+.header-text {
+  font-size: 26px;
+  font-weight: 600;
+  color: #2c3e50;
+  text-align: left;
+}
+
+.modal-logo {
+  width: 150px;
+  height: 80%;
+  object-fit: contain;
+}
+
+
+

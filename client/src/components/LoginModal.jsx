@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
+import logo from '../assets/logo.png';
 import './LoginModal.css';
+
 
 function LoginModal({ onGoToSignup, onLoginSuccess }) {
   // States to store form inputs
@@ -54,9 +56,12 @@ function LoginModal({ onGoToSignup, onLoginSuccess }) {
   return (
     <div className="modal-overlay">
       <div className="modal login-modal">
-        <div className="modal-header">
-          <h2>Welcome Back</h2>
-        </div>
+      <div className="modal-header">
+        <h2 className="header-text">Welcome Back</h2>
+        <img src={logo} alt="Logo" className="modal-logo" />
+      </div>
+
+
 
         <form className="modal-body" onSubmit={handleSubmit}>
           <div className="row">
