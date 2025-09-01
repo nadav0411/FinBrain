@@ -4,11 +4,11 @@ import './LoginModal.css';
 
 
 function LoginModal({ onGoToSignup, onLoginSuccess }) {
-  // States to store form inputs
+  // Store form inputs
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  // States for UI feedback
+  // UI feedback
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
@@ -17,7 +17,7 @@ function LoginModal({ onGoToSignup, onLoginSuccess }) {
   const handleSubmit = async (e) => {
     e.preventDefault(); // prevent page reload
 
-    // Basic validation
+    // Validate inputs
     if (!email || !password) {
       setError('Both email and password are required.');
       return;
@@ -25,13 +25,15 @@ function LoginModal({ onGoToSignup, onLoginSuccess }) {
 
     setLoading(true);
     setError('');
+    // Send request to server
     try {
-      const response = await fetch('http://localhost:5000/login', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
       });
 
+      // wait for response from server
       const data = await response.json();
 
       if (response.status === 200) {
