@@ -29,6 +29,7 @@
   transition: color 0.2s ease;
 }
 
+/* Style for the text link when the user hovers over it */
 .side-link:hover {
   font-weight: 800;
   color: #0f487c;
@@ -37,7 +38,7 @@
 /* Row that holds the buttons */
 .button-group {
   display: flex;
-  flex-direction: column; /* buttons stacked vertically */
+  flex-direction: column;
   gap: 12px;
 }
 
@@ -52,12 +53,13 @@
   transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-/* Login button – simple dark button */
+/* Login button – dark button */
 .login-button {
   background-color: #5d6369;
   color: white;
 }
 
+/* When hovering over the login button, make it darker blue and slightly bigger */
 .login-button:hover {
   background-color: #444;
   transform: scale(1.05);
@@ -73,6 +75,7 @@
   overflow: hidden;
 }
 
+/* Before element for the demo button */
 .demo-button::before {
   content: '';
   position: absolute;
@@ -81,19 +84,21 @@
   height: 100%;
   width: 100%;
   background: rgba(255, 255, 255, 0.1);
-  transform: skewX(-20deg);
-  transition: left 0.5s;
+  transform: skewX(-20deg); /* make it diagonal */
+  transition: left 0.5s; /* smooth movement */
 }
 
+/* When hovering over the demo button, make the before element move to the right */
 .demo-button:hover::before {
   left: 100%;
 }
 
+/* When hovering over the demo button, make it slightly bigger */
 .demo-button:hover {
   transform: scale(1.06);
 }
 
-/* Error message */
+/* Style for the red error message */
 .error-msg {
   color: #d9534f;
   font-size: 14px;
@@ -102,7 +107,7 @@
   text-align: center;
 }
 
-/* Loading message */
+/* Style for the loading message */
 .loading-msg {
   color: #555;
   font-size: 14px;
@@ -111,7 +116,7 @@
   margin-bottom: 12px;
 }
 
-/* Spinner next to loading text */
+/* Spinner next to the loading text */
 .spinner {
   display: inline-block;
   width: 16px;
@@ -124,12 +129,13 @@
   vertical-align: middle;
 }
 
+/* Spin animation for the spinner */
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
 
-/* Success popup */
+/* Style for the success popup */
 .success-popup {
   position: fixed;
   top: 50%;
@@ -146,9 +152,10 @@
   align-items: center;
   gap: 15px;
   animation: fadeInScale 0.5s ease-in-out;
-  z-index: 9999;
+  z-index: 9999; /* makes sure the success popup is on top */
 }
 
+/* Style for the checkmark */
 .checkmark {
   font-size: 32px;
   font-weight: bold;
@@ -156,11 +163,13 @@
   animation: popIn 0.3s ease;
 }
 
+/* Style for the success text */
 .success-text {
   font-size: 16px;
   font-weight: 500;
 }
 
+/* Pop in animation for the checkmark */
 @keyframes popIn {
   0% {
     transform: scale(0.7);
@@ -172,6 +181,7 @@
   }
 }
 
+/* Fade in scale animation for the success popup */
 @keyframes fadeInScale {
   0% {
     opacity: 0;
@@ -183,6 +193,7 @@
   }
 }
 
+/* Style for the modal header */
 .modal-header {
   display: flex;
   justify-content: space-between; 
@@ -190,6 +201,7 @@
   padding: 0 16px;
 }
 
+/* Style for the header text */
 .header-text {
   font-size: 26px;
   font-weight: 600;
@@ -197,11 +209,9 @@
   text-align: left;
 }
 
+/* Style for the modal logo */
 .modal-logo {
   width: 150px;
   height: 80%;
-  object-fit: contain;
+  object-fit: contain; /* makes sure the logo is the same size as the header text */
 }
-
-
-

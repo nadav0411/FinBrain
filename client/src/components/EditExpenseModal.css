@@ -1,24 +1,18 @@
-/* I'm learning CSS, so I added comments to help me understand what each part does :) */
-
+/* Makes the background cover the whole screen */
 .modal-overlay {
-  /* Makes the background cover the whole screen */
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-
   /* Adds blur effect to the background */
   backdrop-filter: blur(4px);
-
   /* Adds semi-transparent dark background */
   background: rgba(0, 0, 0, 0.2);
-
   /* Centers the modal in the middle of the screen */
   display: flex;
   align-items: center;
   justify-content: center;
-
   /* Makes sure the overlay is on top */
   z-index: 999;
 }
@@ -26,20 +20,15 @@
 .modal {
   /* Light background for the modal box */
   background: #f9fcff;
-
   /* Set modal width and padding inside */
   width: 720px;
   padding: 32px;
-
   /* Round the corners of the modal */
   border-radius: 16px;
-
   /* Adds soft shadow behind the modal */
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
-
   /* Makes modal appear with fade animation */
   animation: fadeIn 0.3s ease;
-
   /* Font and text color */
   font-family: 'Segoe UI', sans-serif;
   color: #1e1e1e;
@@ -48,116 +37,109 @@
 /* Defines the animation called "fadeIn" */
 @keyframes fadeIn {
   from {
-    opacity: 0;               /* Start invisible */
-    transform: translateY(-20px); /* Start a bit higher */
+    opacity: 0;              
+    transform: translateY(-20px); 
   }
   to {
-    opacity: 1;               /* End fully visible */
-    transform: translateY(0);     /* Move to normal position */
+    opacity: 1;              
+    transform: translateY(0);
   }
 }
 
+/* Arrange title and close button in one line */
 .modal-header {
-  /* Arrange title and close button in one line */
   display: flex;
   justify-content: space-between;
   align-items: center;
-
   /* Space below header */
   margin-bottom: 24px;
 }
 
+/* Title text size and color */
 .modal-header h2 {
-  /* Title text size and color */
   font-size: 24px;
   font-weight: 600;
   color: #2c3e50;
-
   /* Remove default margin */
   margin: 0;
 }
 
+/* Makes the X button look simple */
 .close-button {
-  /* Makes the X button look simple */
   font-size: 26px;
   background: none;
   border: none;
   cursor: pointer;
   color: #6c757d;
-
-  /* Smooth color transition when hovering */
+/* Smooth color transition when hovering */
   transition: color 0.2s ease;
 }
 
+/* Darker color when hovering over the close button */
 .close-button:hover {
-  /* Darker color when hovering over the close button */
   color: #000;
 }
 
+/* Puts fields in a row, with space between them */
 .modal-body .row {
-  /* Puts fields in a row, with space between them */
   display: flex;
   gap: 24px;
-
   /* Adds space below each row */
   margin-bottom: 20px;
 }
 
+/* Makes all fields share space equally */
 .field {
-  /* Makes all fields share space equally */
   flex: 1;
-
   /* Arrange label and input one below the other */
   display: flex;
   flex-direction: column;
 }
 
+/* Label style: font size, color, margin */
 .field label {
-  /* Label style: font size, color, margin */
   font-size: 14px;
   color: #4a6fa5;
   margin-bottom: 6px;
   font-weight: 500;
 }
 
+/* Styling for text fields */
 .field input,
 .field textarea {
-  /* Styling for text fields */
   padding: 10px 12px;
   border: 1.5px solid #cbdff5;
   border-radius: 6px;
   font-size: 15px;
   background-color: white;
-
   /* Smooth transition on focus */
   transition: border-color 0.2s;
 }
 
+/* When clicking inside input */
 .field input:focus,
 .field textarea:focus {
-  /* When clicking inside input */
   border-color: #4da3ff;
   box-shadow: 0 0 0 3px rgba(77, 163, 255, 0.2);
   outline: none; /* Remove blue outline */
 }
 
+/* Styling for dropdown */
 .field select {
-  /* Styling for dropdown */
   padding: 10px 12px;
   border: 1.5px solid #cbdff5;
   border-radius: 6px;
   font-size: 15px;
   background-color: white;
   transition: border-color 0.2s;
-
   /* Remove default browser arrow style */
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
 }
 
+/* Style when dropdown is focused */
 .field select:focus {
-  /* Style when dropdown is focused */
   border-color: #4da3ff;
   box-shadow: 0 0 0 3px rgba(77, 163, 255, 0.2);
   outline: none;

@@ -65,6 +65,7 @@ function SignupModal({ onBackToLogin }) {
         body: JSON.stringify(formData),
       });
 
+      // get the response from the server
       const data = await response.json();
 
       // if signup is successful
@@ -179,7 +180,6 @@ function SignupModal({ onBackToLogin }) {
             <div className="checkmark">✓</div>
             <div className="success-text">Signup successful!</div>
           </div> )}
-
 
           {/* Submit button row */}
           <div className="row button-group">

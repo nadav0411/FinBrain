@@ -13,15 +13,17 @@
   color: #2c3e50;
 }
 
+/* Style for the submit button */
 .signup-submit {
-  background: linear-gradient(to right, #4da3ff, #1676d6); /* blue gradient */
+  background: linear-gradient(to right, #4da3ff, #1676d6); 
   color: white;
   font-weight: 600;
-  box-shadow: 0 4px 12px rgba(77, 163, 255, 0.5); /* glow */
-  position: relative;
-  overflow: hidden; /* so the shiny animation stays inside */
+  box-shadow: 0 4px 12px rgba(77, 163, 255, 0.5); 
+  position: relative; 
+  overflow: hidden; /* Ensures the shiny animation stays inside */
 }
 
+/* Style for the before element that creates the shiny animation for the submit button */
 .signup-submit::before {
   content: '';
   position: absolute;
@@ -29,24 +31,26 @@
   left: -100%; /* start outside on the left */
   height: 100%;
   width: 100%;
-  background: rgba(255, 255, 255, 0.1); /* shiny white stripe */
+  background: rgba(255, 255, 255, 0.1); 
   transform: skewX(-20deg); /* make it diagonal */
   transition: left 0.5s; /* smooth movement */
 }
 
+/* Style for the hover effect of the submit button */
 .signup-submit:hover::before {
   left: 100%;
 }
 
+/* Style for the hover effect of the submit button */
 .signup-submit:hover {
   transform: scale(1.05);
 }
 
 /* Style for the red error message (if fields are empty or passwords don't match) */
 .error-msg {
-  color: #d9534f;            /* red text */
+  color: #d9534f;           
   font-size: 14px;
-  margin-top: -8px;          /* pull it up slightly */
+  margin-top: -8px;          
   margin-bottom: 12px;
   text-align: center;
 }
@@ -72,6 +76,7 @@
   color: #0f487c;
 }
 
+/* Loading message (when waiting for server) */
 .loading-msg {
   color: #555;
   font-size: 14px;
@@ -80,9 +85,9 @@
   margin-bottom: 12px;
 }
 
-/* Spinner animation */
+/* Spinner animation (next to loading text) */
 .spinner {
-  display: inline-block;
+  display: inline-block; /* makes the spinner a circle */
   width: 16px;
   height: 16px;
   border: 3px solid #ccc;
@@ -93,19 +98,20 @@
   vertical-align: middle;
 }
 
+/* Spinner animation (spinning circle) */
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
 
-
+/* Success popup (when signup is successful) */
 .success-popup {
   position: fixed;             
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);  
   background-color: #e6f9e6;    
-  padding: 40px 60px;
+  padding: 40px 60px; 
   border-radius: 16px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
   font-size: 28px;
@@ -115,10 +121,10 @@
   align-items: center;
   gap: 15px;
   animation: fadeInScale 0.5s ease-in-out;
-  z-index: 9999;
+  z-index: 9999; /* makes sure the success popup is on top */
 }
 
-
+/* Checkmark animation */
 .checkmark {
   font-size: 32px;
   font-weight: bold;
@@ -126,11 +132,13 @@
   animation: popIn 0.3s ease;
 }
 
+/* Success text (when signup is successful) */
 .success-text {
   font-size: 16px;
   font-weight: 500;
 }
 
+/* Pop in animation (next to checkmark) */
 @keyframes popIn {
   0% {
     transform: scale(0.7);
@@ -142,12 +150,13 @@
   }
 }
 
+/* Fade out animation (when success popup is closing) */
 @keyframes fadeOut {
   0% {
     opacity: 1;
   }
   80% {
-    opacity: 1;
+    opacity: 1; 
   }
   100% {
     opacity: 0;
@@ -155,6 +164,7 @@
   }
 }
 
+/* Fade in scale animation (when success popup is opening) */
 @keyframes fadeInScale {
   0% {
     opacity: 0;
@@ -166,6 +176,7 @@
   }
 }
 
+/* Modal header (title and logo) */
 .modal-header {
   display: flex;
   justify-content: space-between; 
@@ -173,6 +184,7 @@
   padding: 0 16px;
 }
 
+/* Header text (title) */
 .header-text {
   font-size: 26px;
   font-weight: 600;
@@ -180,9 +192,9 @@
   text-align: left;
 }
 
+/* Modal logo (logo image) */
 .modal-logo {
   width: 150px;
   height: 80%;
   object-fit: contain;
 }
-
