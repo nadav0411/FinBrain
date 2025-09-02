@@ -1,5 +1,6 @@
 import React from 'react';
 import AuthSwitcher from './components/AuthSwitcher'; 
+import AllExpenses from './components/AllExpenses';
 
 function App() {
   return (

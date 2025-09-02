@@ -1,71 +1,93 @@
-/* מבנה עמוד ראשי */
+/* כל המסך – שני צדדים */
 .main-container {
-    display: flex;
-    height: 100vh;
-    font-family: 'Segoe UI', sans-serif;
-    color: #1e1e1e;
-  }
-  
-  /* Sidebar */
-  .sidebar {
-    width: 240px;
-    background: #f3f8fd; /* תכלת חלש */
-    padding: 32px 16px;
-    box-shadow: 4px 0 12px rgba(0, 0, 0, 0.05);
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .logo {
-    font-size: 20px;
-    font-weight: 600;
-    color: #1676d6;
-    margin-bottom: 40px;
-    text-align: center;
-  }
-  
-  /* כפתורי תפריט */
-  .menu {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-  }
-  
-  .menu-item {
-    font-size: 16px;
-    color: #4a6fa5;
-    padding: 10px 16px;
-    border-radius: 8px;
-    text-decoration: none;
-    transition: background 0.2s, color 0.2s;
-  }
-  
-  .menu-item:hover {
-    background-color: #dbefff;
-    color: #1676d6;
-  }
-  
-  .menu-item.active {
-    background-color: #1676d6;
-    color: white;
-  }
-  
-  /* תוכן מימין */
-  .content {
-    flex: 1;
-    padding: 40px;
-    background-color: #f9fcff;
-    overflow-y: auto;
-  }
-  
-  .content h1 {
-    font-size: 28px;
-    font-weight: 600;
-    margin-bottom: 12px;
-  }
-  
-  .content p {
-    font-size: 16px;
-    color: #4a6fa5;
-  }
-  
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  font-family: 'Segoe UI', sans-serif;
+  color: #1e1e1e;
+}
+
+/* סרגל צד קבוע משמאל */
+.sidebar {
+  width: 240px;
+  background: #f3f8fd;
+  padding: 32px 16px;
+  box-shadow: 4px 0 12px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.sidebar-logo {
+  width: 150px;
+  height: auto;
+  margin-bottom: 12px;
+}
+
+.logo {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1676d6;
+  margin-bottom: 40px;
+  text-align: center;
+}
+
+/* תפריט לחצנים */
+.menu {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+}
+
+.menu-item {
+  font-size: 16px;
+  color: #4a6fa5;
+  padding: 10px 16px;
+  border-radius: 8px;
+  text-align: left;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.menu-item:hover {
+  background-color: #dbefff;
+  color: #1676d6;
+}
+
+.menu-item.active {
+  background-color: #1676d6;
+  color: white;
+}
+
+/* אזור התוכן */
+.content {
+  flex: 1;
+  background-color: #f9fcff;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding: 32px;
+  box-sizing: border-box;
+}
+
+.page-header {
+  padding-bottom: 16px;
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 24px;
+}
+
+.page-header h2 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #444;
+}
+
+.page-body {
+  flex: 1;
+  overflow: hidden;
+}
