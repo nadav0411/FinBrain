@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './AddExpenseModal.css';
 
+
 function AddExpenseModal({ onClose }) {
   const [title, setTitle] = useState('');
   const [date, setDate] = useState('');
@@ -8,6 +9,9 @@ function AddExpenseModal({ onClose }) {
   const [currency, setCurrency] = useState('USD');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  const today = new Date().toISOString().split("T")[0];        // תאריך נוכחי בפורמט YYYY-MM-DD
+  const minDate = "2015-01-01";                                 // תאריך מינימלי
 
   const handleSubmit = async () => {
     if (!title || !date || !amount || !currency) {
@@ -21,8 +25,10 @@ function AddExpenseModal({ onClose }) {
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/add_expense`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json',
-                   'Session-ID': localStorage.getItem('session_id')},
+        headers: {
+          'Content-Type': 'application/json',
+          'Session-ID': localStorage.getItem('session_id')
+        },
         body: JSON.stringify(expenseData),
       });
 
@@ -39,6 +45,14 @@ function AddExpenseModal({ onClose }) {
       setError("Connection error.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleTitleChange = (e) => {
+    const regex = /^[A-Za-z0-9\s]*$/;
+    if (regex.test(e.target.value)) {
+      setTitle(e.target.value);
+      setError('');
     }
   };
 
@@ -60,10 +74,7 @@ function AddExpenseModal({ onClose }) {
                 type="text"
                 placeholder="Pizza with friends"
                 value={title}
-                onChange={(e) => {
-                  setTitle(e.target.value);
-                  setError('');
-                }}
+                onChange={handleTitleChange}
               />
             </div>
           </div>
@@ -74,9 +85,10 @@ function AddExpenseModal({ onClose }) {
               <input
                 type="date"
                 className="date-input"
-                max={new Date().toISOString().split("T")[0]}
-                onKeyDown={(e) => e.preventDefault()}
                 value={date}
+                min={minDate}
+                max={today}
+                onKeyDown={(e) => e.preventDefault()}
                 onChange={(e) => {
                   setDate(e.target.value);
                   setError('');

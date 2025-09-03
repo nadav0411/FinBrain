@@ -4,6 +4,27 @@ from logicconnection import get_email_from_session_id
 from datetime import datetime
 import requests
 import re
+from predictmodelloader import model, vectorizer
+
+
+
+def classify_expense(text):
+    """
+    This function gets a sentence (like 'Bought medicine')
+    and returns the best category (like 'health')
+    """
+    # First, make sure the input is a string and is not empty
+    if not text or not isinstance(text, str):
+        return "other"  # If the text is bad, we return 'other' by default
+
+    # Use the saved vectorizer to turn the text into a number vector
+    vector = vectorizer.transform([text])
+
+    # Now we use the trained model to predict the category
+    prediction = model.predict(vector)
+
+    # Return the predicted category (it's a list with one value)
+    return prediction[0]
 
 
 def get_usd_to_ils_rate(date_str):
