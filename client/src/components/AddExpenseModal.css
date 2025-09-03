@@ -5,98 +5,75 @@
   left: 0;
   width: 100%;
   height: 100%;
-  /* Adds blur effect to the background */
   backdrop-filter: blur(4px);
-  /* Adds semi-transparent dark background */
   background: rgba(0, 0, 0, 0.2);
-  /* Centers the modal in the middle of the screen */
   display: flex;
   align-items: center;
   justify-content: center;
-  /* Makes sure the overlay is on top */
   z-index: 999;
 }
 
 .modal {
-  /* Light background for the modal box */
   background: #f9fcff;
-  /* Set modal width and padding inside */
   width: 720px;
   padding: 32px;
-  /* Round the corners of the modal */
   border-radius: 16px;
-  /* Adds soft shadow behind the modal */
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
-  /* Makes modal appear with fade animation */
   animation: fadeIn 0.3s ease;
-  /* Font and text color */
   font-family: 'Segoe UI', sans-serif;
   color: #1e1e1e;
 }
 
-/* Defines the animation called "fadeIn" */
 @keyframes fadeIn {
   from {
-    opacity: 0;              
-    transform: translateY(-20px); 
+    opacity: 0;
+    transform: translateY(-20px);
   }
   to {
-    opacity: 1;              
+    opacity: 1;
     transform: translateY(0);
   }
 }
 
-/* Arrange title and close button in one line */
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  /* Space below header */
   margin-bottom: 24px;
 }
 
-/* Title text size and color */
 .modal-header h2 {
   font-size: 24px;
   font-weight: 600;
   color: #2c3e50;
-  /* Remove default margin */
   margin: 0;
 }
 
-/* Makes the X button look simple */
 .close-button {
   font-size: 26px;
   background: none;
   border: none;
   cursor: pointer;
   color: #6c757d;
-/* Smooth color transition when hovering */
   transition: color 0.2s ease;
 }
 
-/* Darker color when hovering over the close button */
 .close-button:hover {
   color: #000;
 }
 
-/* Puts fields in a row, with space between them */
 .modal-body .row {
   display: flex;
   gap: 24px;
-  /* Adds space below each row */
   margin-bottom: 20px;
 }
 
-/* Makes all fields share space equally */
 .field {
   flex: 1;
-  /* Arrange label and input one below the other */
   display: flex;
   flex-direction: column;
 }
 
-/* Label style: font size, color, margin */
 .field label {
   font-size: 14px;
   color: #4a6fa5;
@@ -104,7 +81,6 @@
   font-weight: 500;
 }
 
-/* Styling for text fields */
 .field input,
 .field textarea {
   padding: 10px 12px;
@@ -112,19 +88,16 @@
   border-radius: 6px;
   font-size: 15px;
   background-color: white;
-  /* Smooth transition on focus */
   transition: border-color 0.2s;
 }
 
-/* When clicking inside input */
 .field input:focus,
 .field textarea:focus {
   border-color: #4da3ff;
   box-shadow: 0 0 0 3px rgba(77, 163, 255, 0.2);
-  outline: none; /* Remove blue outline */
+  outline: none;
 }
 
-/* Styling for dropdown */
 .field select {
   padding: 10px 12px;
   border: 1.5px solid #cbdff5;
@@ -132,33 +105,28 @@
   font-size: 15px;
   background-color: white;
   transition: border-color 0.2s;
-  /* Remove default browser arrow style */
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
 }
 
-/* Style when dropdown is focused */
 .field select:focus {
   border-color: #4da3ff;
   box-shadow: 0 0 0 3px rgba(77, 163, 255, 0.2);
   outline: none;
 }
 
-/* For text areas (not in use here, but good to have) */
 textarea {
-  resize: vertical;       /* Allows resizing up/down */
+  resize: vertical;
   min-height: 60px;
 }
 
-/* This is the container that holds the Add button on the bottom right */
 .button-container {
   text-align: right;
   margin-top: 16px;
 }
 
 .add-button {
-  /* Styling for the 'Add' button */
   background-color: #5d6369;
   color: white;
   border: none;
@@ -167,13 +135,61 @@ textarea {
   font-weight: 500;
   border-radius: 8px;
   cursor: pointer;
-
-  /* Smooth animation when hovering */
   transition: background-color 0.3s ease, transform 0.2s ease;
+  min-width: 90px;
 }
 
 .add-button:hover {
-  /* Button gets blue and slightly bigger on hover */
   background-color: #1676d6;
   transform: scale(1.05);
+}
+
+.add-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* 💬 Error message */
+.error-message {
+  background-color: #ffe5e5;
+  border: 1px solid #ffcccc;
+  color: #d93025;
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 16px;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* 💬 Bouncing dots animation */
+.loading-dots {
+  display: flex;
+  gap: 4px;
+  justify-content: center;
+  align-items: center;
+  font-size: 18px;
+  font-weight: bold;
+  height: 20px;
+  letter-spacing: 2px;
+}
+
+.loading-dots span {
+  animation: bounce 1s infinite;
+}
+
+.loading-dots span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.loading-dots span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes bounce {
+  0%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-6px);
+  }
 }

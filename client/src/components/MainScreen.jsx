@@ -23,7 +23,7 @@ function MainScreen() {
       case 'expenses':
         return <AllExpenses />;
       case 'incomes':
-        return <h1>💵 All Incomes Page</h1>;
+        return <h1>💵 Incomes Page</h1>;
       case 'coming':
         return <h1>🛠️ Coming Soon</h1>;
       case 'settings':

@@ -1,11 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './AllExpenses.css';
+import AddExpenseModal from './AddExpenseModal';
+
 
 function AllExpenses() {
+  const [showPopup, setShowPopup] = useState(false);
+
   return (
     <div className="expenses-container">
       <div className="expenses-header">
-        <button className="new-expense-button">✨ New Expense</button>
+        <button className="new-expense-button" onClick={() => setShowPopup(true)}>✨ New Expense</button>
         <div className="controls">
           <span className="filter-btn">🔍 Filters</span>
           <span className="sort-btn">↕ Sort</span>
@@ -45,6 +49,8 @@ function AllExpenses() {
           </tr>
         </tbody>
       </table>
+
+      {showPopup && <AddExpenseModal onClose={() => setShowPopup(false)} />}
     </div>
   );
 }

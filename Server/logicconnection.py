@@ -1,6 +1,12 @@
 from db import users_collection
 from flask import jsonify
 import re
+import uuid
+
+
+# This is a dictionary that will store the connected sessions
+# The key is the session ID and the value is the user's email
+connected_sessions = {}
 
 
 def handle_signup(data):
@@ -68,4 +74,17 @@ def handle_login(data):
     if user['password'] != password:
         return jsonify({'message': 'Incorrect password'}), 401
     
-    return jsonify({'message': 'Login successful'}), 200
+    # Create a session ID and store it in the dictionary
+    session_id = str(uuid.uuid4())
+    connected_sessions[session_id] = email
+
+    return jsonify({'message': 'Login successful', 'session_id': session_id}), 200
+
+
+def get_email_from_session_id(session_id):
+    """
+    Get the email from the session ID
+    This function is called when the user wants to get their email from the session ID
+    It returns the email from the dictionary
+    """
+    return connected_sessions.get(session_id)

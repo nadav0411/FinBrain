@@ -33,11 +33,16 @@ function LoginModal({ onGoToSignup, onLoginSuccess }) {
         body: JSON.stringify({ email, password })
       });
 
-      // wait for response from server
+      // Wait for response from server
       const data = await response.json();
 
-      // if login is successful
+      // If login is successful
       if (response.status === 200) {
+        // Save the session ID to local storage
+        if (data.session_id) {
+          localStorage.setItem('session_id', data.session_id);
+        }
+        // Show success message
         setSuccess(true);
         setTimeout(() => {
           setSuccess(false);
@@ -46,12 +51,12 @@ function LoginModal({ onGoToSignup, onLoginSuccess }) {
           onLoginSuccess();
         }, 2500);
       
-      // if login fails
+      // If login fails
       } else {
         setError(data.message || 'Login failed.');
       }
 
-    // if there is an error
+    // If there is an error
     } catch (err) {
       setError('Server error. Please try again later.');
     }

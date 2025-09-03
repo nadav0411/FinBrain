@@ -1,5 +1,3 @@
-@import './EditExpenseModal.css';
-
 /* Make the signup modal a bit wider than the login modal */
 .signup-modal {
   width: 600px;
