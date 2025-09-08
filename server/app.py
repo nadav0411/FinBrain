@@ -6,7 +6,8 @@ import logicexpenses as logic_expenses
 
 # Creates a Flask app - my web server and allows other applications to connect to it (such as my React client)
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}})
+
 
 # Signup route - This is where the user will sign up for an account
 @app.route('/signup', methods=['POST'])
@@ -28,6 +29,14 @@ def add_expense():
     data = request.get_json()
     session_id = request.headers.get('Session-ID')
     result = logic_expenses.handle_add_expense(data, session_id)
+    return result
+
+@app.route('/get_expenses', methods=['GET'])
+def get_expenses():
+    month = request.args.get('month', type=int)
+    year = request.args.get('year', type=int)
+    session_id = request.headers.get('Session-ID')
+    result = logic_expenses.handle_get_expenses(month, year, session_id)
     return result
     
 

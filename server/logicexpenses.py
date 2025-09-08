@@ -1,5 +1,5 @@
 from flask import jsonify
-from db import users_collection
+from db import users_collection, expenses_collection
 from logicconnection import get_email_from_session_id
 from datetime import datetime
 import requests
@@ -49,6 +49,13 @@ def get_usd_to_ils_rate(date_str):
 
 
 def handle_add_expense(data, session_id):
+    """
+    This function is called when the user wants to add an expense to their account
+    It checks if the required fields are present and if the title is valid
+    It then checks if the amount is valid and if the date is valid
+    It then checks if the currency is valid and if the expense is valid
+    It then adds the expense to the database
+    """
     # Get the email from the session ID
     email = get_email_from_session_id(session_id)
     if not email:
@@ -63,7 +70,7 @@ def handle_add_expense(data, session_id):
         return jsonify({'message': 'Missing required fields'}), 400
     
     # Check if the title is valid
-    title_regex = re.compile(r'^[A-Za-z\s]*$')
+    title_regex = re.compile(r'^[A-Za-z0-9\s]*$')
     if not title_regex.match(title):
         return jsonify({'message': 'Invalid title'}), 400
     
@@ -98,16 +105,68 @@ def handle_add_expense(data, session_id):
     if not user:
         return jsonify({'message': 'User not found'}), 404
     
+    # Classify the expense
+    category = classify_expense(title)
+    
+    # Get the last expense number
+    last_expense = expenses_collection.find_one(
+    {"user_id": user["_id"]},
+    sort=[("serial_number", -1)]
+)
+    # If there is a last expense, add 1 to the serial number
+    if last_expense:
+        serial_number = last_expense.get("serial_number", 0) + 1
+    else:
+        serial_number = 1
+    
     # Create the expense item
-    serial_number = len(user['expenses']) + 1
-    expense_item = {
+    expenses_collection.insert_one({
+        "user_id": user['_id'],
         "title": title,
         "date": date.isoformat(),
         "amount_usd": amount_usd,
         "amount_ils": amount_ils,
-        "category": "",
+        "category": category,
         "serial_number": serial_number
-    }
-    users_collection.update_one({'email': email}, {'$push': {'expenses': expense_item}})
+    })
 
     return jsonify({'message': 'Expense added'}), 200
+
+
+def handle_get_expenses(month, year, session_id):
+    # Get the user from the session ID
+    email = get_email_from_session_id(session_id)
+    user = users_collection.find_one({'email': email})
+    if not user:
+        return jsonify({'message': 'User not found'}), 404
+    
+    # Check if the month and year are valid
+    if month is None or year is None:
+        return jsonify({"error": "Missing month or year"}), 400
+    
+    # Calculate the start and end dates for the month
+    try:
+        start_date = datetime(year, month, 1)
+        if month == 12:
+            end_date = datetime(year + 1, 1, 1)
+        else:
+            end_date = datetime(year, month + 1, 1)
+    except ValueError:
+        return jsonify({"error": "Invalid month or year"}), 400
+    
+    # Get the expenses for the month
+    expenses = list(expenses_collection.find({
+        "user_id": user["_id"],
+        "date": {
+            "$gte": start_date.isoformat(),
+            "$lt": end_date.isoformat()
+    }}))
+
+    # Convert the ObjectId to a string and remove the user_id field
+    for expense in expenses:
+        expense["_id"] = str(expense["_id"])
+        if "user_id" in expense:
+            expense["user_id"] = str(expense["user_id"])
+
+    return jsonify({"expenses": expenses}), 200
+    

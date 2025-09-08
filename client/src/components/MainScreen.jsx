@@ -32,7 +32,6 @@ function MainScreen() {
         return (
           <>
             <h1>📊 Dashboard</h1>
-            <p>Welcome to FinBrain 🎉</p>
           </>
         );
     }

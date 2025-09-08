@@ -14,6 +14,8 @@ client = MongoClient(mongo_uri, server_api=ServerApi('1'))
 db = client['FinBrain']
 # Picks a clolection called "users" from the "FinBrain" database - This is where I will store the registered users
 users_collection = db['users']
+# Picks a clolection called "expenses" from the "FinBrain" database - This is where I will store the expenses
+expenses_collection = db['expenses']
 
 # pings MongoDB to test the connection
 try:

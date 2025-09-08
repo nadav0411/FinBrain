@@ -1,10 +1,98 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './AllExpenses.css';
 import AddExpenseModal from './AddExpenseModal';
+import CalendarModal from './CalendarModal';
 
+const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 function AllExpenses() {
+  const today = new Date();
+
   const [showPopup, setShowPopup] = useState(false);
+  const [calendarOpen, setCalendarOpen] = useState(false);
+  const [month, setMonth] = useState(today.getMonth() + 1);
+  const [year, setYear] = useState(today.getFullYear());
+  const [expenses, setExpenses] = useState([]);
+  const [refreshKey, setRefreshKey] = useState(0); // Used for re-fetching
+
+  const MIN_YEAR = 2015;
+  const MAX_YEAR = 2027;
+
+  const fetchExpenses = async () => {
+    try {
+      const sessionId = localStorage.getItem('session_id');
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/get_expenses?month=${month}&year=${year}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Session-ID': sessionId
+        }
+      });
+
+      if (!res.ok) {
+        throw new Error('Failed to fetch expenses');
+      }
+
+      const data = await res.json();
+      setExpenses(data.expenses || []);
+    } catch (err) {
+      console.error('Error fetching expenses:', err);
+    }
+  };
+
+  useEffect(() => {
+    fetchExpenses();
+  }, [month, year, refreshKey]);
+
+  const handlePrevMonth = () => {
+    if (month === 1) {
+      if (year > MIN_YEAR) {
+        setMonth(12);
+        setYear(year - 1);
+      }
+    } else {
+      setMonth(month - 1);
+    }
+  };
+
+  const handleNextMonth = () => {
+    if (month === 12) {
+      if (year < MAX_YEAR) {
+        setMonth(1);
+        setYear(year + 1);
+      }
+    } else {
+      setMonth(month + 1);
+    }
+  };
+
+  const getMonthName = () => {
+    return `${monthNames[month - 1]} ${year}`;
+  };
+
+  const handleDatePick = (pickedMonth, pickedYear) => {
+    if (pickedYear === year && pickedMonth === month) {
+      setRefreshKey(prev => prev + 1); // Force refresh
+    } else if (pickedYear >= MIN_YEAR && pickedYear <= MAX_YEAR) {
+      setMonth(pickedMonth);
+      setYear(pickedYear);
+    }
+  };
+
+  const handleAddExpenseClose = () => {
+    setShowPopup(false);
+    setRefreshKey(prev => prev + 1); // Trigger refresh after adding
+  };
+
+  // 🧼 פונקציה לניקוי שם קטגוריה כדי שישמש ב־className
+  const cleanCategoryClassName = (category) => {
+    return category
+      .toLowerCase()
+      .replace(/&/g, 'and')         // & → and
+      .replace(/\s+/g, '-')         // רווחים → מקפים
+      .replace(/[^a-z0-9\-]/g, ''); // מוחק תווים שאינם אותיות/ספרות/מקף
+  };
 
   return (
     <div className="expenses-container">
@@ -16,41 +104,58 @@ function AllExpenses() {
         </div>
       </div>
 
+      <div className="month-picker">
+        <button className="arrow-button" onClick={handlePrevMonth}>◀</button>
+
+        <div className="month-display" onClick={() => setCalendarOpen(true)}>
+          <span>{getMonthName()}</span>
+          <span className="calendar-icon" title="Pick a month">📅</span>
+        </div>
+
+        <button className="arrow-button" onClick={handleNextMonth}>▶</button>
+      </div>
+
+      {calendarOpen && (
+        <CalendarModal
+          onClose={() => setCalendarOpen(false)}
+          onPickDate={handleDatePick}
+        />
+      )}
+
       <table className="expenses-table">
         <thead>
           <tr>
             <th>Title</th>
-            <th>Amount</th>
-            <th>Project</th>
-            <th>Category</th>
             <th>Date</th>
-            <th>Status</th>
-            <th></th> {/* לשלוש הנקודות */}
+            <th>Category</th>
+            <th>Amount (USD)</th>
+            <th>Amount (ILS)</th>
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>Stock Images</td>
-            <td>$25.00</td>
-            <td>📱 App Development</td>
-            <td>Other Expenses</td>
-            <td>11/18/22</td>
-            <td>Reimbursed</td>
-            <td>⋯</td>
-          </tr>
-          <tr>
-            <td>Software subscription</td>
-            <td>$50.00</td>
-            <td>📱 App Development</td>
-            <td>Software</td>
-            <td>11/06/22</td>
-            <td>Unbilled</td>
-            <td>⋯</td>
-          </tr>
+          {expenses.length > 0 ? (
+            expenses.map((exp) => (
+              <tr key={exp.serial_number}>
+                <td>{exp.title}</td>
+                <td>{exp.date}</td>
+                <td className={`category-${cleanCategoryClassName(exp.category)}`}>
+                  {exp.category}
+                </td>
+                <td className="amount-cell">${exp.amount_usd.toFixed(2)}</td>
+                <td className="amount-cell">₪{exp.amount_ils.toFixed(2)}</td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan="5" style={{ textAlign: 'center', padding: '20px' }}>
+                No expenses found for {getMonthName()}
+              </td>
+            </tr>
+          )}
         </tbody>
       </table>
 
-      {showPopup && <AddExpenseModal onClose={() => setShowPopup(false)} />}
+      {showPopup && <AddExpenseModal onClose={handleAddExpenseClose} />}
     </div>
   );
 }
