@@ -4,10 +4,10 @@ import './CalendarModal.css';
 function CalendarModal({ onClose, onPickDate }) {
   const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
                   "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-  const years = Array.from({ length: 13 }, (_, i) => 2015 + i); // 2015–2027
+  const years = Array.from({ length: 13 }, (_, i) => 2015 + i); 
 
-  const [selectedMonth, setSelectedMonth] = useState(null); // e.g. "Jan"
-  const [selectedYear, setSelectedYear] = useState(null);   // e.g. 2025
+  const [selectedMonth, setSelectedMonth] = useState(null); 
+  const [selectedYear, setSelectedYear] = useState(null);   
 
   // Function to convert month name to number (1–12)
   const getMonthIndex = (monthName) => months.indexOf(monthName) + 1;
@@ -16,7 +16,7 @@ function CalendarModal({ onClose, onPickDate }) {
     if (selectedMonth && selectedYear) {
       const monthNumber = getMonthIndex(selectedMonth); // Convert to number
       onPickDate(monthNumber, selectedYear); // Send to parent
-      onClose(); // Close modal
+      onClose(); 
     }
   };
 

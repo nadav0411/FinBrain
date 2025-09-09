@@ -1,6 +1,3 @@
-/* ===================== */
-/* 📦 Container */
-/* ===================== */
 .expenses-container {
   background-color: #f5f8fe;
   padding: 32px;
@@ -8,9 +5,6 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
 }
 
-/* ===================== */
-/* 🔝 Header + Add Button */
-/* ===================== */
 .expenses-header {
   display: flex;
   justify-content: space-between;
@@ -46,9 +40,6 @@
   text-decoration: underline;
 }
 
-/* ===================== */
-/* 📅 Month Picker UI */
-/* ===================== */
 .month-picker {
   display: flex;
   justify-content: center;
@@ -102,9 +93,6 @@
   cursor: pointer;
 }
 
-/* ===================== */
-/* 📊 Expenses Table */
-/* ===================== */
 .expenses-table {
   width: 100%;
   border-collapse: collapse;
@@ -163,7 +151,6 @@
   font-weight: 600;
 }
 
-/* Row hover effect */
 .expenses-table tbody tr {
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
@@ -174,7 +161,6 @@
   box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
 }
 
-/* Category base style */
 td[class^="category-"] {
   font-weight: bold;
   padding: 6px 10px;
@@ -183,31 +169,30 @@ td[class^="category-"] {
   white-space: nowrap;
 }
 
-/* 🎨 Category colors */
 .category-food-and-drinks {
-  color: #4caf50; /* soft green */
+  color: #4caf50; 
 }
 
 .category-housing-and-bills {
-  color: #ff9800; /* soft orange */
+  color: #ff9800; 
 }
 
 .category-transportation {
-  color: #2196f3; /* soft blue */
+  color: #2196f3; 
 }
 
 .category-education-and-personal-growth {
-  color: #00bcd4; /* teal */
+  color: #00bcd4; 
 }
 
 .category-health-and-essentials {
-  color: #9c27b0; /* purple */
+  color: #9c27b0; 
 }
 
 .category-leisure-and-gifts {
-  color: #e91e63; /* pink */
+  color: #e91e63; 
 }
 
 .category-other {
-  color: #607d8b; /* blue-grey */
+  color: #607d8b; 
 }

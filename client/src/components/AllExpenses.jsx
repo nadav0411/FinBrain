@@ -14,7 +14,7 @@ function AllExpenses() {
   const [month, setMonth] = useState(today.getMonth() + 1);
   const [year, setYear] = useState(today.getFullYear());
   const [expenses, setExpenses] = useState([]);
-  const [refreshKey, setRefreshKey] = useState(0); // Used for re-fetching
+  const [refreshKey, setRefreshKey] = useState(0); 
 
   const MIN_YEAR = 2015;
   const MAX_YEAR = 2027;
@@ -73,7 +73,7 @@ function AllExpenses() {
 
   const handleDatePick = (pickedMonth, pickedYear) => {
     if (pickedYear === year && pickedMonth === month) {
-      setRefreshKey(prev => prev + 1); // Force refresh
+      setRefreshKey(prev => prev + 1); 
     } else if (pickedYear >= MIN_YEAR && pickedYear <= MAX_YEAR) {
       setMonth(pickedMonth);
       setYear(pickedYear);
@@ -82,16 +82,15 @@ function AllExpenses() {
 
   const handleAddExpenseClose = () => {
     setShowPopup(false);
-    setRefreshKey(prev => prev + 1); // Trigger refresh after adding
+    setRefreshKey(prev => prev + 1); 
   };
 
-  // 🧼 פונקציה לניקוי שם קטגוריה כדי שישמש ב־className
   const cleanCategoryClassName = (category) => {
     return category
       .toLowerCase()
-      .replace(/&/g, 'and')         // & → and
-      .replace(/\s+/g, '-')         // רווחים → מקפים
-      .replace(/[^a-z0-9\-]/g, ''); // מוחק תווים שאינם אותיות/ספרות/מקף
+      .replace(/&/g, 'and')         
+      .replace(/\s+/g, '-')         
+      .replace(/[^a-z0-9\-]/g, ''); 
   };
 
   return (

@@ -10,8 +10,8 @@ function AddExpenseModal({ onClose }) {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const today = new Date().toISOString().split("T")[0];        // תאריך נוכחי בפורמט YYYY-MM-DD
-  const minDate = "2015-01-01";                                 // תאריך מינימלי
+  const today = new Date().toISOString().split("T")[0];        
+  const minDate = "2015-01-01";                                 
 
   const handleSubmit = async () => {
     if (!title || !date || !amount || !currency) {

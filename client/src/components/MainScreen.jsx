@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
 import './MainScreen.css';
 import AllExpenses from './AllExpenses';
-import logo from '../assets/logo.png'; // ודא שזה הנתיב הנכון
+import logo from '../assets/logo.png'; 
 
 function MainScreen() {
   const [view, setView] = useState('dashboard');
 
-  // כותרת בראש המסך לפי המסך הנבחר
   const getPageTitle = () => {
     switch (view) {
       case 'expenses': return 'Expenses';
@@ -17,7 +16,6 @@ function MainScreen() {
     }
   };
 
-  // תוכן המסך המרכזי לפי view
   const renderContent = () => {
     switch (view) {
       case 'expenses':
