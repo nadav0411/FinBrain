@@ -1,0 +1,162 @@
+/* שכבת רקע כהה */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.35);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+/* תיבת המודאל */
+.calendar-modal {
+  background-color: #ffffff;
+  padding: 32px;
+  border-radius: 16px;
+  width: 480px;
+  max-width: 90%;
+  font-family: 'Segoe UI', sans-serif;
+  color: #1e1e1e;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  animation: fadeIn 0.3s ease;
+}
+
+/* כותרת מודאל */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.modal-header h2 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #2c3e50;
+  margin: 0;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  font-size: 1.4rem;
+  cursor: pointer;
+  color: #555;
+}
+
+/* תוכן כללי */
+.calendar-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* כפתורי ניווט שנה */
+.year-nav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+  margin-top: 8px;
+}
+
+.year-nav button {
+  background-color: #eef5ff;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #2d4c74;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.year-nav button:hover {
+  background-color: #cce2ff;
+}
+
+.year-nav button:disabled {
+  background-color: #dbe8f3;
+  cursor: not-allowed;
+}
+
+.year-nav span {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #2d4c74;
+  min-width: 80px;
+  text-align: center;
+}
+
+/* גריד חודשים 3x4 */
+.months-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.month-btn {
+  background-color: #eef5ff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px;
+  font-weight: 500;
+  font-size: 15px;
+  color: #2d4c74;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.month-btn:hover {
+  background-color: #cce2ff;
+}
+
+.month-btn.selected {
+  background-color: #1676d6 !important;
+  color: white !important;
+  border: 1px solid #1676d6;
+}
+
+/* פלט של תאריכים נבחרים + כפתור Apply */
+.calendar-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.selected-preview {
+  font-size: 14px;
+  color: #2c3e50;
+  line-height: 1.6;
+  word-break: break-word;
+  flex: 1 1 60%;
+}
+
+.apply-button {
+  background-color: #4da3ff;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  font-size: 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  flex-shrink: 0;
+}
+
+.apply-button:hover {
+  background-color: #1676d6;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}

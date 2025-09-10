@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import './MainScreen.css';
 import AllExpenses from './AllExpenses';
 import logo from '../assets/logo.png'; 
+import Dashboard from './DashBoard';
 
 function MainScreen() {
   const [view, setView] = useState('dashboard');
@@ -9,7 +10,6 @@ function MainScreen() {
   const getPageTitle = () => {
     switch (view) {
       case 'expenses': return 'Expenses';
-      case 'incomes': return 'Incomes';
       case 'coming': return 'Coming Soon';
       case 'settings': return 'Settings';
       default: return 'Dashboard';
@@ -20,8 +20,6 @@ function MainScreen() {
     switch (view) {
       case 'expenses':
         return <AllExpenses />;
-      case 'incomes':
-        return <h1>💵 Incomes Page</h1>;
       case 'coming':
         return <h1>🛠️ Coming Soon</h1>;
       case 'settings':
@@ -29,7 +27,7 @@ function MainScreen() {
       default:
         return (
           <>
-            <h1>📊 Dashboard</h1>
+            <Dashboard />
           </>
         );
     }
@@ -45,9 +43,6 @@ function MainScreen() {
           </button>
           <button className={`menu-item ${view === 'expenses' ? 'active' : ''}`} onClick={() => setView('expenses')}>
             💸 All Expenses
-          </button>
-          <button className={`menu-item ${view === 'incomes' ? 'active' : ''}`} onClick={() => setView('incomes')}>
-            💰 All Incomes
           </button>
           <button className={`menu-item ${view === 'coming' ? 'active' : ''}`} onClick={() => setView('coming')}>
             🛠️ Coming Soon

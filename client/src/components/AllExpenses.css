@@ -3,6 +3,10 @@
   padding: 32px;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+  height: calc(100vh - 200px);
+  display: flex;
+  flex-direction: column;
+  position: relative;
 }
 
 .expenses-header {
@@ -93,17 +97,30 @@
   cursor: pointer;
 }
 
+.expenses-table-wrapper {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+  padding-right: 8px;
+  padding-bottom: 20px;
+  box-sizing: border-box;
+}
+
+/* טבלה */
 .expenses-table {
   width: 100%;
   border-collapse: collapse;
   background-color: white;
   border-radius: 12px;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .expenses-table thead {
   background-color: #eef5ff;
   text-align: left;
+  position: sticky;
+  top: 0;
+  z-index: 1;
 }
 
 .expenses-table th,
@@ -117,7 +134,6 @@
   vertical-align: middle;
 }
 
-/* Title column */
 .expenses-table th:nth-child(1),
 .expenses-table td:nth-child(1) {
   text-align: left;
@@ -125,7 +141,6 @@
   color: #333;
 }
 
-/* Date column */
 .expenses-table th:nth-child(2),
 .expenses-table td:nth-child(2) {
   text-align: center;
@@ -133,14 +148,12 @@
   font-weight: 500;
 }
 
-/* Category column */
 .expenses-table th:nth-child(3),
 .expenses-table td:nth-child(3) {
   text-align: center;
   font-weight: 700;
 }
 
-/* Amount columns (USD and ILS) in black */
 .expenses-table th:nth-child(4),
 .expenses-table td:nth-child(4),
 .expenses-table th:nth-child(5),
@@ -161,6 +174,7 @@
   box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
 }
 
+/* קטגוריות */
 td[class^="category-"] {
   font-weight: bold;
   padding: 6px 10px;
@@ -170,29 +184,29 @@ td[class^="category-"] {
 }
 
 .category-food-and-drinks {
-  color: #4caf50; 
+  color: #4caf50;
 }
 
 .category-housing-and-bills {
-  color: #ff9800; 
+  color: #ff9800;
 }
 
 .category-transportation {
-  color: #2196f3; 
+  color: #2196f3;
 }
 
 .category-education-and-personal-growth {
-  color: #00bcd4; 
+  color: #00bcd4;
 }
 
 .category-health-and-essentials {
-  color: #9c27b0; 
+  color: #9c27b0;
 }
 
 .category-leisure-and-gifts {
-  color: #e91e63; 
+  color: #e91e63;
 }
 
 .category-other {
-  color: #607d8b; 
+  color: #607d8b;
 }

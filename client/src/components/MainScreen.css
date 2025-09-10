@@ -64,7 +64,6 @@
   flex: 1;
   background-color: #f9fcff;
   height: 100vh;
-  overflow: hidden;
   display: flex;
   flex-direction: column;
   padding: 32px;
@@ -85,5 +84,5 @@
 
 .page-body {
   flex: 1;
-  overflow: hidden;
+  overflow: visible;
 }

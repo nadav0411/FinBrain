@@ -14,7 +14,7 @@ function AllExpenses() {
   const [month, setMonth] = useState(today.getMonth() + 1);
   const [year, setYear] = useState(today.getFullYear());
   const [expenses, setExpenses] = useState([]);
-  const [refreshKey, setRefreshKey] = useState(0); 
+  const [refreshKey, setRefreshKey] = useState(0);
 
   const MIN_YEAR = 2015;
   const MAX_YEAR = 2027;
@@ -73,7 +73,7 @@ function AllExpenses() {
 
   const handleDatePick = (pickedMonth, pickedYear) => {
     if (pickedYear === year && pickedMonth === month) {
-      setRefreshKey(prev => prev + 1); 
+      setRefreshKey(prev => prev + 1);
     } else if (pickedYear >= MIN_YEAR && pickedYear <= MAX_YEAR) {
       setMonth(pickedMonth);
       setYear(pickedYear);
@@ -82,15 +82,15 @@ function AllExpenses() {
 
   const handleAddExpenseClose = () => {
     setShowPopup(false);
-    setRefreshKey(prev => prev + 1); 
+    setRefreshKey(prev => prev + 1);
   };
 
   const cleanCategoryClassName = (category) => {
     return category
       .toLowerCase()
-      .replace(/&/g, 'and')         
-      .replace(/\s+/g, '-')         
-      .replace(/[^a-z0-9\-]/g, ''); 
+      .replace(/&/g, 'and')
+      .replace(/\s+/g, '-')
+      .replace(/[^a-z0-9\-]/g, '');
   };
 
   return (
@@ -121,38 +121,41 @@ function AllExpenses() {
         />
       )}
 
-      <table className="expenses-table">
-        <thead>
-          <tr>
-            <th>Title</th>
-            <th>Date</th>
-            <th>Category</th>
-            <th>Amount (USD)</th>
-            <th>Amount (ILS)</th>
-          </tr>
-        </thead>
-        <tbody>
-          {expenses.length > 0 ? (
-            expenses.map((exp) => (
-              <tr key={exp.serial_number}>
-                <td>{exp.title}</td>
-                <td>{exp.date}</td>
-                <td className={`category-${cleanCategoryClassName(exp.category)}`}>
-                  {exp.category}
-                </td>
-                <td className="amount-cell">${exp.amount_usd.toFixed(2)}</td>
-                <td className="amount-cell">₪{exp.amount_ils.toFixed(2)}</td>
-              </tr>
-            ))
-          ) : (
+      {/* 🛠️ עטפנו את הטבלה בקונטיינר עם גלילה */}
+      <div className="expenses-table-wrapper">
+        <table className="expenses-table">
+          <thead>
             <tr>
-              <td colSpan="5" style={{ textAlign: 'center', padding: '20px' }}>
-                No expenses found for {getMonthName()}
-              </td>
+              <th>Title</th>
+              <th>Date</th>
+              <th>Category</th>
+              <th>Amount (USD)</th>
+              <th>Amount (ILS)</th>
             </tr>
-          )}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {expenses.length > 0 ? (
+              expenses.map((exp) => (
+                <tr key={exp.serial_number}>
+                  <td>{exp.title}</td>
+                  <td>{exp.date}</td>
+                  <td className={`category-${cleanCategoryClassName(exp.category)}`}>
+                    {exp.category}
+                  </td>
+                  <td className="amount-cell">${exp.amount_usd.toFixed(2)}</td>
+                  <td className="amount-cell">₪{exp.amount_ils.toFixed(2)}</td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="5" style={{ textAlign: 'center', padding: '20px' }}>
+                  No expenses found for {getMonthName()}
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
 
       {showPopup && <AddExpenseModal onClose={handleAddExpenseClose} />}
     </div>
