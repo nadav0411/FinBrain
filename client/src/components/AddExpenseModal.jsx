@@ -50,8 +50,11 @@ function AddExpenseModal({ onClose }) {
 
   const handleTitleChange = (e) => {
     const regex = /^[A-Za-z0-9\s]*$/;
-    if (regex.test(e.target.value)) {
-      setTitle(e.target.value);
+    const value = e.target.value;
+    
+    // Limit to 60 characters
+    if (value.length <= 60 && regex.test(value)) {
+      setTitle(value);
       setError('');
     }
   };
@@ -75,7 +78,11 @@ function AddExpenseModal({ onClose }) {
                 placeholder="Pizza with friends"
                 value={title}
                 onChange={handleTitleChange}
+                maxLength={60}
               />
+              <div className="char-counter">
+                {title.length}/60 characters
+              </div>
             </div>
           </div>
 
@@ -106,8 +113,16 @@ function AddExpenseModal({ onClose }) {
                 min={0}
                 value={amount}
                 onChange={(e) => {
-                  setAmount(e.target.value);
-                  setError('');
+                  const value = e.target.value;
+                  // Remove any non-digit characters except decimal point
+                  const cleanValue = value.replace(/[^0-9.]/g, '');
+                  
+                  // Limit to 10 digits total (including decimal places)
+                  const digitsOnly = cleanValue.replace(/\./g, '');
+                  if (digitsOnly.length <= 10) {
+                    setAmount(cleanValue);
+                    setError('');
+                  }
                 }}
                 onKeyDown={(e) => {
                   if (
@@ -118,6 +133,9 @@ function AddExpenseModal({ onClose }) {
                   }
                 }}
               />
+              <div className="char-counter">
+                {amount.replace(/\./g, '').length}/10 digits
+              </div>
             </div>
 
             <div className="field">

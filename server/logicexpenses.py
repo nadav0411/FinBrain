@@ -74,6 +74,10 @@ def handle_add_expense(data, session_id):
     if not title_regex.match(title):
         return jsonify({'message': 'Invalid title'}), 400
     
+    # Check if the title is <= 60 characters
+    if len(title) > 60:
+        return jsonify({'message': 'Title must be less than 60 characters'}), 400
+    
     # Check valid amount
     try:
         amount = float(amount)
@@ -81,6 +85,10 @@ def handle_add_expense(data, session_id):
             return jsonify({'message': 'Amount must be greater than 0'}), 400
     except ValueError:
         return jsonify({'message': 'Amount must be a number'}), 400
+    
+    # Check if the amount is <= 10 digits
+    if len(amount) > 10:
+        return jsonify({'message': 'Amount must be less than 10 digits'}), 400
     
     # Check valid date
     try:
