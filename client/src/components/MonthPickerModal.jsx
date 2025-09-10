@@ -17,7 +17,19 @@ function MonthPickerModal({ onClose, onApply }) {
   const toggleMonth = (year, monthIndex) => {
     const key = `${year}-${monthIndex}`;
     const updated = new Set(selected);
-    updated.has(key) ? updated.delete(key) : updated.add(key);
+    
+    if (updated.has(key)) {
+      // If already selected, remove it
+      updated.delete(key);
+    } else {
+      // If not selected, check if we can add it (max 20)
+      if (updated.size >= 20) {
+        alert('Maximum 20 months can be selected');
+        return;
+      }
+      updated.add(key);
+    }
+    
     setSelected(updated);
   };
 
@@ -84,16 +96,23 @@ function MonthPickerModal({ onClose, onApply }) {
             ))}
           </div>
 
-          {selected.size > 0 && (
-            <div className="calendar-footer">
-              <div className="selected-preview">
-                📅 <strong>Selected:</strong> {formatSelectedText().join(' • ')}
-              </div>
+          <div className="calendar-footer">
+            <div className="selection-info">
+              <span className="selection-count">
+                {selected.size}/20 months selected
+              </span>
+              {selected.size > 0 && (
+                <div className="selected-preview">
+                  📅 <strong>Selected:</strong> {formatSelectedText().join(' • ')}
+                </div>
+              )}
+            </div>
+            {selected.size > 0 && (
               <button className="apply-button" onClick={handleApply}>
                 Apply
               </button>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
     </div>

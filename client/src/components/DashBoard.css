@@ -66,30 +66,32 @@
   /* Beautiful Total Display */
   .total-display {
     position: relative;
-    background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
-    border: 1px solid #d1d5db;
+    background: linear-gradient(135deg, #dbeafe 0%, #e0f2fe 20%, #f0f9ff 40%, #f8fafc 60%, #e0f2fe 80%, #dbeafe 100%);
     border-radius: 12px;
     padding: 8px 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 3px 12px rgba(59, 130, 246, 0.12), 0 1px 4px rgba(0, 0, 0, 0.05);
     overflow: hidden;
     min-width: 140px;
     transition: all 0.3s ease;
   }
   
   .total-display:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+    transform: translateY(-6px) scale(1.01);
+    background: linear-gradient(135deg, #bfdbfe 0%, #dbeafe 20%, #e0f2fe 40%, #f0f9ff 60%, #dbeafe 80%, #bfdbfe 100%);
+    box-shadow: 0 4px 16px rgba(59, 130, 246, 0.18), 0 2px 6px rgba(0, 0, 0, 0.08);
   }
   
   .total-label {
-    color: var(--text-light);
-    font-size: 0.6rem;
-    font-weight: 500;
+    color: #475569;
+    font-size: 0.7rem;
+    font-weight: 800;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 4px;
+    letter-spacing: 1.2px;
+    margin-bottom: 6px;
     text-align: center;
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+    opacity: 1;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   }
   
   .total-amount {
@@ -100,38 +102,94 @@
   }
   
   .currency-symbol {
-    color: var(--text-dark);
-    font-size: 1.2rem;
-    font-weight: 600;
-    opacity: 0.95;
+    color: #1e293b;
+    font-size: 1.3rem;
+    font-weight: 700;
+    opacity: 0.9;
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   }
   
   .amount-value {
-    color: var(--text-dark);
-    font-size: 1.8rem;
-    font-weight: 700;
+    color: #0f172a;
+    font-size: 1.9rem;
+    font-weight: 800;
     line-height: 1;
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    letter-spacing: -0.5px;
   }
   
   .date-display {
-    background-color: var(--box-bg);
-    border: 1px solid #d1d5db;
-    border-radius: 8px;
-    padding: 6px 12px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-    white-space: nowrap;
+    background: linear-gradient(135deg, #f1f5f9 0%, #ffffff 50%, #f8fafc 100%);
+    border: 1px solid transparent;
+    border-radius: 12px;
+    padding: 8px 16px;
+    box-shadow: 0 2px 8px rgba(148, 163, 184, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    max-width: 450px;
+    min-width: 350px;
+    text-align: center;
   }
   
+  .date-display::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(148, 163, 184, 0.3), transparent);
+  }
+  
+  .date-display:hover {
+    transform: translateY(-2px) scale(1.02);
+    background: linear-gradient(135deg, #e2e8f0 0%, #f8fafc 30%, #ffffff 60%, #f1f5f9 100%);
+    box-shadow: 0 8px 35px rgba(148, 163, 184, 0.25), 
+                0 4px 20px rgba(0, 0, 0, 0.12),
+                0 2px 8px rgba(0, 0, 0, 0.08),
+                inset 0 1px 0 rgba(255, 255, 255, 0.95),
+                inset 0 -2px 8px rgba(148, 163, 184, 0.15);
+    border: 1px solid rgba(148, 163, 184, 0.2);
+  }
+  
+  .date-display:hover::before {
+    background: linear-gradient(90deg, transparent, rgba(148, 163, 184, 0.5), transparent);
+  }
+  
+  .date-display:hover::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(148, 163, 184, 0.6), transparent);
+    border-radius: 0 0 12px 12px;
+  }
+  
+  
   .date-item {
-    color: var(--text-medium);
-    font-size: 0.75rem;
-    font-weight: 500;
+    color: #475569;
+    font-size: 0.7rem;
+    font-weight: 700;
     text-transform: capitalize;
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+    letter-spacing: 0.5px;
+    text-shadow: 0 2px 4px rgba(255, 255, 255, 0.9), 0 1px 2px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
   }
   
   .date-separator {
-    color: var(--text-light);
-    opacity: 0.7;
+    color: #64748b;
+    opacity: 1;
+    font-weight: 600;
+    font-size: 0.7rem;
+    transition: all 0.3s ease;
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+    margin: 0 1px;
   }
   
   
@@ -253,7 +311,6 @@
     transition: width 0.3s ease;
   }
   
-  /* צבעים */
   .pink   { background-color: #f472b6; }
   .yellow { background-color: #fde68a; }
   .green  { background-color: #a3e635; }
@@ -262,7 +319,6 @@
   .orange { background-color: #fb923c; }
   .teal   { background-color: #14b8a6; }
   
-  /* רספונסיביות - רק עבור פריסה מיוחדת */
   @media (max-width: 768px) {
     .dashboard-header {
       flex-direction: column;
@@ -289,8 +345,15 @@
       font-size: 1rem;
     }
     
+    .date-display {
+      max-width: 350px;
+      min-width: 280px;
+      padding: 6px 12px;
+    }
+    
     .date-item {
       font-size: 0.7rem;
+      letter-spacing: 0.3px;
     }
     
     .dashboard-buttons {
@@ -334,11 +397,14 @@
     }
     
     .date-display {
+      max-width: 300px;
+      min-width: 250px;
       padding: 4px 8px;
     }
     
     .date-item {
       font-size: 0.65rem;
+      letter-spacing: 0.2px;
     }
     
     .bar-info {
