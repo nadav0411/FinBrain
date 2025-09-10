@@ -87,7 +87,7 @@ def handle_add_expense(data, session_id):
         return jsonify({'message': 'Amount must be a number'}), 400
     
     # Check if the amount is <= 10 digits
-    if len(amount) > 10:
+    if len(str(amount)) > 10:
         return jsonify({'message': 'Amount must be less than 10 digits'}), 400
     
     # Check valid date
@@ -177,4 +177,97 @@ def handle_get_expenses(month, year, session_id):
             expense["user_id"] = str(expense["user_id"])
 
     return jsonify({"expenses": expenses}), 200
+
+
+def handle_get_expenses_for_dashboard(chart, currency, months, session_id):
+    """
+    This function is called when the user wants to get the expenses for the dashboard
+    It gets the user from the session ID, checks if the chart and currency are valid,
+    checks if the months are valid, gets the user ID, gets the month regexes,
+    gets the expenses for the months, initializes the categories totals, sets the amount key,
+    sums the expenses for the categories, calculates the total amount, calculates the percentage for each category,
+    and returns the result
+    """
+    # Get the user from the session ID
+    email = get_email_from_session_id(session_id)
+    user = users_collection.find_one({'email': email})
+    if not user:
+        return jsonify({'message': 'User not found'}), 404
+    
+    # Check if the chart is valid
+    if chart not in ['bar', 'pie']:
+        return jsonify({'message': 'Invalid chart'}), 400
+    
+    # Check if the currency is valid
+    if currency not in ['ILS', 'USD']:
+        return jsonify({'message': 'Invalid currency'}), 400
+    
+    # Check if the months are valid [year-month]
+    for month in months:
+        if not re.match(r'^\d{4}-\d{2}$', month):
+            return jsonify({'message': 'Invalid month'}), 400
+    
+    # Get the user ID
+    user_id = user['_id']
+    # Get the month regexes
+    month_regexes = [re.compile(f'^{month}') for month in months]
+
+    # Get the expenses for the months
+    expenses_cursor = expenses_collection.find({
+        'user_id': user_id,
+        'date': {'$in': month_regexes}
+    })
+
+    # Initialize the categories totals
+    categories_totals = {
+        "Food & Drinks": 0,
+        "Housing & Bills": 0,
+        "Transportation": 0,
+        "Education & Personal Growth": 0,
+        "Health & Essentials": 0,
+        "Leisure & Gifts": 0,
+        "Other": 0
+    }
+
+    # Set the amount key
+    amount_key = 'amount_ils'
+    if currency == 'USD':
+        amount_key = 'amount_usd'
+    
+    # Sum the expenses for the categories
+    for expense in expenses_cursor:
+        category = expense.get('category', 'Other')
+        if category not in categories_totals:
+            category = 'Other'
+        categories_totals[category] += expense.get(amount_key, 0)
+    
+    # Calculate the total amount
+    total_amount = sum(categories_totals.values())
+
+    result = []
+    # Calculate the percentage for each category
+    for category, amount in categories_totals.items():
+        if total_amount > 0:
+            percentage = (amount / total_amount) * 100
+        else:
+            percentage = 0
+        # Add the category to the result
+        result.append({
+            'category': category,
+            # Round the amount to 2 decimal places
+            'amount': round(amount, 2),
+            'percentage': round(percentage, 2)
+        })
+
+    return jsonify({
+        'currency': currency,
+        'chart': chart,
+        'months': months,
+        'data': result
+    }), 200
+
+    
+
+
+
     

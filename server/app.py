@@ -38,7 +38,15 @@ def get_expenses():
     session_id = request.headers.get('Session-ID')
     result = logic_expenses.handle_get_expenses(month, year, session_id)
     return result
-    
+
+@app.route('/expenses_for_dashboard', methods=['GET'])
+def expenses_for_dashboard():
+    chart = request.args.get('chart', type=str)
+    currency = request.args.get('currency', type=str)
+    months = request.args.getlist('months')
+    session_id = request.headers.get('Session-ID')
+    result = logic_expenses.handle_get_expenses_for_dashboard(chart, currency, months, session_id)
+    return result
 
 if __name__ == '__main__':
     app.run(debug=True)
