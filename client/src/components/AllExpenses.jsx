@@ -15,6 +15,7 @@ function AllExpenses() {
   const [year, setYear] = useState(today.getFullYear());
   const [expenses, setExpenses] = useState([]);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [activeMenu, setActiveMenu] = useState(null);
 
   const MIN_YEAR = 2015;
   const MAX_YEAR = 2027;
@@ -44,6 +45,20 @@ function AllExpenses() {
   useEffect(() => {
     fetchExpenses();
   }, [month, year, refreshKey]);
+
+  // Close menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (activeMenu && !event.target.closest('.menu-container')) {
+        setActiveMenu(null);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [activeMenu]);
 
   const handlePrevMonth = () => {
     if (month === 1) {
@@ -91,6 +106,42 @@ function AllExpenses() {
       .replace(/&/g, 'and')
       .replace(/\s+/g, '-')
       .replace(/[^a-z0-9\-]/g, '');
+  };
+
+  const handleMenuToggle = (expenseId) => {
+    setActiveMenu(activeMenu === expenseId ? null : expenseId);
+  };
+
+  const handleChangeCategory = (expense) => {
+    // TODO: Implement change category functionality
+    console.log('Change category for expense:', expense);
+    setActiveMenu(null);
+  };
+
+  const handleDeleteExpense = async (expense) => {
+    if (window.confirm(`Are you sure you want to delete "${expense.title}"?`)) {
+      try {
+        const sessionId = localStorage.getItem('session_id');
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/delete_expense`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Session-ID': sessionId
+          },
+          body: JSON.stringify({ serial_number: expense.serial_number })
+        });
+
+        if (res.ok) {
+          setRefreshKey(prev => prev + 1);
+        } else {
+          alert('Failed to delete expense');
+        }
+      } catch (err) {
+        console.error('Error deleting expense:', err);
+        alert('Error deleting expense');
+      }
+    }
+    setActiveMenu(null);
   };
 
   return (
@@ -144,11 +195,35 @@ function AllExpenses() {
                   </td>
                   <td className="amount-cell">${exp.amount_usd.toFixed(2)}</td>
                   <td className="amount-cell">₪{exp.amount_ils.toFixed(2)}</td>
+                  <td className="actions-cell">
+                    <div className="menu-container">
+                      <button 
+                        className={`menu-button ${activeMenu === exp.serial_number ? 'active' : ''}`}
+                        onClick={() => handleMenuToggle(exp.serial_number)}
+                      >
+                        ⋯
+                      </button>
+                      <div className={`menu-dropdown ${activeMenu === exp.serial_number ? 'open' : ''}`}>
+                        <button 
+                          className="menu-item" 
+                          onClick={() => handleChangeCategory(exp)}
+                        >
+                          🏷️ Change Category
+                        </button>
+                        <button 
+                          className="menu-item delete-item" 
+                          onClick={() => handleDeleteExpense(exp)}
+                        >
+                          🗑️ Delete
+                        </button>
+                      </div>
+                    </div>
+                  </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan="5" style={{ textAlign: 'center', padding: '20px' }}>
+                <td colSpan="6" style={{ textAlign: 'center', padding: '20px' }}>
                   No expenses found for {getMonthName()}
                 </td>
               </tr>

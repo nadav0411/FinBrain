@@ -42,6 +42,10 @@ function LoginModal({ onGoToSignup, onLoginSuccess }) {
         if (data.session_id) {
           localStorage.setItem('session_id', data.session_id);
         }
+        // Save the user name to local storage
+        if (data.name) {
+          localStorage.setItem('user_name', data.name);
+        }
         // Show success message
         setSuccess(true);
         setTimeout(() => {

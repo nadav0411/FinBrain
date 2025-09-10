@@ -22,9 +22,9 @@ function MonthPickerModal({ onClose, onApply }) {
       // If already selected, remove it
       updated.delete(key);
     } else {
-      // If not selected, check if we can add it (max 20)
-      if (updated.size >= 20) {
-        alert('Maximum 20 months can be selected');
+      // If not selected, check if we can add it (max 15)
+      if (updated.size >= 15) {
+        alert('Maximum 15 months can be selected');
         return;
       }
       updated.add(key);
@@ -99,7 +99,7 @@ function MonthPickerModal({ onClose, onApply }) {
           <div className="calendar-footer">
             <div className="selection-info">
               <span className="selection-count">
-                {selected.size}/20 months selected
+                {selected.size}/15 months selected
               </span>
               {selected.size > 0 && (
                 <div className="selected-preview">

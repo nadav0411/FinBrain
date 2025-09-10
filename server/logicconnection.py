@@ -78,7 +78,10 @@ def handle_login(data):
     session_id = str(uuid.uuid4())
     connected_sessions[session_id] = email
 
-    return jsonify({'message': 'Login successful', 'session_id': session_id}), 200
+    # Get the name of the user
+    name = f"{user['firstName']}"
+
+    return jsonify({'message': 'Login successful', 'session_id': session_id, 'name': name}), 200
 
 
 def get_email_from_session_id(session_id):

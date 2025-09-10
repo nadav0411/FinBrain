@@ -6,7 +6,7 @@ import MainScreen from './MainScreen';
 function AuthSwitcher() {
   const [isSignupMode, setIsSignupMode] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-
+  
   const goToSignup = () => setIsSignupMode(true);
   const goToLogin = () => setIsSignupMode(false);
 

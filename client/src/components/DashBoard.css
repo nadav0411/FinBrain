@@ -123,14 +123,15 @@
   .date-display {
     background: linear-gradient(135deg, #f1f5f9 0%, #ffffff 50%, #f8fafc 100%);
     border: 1px solid transparent;
-    border-radius: 12px;
-    padding: 8px 16px;
-    box-shadow: 0 2px 8px rgba(148, 163, 184, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    border-radius: 8px;
+    padding: 6px 12px;
+    box-shadow: 0 1px 4px rgba(148, 163, 184, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.8);
     position: relative;
     overflow: hidden;
     transition: all 0.3s ease;
-    max-width: 450px;
-    min-width: 350px;
+    max-width: 350px;
+    min-width: auto;
+    width: fit-content;
     text-align: center;
   }
   
@@ -346,9 +347,10 @@
     }
     
     .date-display {
-      max-width: 350px;
-      min-width: 280px;
-      padding: 6px 12px;
+      max-width: 300px;
+      min-width: auto;
+      width: fit-content;
+      padding: 4px 8px;
     }
     
     .date-item {
@@ -397,9 +399,10 @@
     }
     
     .date-display {
-      max-width: 300px;
-      min-width: 250px;
-      padding: 4px 8px;
+      max-width: 250px;
+      min-width: auto;
+      width: fit-content;
+      padding: 3px 6px;
     }
     
     .date-item {

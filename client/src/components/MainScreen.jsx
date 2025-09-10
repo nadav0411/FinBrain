@@ -59,6 +59,9 @@ function MainScreen() {
       <main className="content">
         <div className="page-header">
           <h2>{getPageTitle()}</h2>
+          <div className="user-welcome">
+            Welcome, <span className="user-name">{localStorage.getItem('user_name') || 'User'}</span><span className="user-punctuation">! 👋</span>
+          </div>
         </div>
         <div className="page-body">
           {renderContent()}
