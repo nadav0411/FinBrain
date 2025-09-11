@@ -173,7 +173,11 @@ const Dashboard = () => {
               <div key={index} className="bar-row">
                 <div className="bar-info">
                   <span>{item.category}</span>
-                  <span>{currencySymbol}{item.amount.toFixed(2)} • {item.percentage}%</span>
+                  <span>
+                    <span className={`amount text-${colorClass}`}>{currencySymbol}{item.amount.toFixed(2)}</span>
+                    <span className="separator">•</span>
+                    <span className={`percentage text-${colorClass}`}>{item.percentage}%</span>
+                  </span>
                 </div>
                 <div className="bar-wrapper">
                   <div

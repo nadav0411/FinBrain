@@ -29,6 +29,10 @@ def handle_signup(data):
     if not name_regex.match(data['firstName']) or not name_regex.match(data['lastName']):
         return jsonify({'message': 'Invalid name'}), 400
     
+    # Check if the name length is within limits (40 characters max)
+    if len(data['firstName']) > 40 or len(data['lastName']) > 40:
+        return jsonify({'message': 'First name and last name must be 40 characters or less'}), 400
+    
     # Check if the passwords match
     if data.get('password') != data.get('confirmPassword'):
         return jsonify({'message': 'Passwords do not match'}), 400

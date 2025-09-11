@@ -296,6 +296,24 @@
     min-width: 280px;
     flex-wrap: nowrap;
   }
+
+  .bar-info > span:first-child {
+    font-weight: 700;
+    font-size: calc(var(--text-size) + 0.05rem);
+  }
+
+  .amount {
+    font-weight: 900;
+  }
+
+  .separator {
+    font-weight: 900;
+    margin: 0 8px;
+  }
+
+  .percentage {
+    font-weight: 900;
+  }
   
   .bar-wrapper {
     width: 100%;
@@ -319,6 +337,15 @@
   .purple { background-color: #a78bfa; }
   .orange { background-color: #fb923c; }
   .teal   { background-color: #14b8a6; }
+  
+  /* Text color classes - darker shades than bar colors for better readability */
+  .text-pink   { color: #be185d; }
+  .text-yellow { color: #d97706; }
+  .text-green  { color: #65a30d; }
+  .text-blue   { color: #2563eb; }
+  .text-purple { color: #7c3aed; }
+  .text-orange { color: #ea580c; }
+  .text-teal   { color: #0d9488; }
   
   @media (max-width: 768px) {
     .dashboard-header {

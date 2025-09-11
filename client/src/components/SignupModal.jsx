@@ -32,7 +32,7 @@ function SignupModal({ onBackToLogin }) {
   // Handle name input
   const handleNameInput = (e) => {
     const regex = /^[A-Za-z\s]*$/; 
-    if (regex.test(e.target.value)) {
+    if (regex.test(e.target.value) && e.target.value.length <= 40) {
       handleChange(e);
     }
   };
@@ -119,6 +119,7 @@ function SignupModal({ onBackToLogin }) {
                 placeholder="John"
                 value={formData.firstName}
                 onChange={handleNameInput}
+                maxLength={40}
               />
             </div>
             <div className="field">
@@ -129,6 +130,7 @@ function SignupModal({ onBackToLogin }) {
                 placeholder="Doe"
                 value={formData.lastName}
                 onChange={handleNameInput}
+                maxLength={40}
               />
             </div>
           </div>
