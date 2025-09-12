@@ -1,29 +1,35 @@
+/* CalendarModal.css */
+
+/* Main modal container - sets fixed width and spacing for the calendar popup */
 .calendar-modal {
   width: 480px;
   padding: 32px;
   font-family: 'Segoe UI', sans-serif;
   color: #1e1e1e;
-  animation: fadeIn 0.3s ease;
 }
 
+/* Content wrapper - uses flexbox to stack elements vertically with consistent spacing */
 .calendar-content {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 20px; /* This gap handles spacing between all child elements automatically */
 }
 
+/* Month buttons grid - 4 columns for 12 months (3 rows) */
 .months-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, 1fr); /* 4 equal columns */
   gap: 12px;
 }
 
+/* Year buttons grid - 5 columns for better layout of years */
 .years-grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(5, 1fr); /* 5 equal columns */
   gap: 10px;
 }
 
+/* Shared button styles for both month and year buttons- keeps code DRY */
 .month-btn,
 .year-btn {
   background-color: #eef5ff;
@@ -34,31 +40,36 @@
   font-size: 15px;
   color: #2d4c74;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.2s; 
 }
 
+/* Hover effect for both button types - darker blue on mouse over */
 .month-btn:hover,
 .year-btn:hover {
   background-color: #cce2ff;
 }
 
+/* Selected state - applied when user clicks a month/year button */
 .selected {
-  background-color: #1676d6 !important;
-  color: white !important;
+  background-color: #1676d6;
+  color: white;
 }
 
+/* Footer layout - puts selected info on left, button on right */
 .calendar-footer {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 12px;
+  justify-content: space-between; /* Spreads content to opposite ends */
+  align-items: center; /* Vertically centers items */
+
 }
 
+/* Text showing which month/year is currently selected */
 .selected-info {
   font-size: 15px;
   color: #2c3e50;
 }
 
+/* Main action button - "Select" button */
 .add-button {
   background-color: #4da3ff;
   color: white;
@@ -70,11 +81,13 @@
   transition: background-color 0.2s;
 }
 
+/* Button hover state - darker blue */
 .add-button:hover {
   background-color: #1676d6;
 }
 
+/* Disabled state - when no month/year is selected */
 .add-button:disabled {
-  background-color: #b7d9fb;
-  cursor: not-allowed;
+  background-color: #b7d9fb; /* Light gray when disabled */
+  cursor: not-allowed; /* Shows disabled cursor */
 }

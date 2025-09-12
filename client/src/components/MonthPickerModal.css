@@ -1,31 +1,33 @@
-/* שכבת רקע כהה */
+/* MonthPickerModal.css */
+
+/* Creates a full-screen dark background that covers the entire viewport */
 .modal-overlay {
-  position: fixed;
-  inset: 0;
-  background-color: rgba(0, 0, 0, 0.35);
+  position: fixed; /* Fixed positioning removes element from normal flow */
+  inset: 0; /* Shorthand for top:0, right:0, bottom:0, left:0 */
+  background-color: rgba(0, 0, 0, 0.35); /* Semi-transparent black overlay */
   display: flex;
   justify-content: center;
-  align-items: center;
-  z-index: 999;
+  align-items: center; /* Centers the modal both horizontally and vertically */
+  z-index: 999; /* High z-index ensures modal appears above other content */
 }
 
-/* תיבת המודאל */
+/* The main modal box with modern styling and smooth animations */
 .calendar-modal {
   background-color: #ffffff;
   padding: 32px;
-  border-radius: 16px;
+  border-radius: 16px; /* Rounded corners for modern look */
   width: 480px;
-  max-width: 90%;
+  max-width: 90%; /* Responsive: prevents overflow on small screens */
   font-family: 'Segoe UI', sans-serif;
   color: #1e1e1e;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  animation: fadeIn 0.3s ease;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* Subtle drop shadow */
+  animation: fadeIn 0.3s ease; /* Smooth entrance animation */
 }
 
-/* כותרת מודאל */
+/* Header section with title and close button using flexbox layout */
 .modal-header {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-between; /* Pushes title left, close button right */
   align-items: center;
   margin-bottom: 24px;
 }
@@ -34,7 +36,7 @@
   font-size: 20px;
   font-weight: 600;
   color: #2c3e50;
-  margin: 0;
+  margin: 0; /* Removes default margin */
 }
 
 .close-button {
@@ -45,14 +47,14 @@
   color: #555;
 }
 
-/* תוכן כללי */
+/* Vertical layout for all modal content with consistent spacing */
 .calendar-content {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 20px; /* Consistent spacing between sections */
 }
 
-/* כפתורי ניווט שנה */
+/* Horizontal navigation controls for changing years */
 .year-nav {
   display: flex;
   justify-content: center;
@@ -70,7 +72,7 @@
   font-weight: bold;
   color: #2d4c74;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.2s ease; /* Smooth color transition on hover */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -82,22 +84,22 @@
 
 .year-nav button:disabled {
   background-color: #dbe8f3;
-  cursor: not-allowed;
+  cursor: not-allowed; /* Shows disabled cursor when button is disabled */
 }
 
 .year-nav span {
   font-size: 1.4rem;
   font-weight: 600;
   color: #2d4c74;
-  min-width: 80px;
+  min-width: 80px; /* Ensures consistent width for year display */
   text-align: center;
 }
 
-/* גריד חודשים 3x4 */
+/* CSS Grid layout for 4x3 month selection grid */
 .months-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
+  grid-template-columns: repeat(4, 1fr); /* 4 equal-width columns */
+  gap: 12px; /* Space between grid items */
 }
 
 .month-btn {
@@ -116,23 +118,25 @@
   background-color: #cce2ff;
 }
 
+/* Selected state with higher specificity using !important */
 .month-btn.selected {
   background-color: #1676d6 !important;
   color: white !important;
   border: 1px solid #1676d6;
 }
 
+/* Bottom section with selection info and apply button */
 .calendar-footer {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-between; /* Info on left, button on right */
   align-items: flex-start;
-  flex-wrap: wrap;
+  flex-wrap: wrap; /* Allows wrapping on small screens */
   gap: 10px;
   margin-top: 16px;
 }
 
 .selection-info {
-  flex: 1 1 60%;
+  flex: 1 1 60%; /* Flexible width, minimum 60% of container */
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -145,15 +149,15 @@
   background-color: #eef5ff;
   padding: 4px 8px;
   border-radius: 6px;
-  display: inline-block;
+  display: inline-block; /* Allows width to fit content */
   width: fit-content;
 }
 
 .selected-preview {
   font-size: 14px;
   color: #2c3e50;
-  line-height: 1.6;
-  word-break: break-word;
+  line-height: 1.6; /* Improved readability with more line spacing */
+  word-break: break-word; /* Prevents long text from overflowing */
 }
 
 .apply-button {
@@ -165,14 +169,21 @@
   border-radius: 8px;
   cursor: pointer;
   transition: background-color 0.2s ease;
-  flex-shrink: 0;
+  flex-shrink: 0; /* Prevents button from shrinking in flex container */
 }
 
 .apply-button:hover {
   background-color: #1676d6;
 }
 
+/* Keyframe animation for smooth modal entrance */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { 
+    opacity: 0; 
+    transform: translateY(-10px); /* Starts slightly above final position */
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); /* Ends at normal position */
+  }
 }

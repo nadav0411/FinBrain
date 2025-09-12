@@ -1,84 +1,79 @@
+/* DashBoard.css */
+
+
 :root {
-    --bg-main: #f4f9ff;
-    --box-bg: #ffffff;
-    --box-radius: 16px;
-    --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    /* Colors - what colors to use for different parts */
+    --bg-main: #f4f9ff; /* Background color */
+    --box-bg: #ffffff; /* Boxes */
+    --box-radius: 16px; /* How round the corners should be */
+    --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06); /* Shadow effect for boxes */
   
-    --text-dark: #1f2937;
-    --text-medium: #374151;
-    --text-light: #6b7280;
+  /* Text colors - different shades of gray for text */
+  --text-medium: #374151; /* Normal text */
   
-    --btn-hover-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
+    /* Button effects */
+    --btn-hover-shadow: 0 6px 14px rgba(0, 0, 0, 0.12); /* Shadow when you hover over buttons */
     
-    /* Dynamic sizing based on viewport - optimized for 7 bars */
-    --container-padding: clamp(6px, 1.5vw, 15px);
-    --header-margin: clamp(10px, 2vw, 15px);
-    --chart-padding: clamp(10px, 2vw, 15px);
-    --bar-gap: clamp(8px, 1.5vw, 15px);
-    --bar-height: clamp(14px, 2vw, 20px);
-    --title-size: clamp(1.6rem, 3vw, 2.5rem);
-    --text-size: clamp(0.8rem, 1.2vw, 0.95rem);
-    --button-padding: clamp(5px, 1vw, 8px) clamp(10px, 1.5vw, 16px);
-    
-    /* Calculate optimal spacing for 7 bars */
-    --available-height: calc(100vh - var(--container-padding) * 2 - var(--header-margin) - var(--chart-padding) * 2 - 120px);
-    --bar-total-height: calc(var(--bar-height) * 7);
-    --optimal-gap: calc((var(--available-height) - var(--bar-total-height)) / 6);
-    --final-bar-gap: clamp(8px, var(--optimal-gap), 18px);
+    /* Sizes that change based on screen size - clamp means: minimum, preferred, maximum */
+    --container-padding: clamp(6px, 1.5vw, 15px); /* Space around the main area */
+    --header-margin: clamp(10px, 2vw, 15px); /* Space below the header */
+    --chart-padding: clamp(10px, 2vw, 15px); /* Space inside the chart box */
+    --bar-gap: clamp(8px, 1.5vw, 15px); /* Space between chart bars */
+    --bar-height: clamp(14px, 2vw, 20px); /* How tall each bar should be */
+    --text-size: clamp(0.8rem, 1.2vw, 0.95rem); /* How big normal text should be */
+    --button-padding: clamp(5px, 1vw, 8px) clamp(10px, 1.5vw, 16px); /* Space inside buttons */
   }
   
-  /* קריטי: לטפל בשורש של כל העמוד */
+  /* Reset the default browser styles and set up the page */
   html, body, #root {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    max-width: 100%;
-    overflow-x: hidden;
-    background-color: var(--bg-main);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0; /* Remove default spaces around the page */
+    padding: 0; /* Remove default padding */
+    width: 100%; /* Make it take the full width */
+    overflow-x: hidden; /* Hide horizontal scrollbar */
+    background-color: var(--bg-main); /* Use our light blue background */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Choose a font */
   }
   
-  /* עוטף */
+  /* The main box that holds everything on the dashboard */
   .dashboard-container {
-    padding: var(--container-padding);
-    min-height: 100vh;
-    box-sizing: border-box;
-    width: 100%;
-    max-width: 100vw;
-    overflow-x: auto;
+    padding: var(--container-padding); /* Add space around the edges */
+    min-height: 100vh; /* Make it at least as tall as the screen */
+    box-sizing: border-box; /* Include padding when calculating width */
   }
   
-  /* כותרת */
+  /* The top part with the title and buttons - arrange them side by side */
   .dashboard-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    margin-bottom: var(--header-margin);
+    display: flex; /* Put things in a row */
+    justify-content: space-between; /* Put title on left, buttons on right */
+    align-items: center; /* Center everything vertically */
+    flex-wrap: wrap; /* Allow things to wrap to new line on small screens */
+    margin-bottom: var(--header-margin); /* Add space below this section */
   }
   
+  /* Group the total amount and date together on the left side */
   .dashboard-title-group {
-    display: flex;
-    align-items: center;
-    gap: 16px;
+    display: flex; /* Put total and date side by side */
+    align-items: center; /* Center them vertically */
+    gap: 16px; /* Add space between them */
   }
   
-  /* Beautiful Total Display */
+  /* The box that shows the total amount of money - make it look fancy */
   .total-display {
-    position: relative;
-    background: linear-gradient(135deg, #dbeafe 0%, #e0f2fe 20%, #f0f9ff 40%, #f8fafc 60%, #e0f2fe 80%, #dbeafe 100%);
-    border-radius: 12px;
-    padding: 8px 12px;
-    box-shadow: 0 3px 12px rgba(59, 130, 246, 0.12), 0 1px 4px rgba(0, 0, 0, 0.05);
-    overflow: hidden;
-    min-width: 140px;
-    transition: all 0.3s ease;
+    position: relative; 
+    background: linear-gradient(135deg, #dbeafe 0%, #e0f2fe 20%, #f0f9ff 40%, #f8fafc 60%, #e0f2fe 80%, #dbeafe 100%); /* Gradient background */
+    border-radius: 12px; /* Round the corners */
+    padding: 8px 12px; /* Add space inside the box */
+    box-shadow: 0 3px 12px rgba(59, 130, 246, 0.12), 0 1px 4px rgba(0, 0, 0, 0.05); /* Add shadow */
+    overflow: hidden; /* Hide anything that goes outside the box */
+    min-width: 140px; /* Make sure it's not too small */
+    transition: all 0.3s ease; /* Smooth animation when hovering */
   }
   
+  /* What happens when you hover over the total amount box */
   .total-display:hover {
-    transform: translateY(-6px) scale(1.01);
-    background: linear-gradient(135deg, #bfdbfe 0%, #dbeafe 20%, #e0f2fe 40%, #f0f9ff 60%, #dbeafe 80%, #bfdbfe 100%);
-    box-shadow: 0 4px 16px rgba(59, 130, 246, 0.18), 0 2px 6px rgba(0, 0, 0, 0.08);
+    transform: translateY(-6px) scale(1.01); /* Move it up and make it slightly bigger */
+    background: linear-gradient(135deg, #bfdbfe 0%, #dbeafe 20%, #e0f2fe 40%, #f0f9ff 60%, #dbeafe 80%, #bfdbfe 100%); /* Change to a darker blue gradient */
+    box-shadow: 0 4px 16px rgba(59, 130, 246, 0.18), 0 2px 6px rgba(0, 0, 0, 0.08); /* Make the shadow bigger and darker */
   }
   
   .total-label {
@@ -90,7 +85,6 @@
     margin-bottom: 6px;
     text-align: center;
     font-family: 'Inter', 'Segoe UI', sans-serif;
-    opacity: 1;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   }
   
@@ -101,348 +95,290 @@
     gap: 4px;
   }
   
+  /* The dollar sign ($) styling */
   .currency-symbol {
-    color: #1e293b;
-    font-size: 1.3rem;
-    font-weight: 700;
-    opacity: 0.9;
-    font-family: 'Inter', 'Segoe UI', sans-serif;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    color: #1e293b; /* Color */
+    font-size: 1.3rem; /* Medium-large size */
+    font-weight: 700; /* Make it bold */
+    opacity: 0.9; /* Make it slightly see-through */
+    font-family: 'Inter', 'Segoe UI', sans-serif; /* Choose a font */
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
   }
   
+  /* The actual number amount - make it big and bold */
   .amount-value {
-    color: #0f172a;
-    font-size: 1.9rem;
-    font-weight: 800;
-    line-height: 1;
-    font-family: 'Inter', 'Segoe UI', sans-serif;
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    letter-spacing: -0.5px;
+    color: #0f172a; /* Very dark color*/
+    font-size: 1.9rem; /* Large size to make it stand out */
+    font-weight: 800; /* Extra bold */
+    line-height: 1; /* Tight line spacing */
+    font-family: 'Inter', 'Segoe UI', sans-serif; /* Font */
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+    letter-spacing: -0.5px; /* Make letters slightly closer together */
   }
   
+  /* The box that shows the current month and year */
   .date-display {
-    background: linear-gradient(135deg, #f1f5f9 0%, #ffffff 50%, #f8fafc 100%);
-    border: 1px solid transparent;
-    border-radius: 8px;
-    padding: 6px 12px;
-    box-shadow: 0 1px 4px rgba(148, 163, 184, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.8);
-    position: relative;
-    overflow: hidden;
-    transition: all 0.3s ease;
-    max-width: 350px;
-    min-width: auto;
-    width: fit-content;
-    text-align: center;
+    background: linear-gradient(135deg, #f1f5f9 0%, #ffffff 50%, #f8fafc 100%); /* Gradient background */
+    border-radius: 8px; /* Round the corners */
+    padding: 6px 12px; /* Add space inside */
+    box-shadow: 0 1px 4px rgba(148, 163, 184, 0.08); /* Add shadow */
+    transition: all 0.3s ease; /* Smooth animation when hovering */
+    max-width: 350px; /* Don't let it get too wide */
+    text-align: center; /* Center the text */
   }
   
-  .date-display::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(148, 163, 184, 0.3), transparent);
-  }
-  
+  /* What happens when you hover over the date box */
   .date-display:hover {
-    transform: translateY(-2px) scale(1.02);
-    background: linear-gradient(135deg, #e2e8f0 0%, #f8fafc 30%, #ffffff 60%, #f1f5f9 100%);
-    box-shadow: 0 8px 35px rgba(148, 163, 184, 0.25), 
-                0 4px 20px rgba(0, 0, 0, 0.12),
-                0 2px 8px rgba(0, 0, 0, 0.08),
-                inset 0 1px 0 rgba(255, 255, 255, 0.95),
-                inset 0 -2px 8px rgba(148, 163, 184, 0.15);
-    border: 1px solid rgba(148, 163, 184, 0.2);
-  }
-  
-  .date-display:hover::before {
-    background: linear-gradient(90deg, transparent, rgba(148, 163, 184, 0.5), transparent);
-  }
-  
-  .date-display:hover::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, rgba(148, 163, 184, 0.6), transparent);
-    border-radius: 0 0 12px 12px;
+    transform: translateY(-2px) scale(1.02); /* Move it up and make it slightly bigger */
+    background: linear-gradient(135deg, #e2e8f0 0%, #f8fafc 30%, #ffffff 60%, #f1f5f9 100%); /* Change to a different gradient */
+    box-shadow: 0 4px 12px rgba(148, 163, 184, 0.2); /* Add a bigger shadow */
   }
   
   
+  /* The text for month and year */
   .date-item {
-    color: #475569;
-    font-size: 0.7rem;
-    font-weight: 700;
-    text-transform: capitalize;
-    font-family: 'Inter', 'Segoe UI', sans-serif;
-    letter-spacing: 0.5px;
-    text-shadow: 0 2px 4px rgba(255, 255, 255, 0.9), 0 1px 2px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
+    color: #475569; /* Color */
+    font-size: 0.7rem; /* Small text size */
+    font-weight: 700; /* Make it bold */
+    text-transform: capitalize; /* Make first letter of each word big */
+    font-family: 'Inter', 'Segoe UI', sans-serif; /* Font */
+    letter-spacing: 0.5px; /* Add space between letters */
+    text-shadow: 0 2px 4px rgba(255, 255, 255, 0.9), 0 1px 2px rgba(0, 0, 0, 0.1); /* White highlight and dark shadow */
+    transition: all 0.3s ease; /* Smooth animation when hovering */
   }
   
+  /* The dot between month and year (•) */
   .date-separator {
-    color: #64748b;
-    opacity: 1;
-    font-weight: 600;
-    font-size: 0.7rem;
-    transition: all 0.3s ease;
-    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
-    margin: 0 1px;
+    color: #64748b; /* Slightly different gray color */
+    font-weight: 600; /* Semi-bold */
+    font-size: 0.7rem; /* Same size as the date text */
+    transition: all 0.3s ease; /* Smooth animation when hovering */
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8); /* White highlight shadow */
+    margin: 0 1px; /* Add small space on both sides */
   }
   
   
-  /* כפתורים */
+  /* Container for all the action buttons */
   .dashboard-buttons {
-    display: flex;
-    gap: 16px;
-    flex-wrap: wrap;
+    display: flex; /* Put buttons in a row */
+    gap: 16px; /* Add space between buttons */
+    flex-wrap: wrap; /* Allow buttons to wrap to new line on small screens */
   }
   
+  /* Style for each individual button */
   .dashboard-button {
-    background-color: var(--box-bg);
-    border: 1px solid #d1d5db;
-    padding: var(--button-padding);
-    border-radius: 12px;
-    font-weight: 500;
-    color: var(--text-medium);
-    cursor: pointer;
-    transition: box-shadow 0.2s ease, transform 0.15s ease, background-color 0.2s;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: var(--text-size);
+    background-color: var(--box-bg); /* White background */
+    border: 1px solid #d1d5db; /* Light gray border */
+    padding: var(--button-padding); /* Space inside the button */
+    border-radius: 12px; /* Round the corners */
+    font-weight: 500; /* Medium bold text */
+    color: var(--text-medium); /* Gray text color */
+    cursor: pointer; /* Show hand cursor when hovering */
+    transition: box-shadow 0.2s ease, transform 0.15s ease, background-color 0.2s; /* Smooth animations */
+    display: flex; /* Put icon and text side by side */
+    align-items: center; /* Center them vertically */
+    gap: 10px; /* Space between icon and text */
+    font-size: var(--text-size); /* Text size that changes with screen size */
   }
   
+  /* What happens when you hover over a button */
   .dashboard-button:hover {
-    box-shadow: var(--btn-hover-shadow);
-    transform: translateY(-1.5px) scale(1.02);
-    background-color: #f9fafb;
+    box-shadow: var(--btn-hover-shadow); /* Add a bigger shadow */
+    transform: translateY(-1.5px) scale(1.02); /* Move it up and make it slightly bigger */
+    background-color: #f9fafb; /* Change to a slightly different background color */
   }
   
-  /* 💱 אנימציה */
-  .currency-emoji {
-    animation: bounce-emoji 0.8s ease-in-out;
-    display: inline-block;
-    margin-left: 6px;
-  }
   
-  @keyframes bounce-emoji {
-    0% {
-      transform: scale(1) rotate(0deg);
-      opacity: 0;
-    }
-    20% {
-      transform: scale(1.3) rotate(15deg);
-      opacity: 1;
-    }
-    50% {
-      transform: scale(1.1) rotate(-10deg);
-    }
-    80% {
-      transform: scale(1.2) rotate(5deg);
-      opacity: 1;
-    }
-    100% {
-      transform: scale(1) rotate(0deg);
-      opacity: 0;
-    }
-  }
-  
-  /* גרף */
+  /* The main container for the bar chart */
   .bar-chart-section {
-    background-color: var(--box-bg);
-    padding: var(--chart-padding);
-    border-radius: var(--box-radius);
-    box-shadow: var(--box-shadow);
-    width: 100%;
-    margin: 0;
-    box-sizing: border-box;
-    overflow-x: auto;
+    background-color: var(--box-bg); /* White background */
+    padding: var(--chart-padding); /* Space inside the box */
+    border-radius: var(--box-radius); /* Round the corners */
+    box-shadow: var(--box-shadow); /* Add shadow to make it look raised */
+    box-sizing: border-box; /* Include padding in width calculation */
+    overflow-x: auto; /* Add horizontal scroll if needed */
   }
   
+  /* The title above the bar chart */
   .bar-chart-title {
-    font-size: 1.4rem;
-    font-weight: 600;
-    margin-bottom: 18px;
-    color: var(--text-medium);
+    font-size: 1.4rem; /* Large text size */
+    font-weight: 600; /* Semi-bold */
+    margin-bottom: 18px; /* Add space below the title */
+    color: var(--text-medium); /* Use medium gray color */
   }
   
+  /* The container that holds all the bars in the chart */
   .bar-chart {
-    display: flex;
-    flex-direction: column;
-    gap: var(--final-bar-gap);
-    width: 100%;
-    min-width: 300px;
-    justify-content: flex-start;
-    min-height: auto;
+    display: flex; /* Use flexbox layout */
+    flex-direction: column; /* Stack bars vertically */
+    gap: var(--bar-gap); /* Space between each bar */
+    min-width: 300px; /* Don't let it get too narrow */
   }
   
+  /* Each row in the chart (contains the label and the bar) */
   .bar-row {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
+    display: flex; /* Use flexbox layout */
+    flex-direction: column; /* Stack label above the bar */
+    gap: 4px; /* Small space between label and bar */
   }
   
+  /* The text above each bar (category name, amount, percentage) */
   .bar-info {
-    display: flex;
-    justify-content: space-between;
-    font-size: var(--text-size);
-    font-weight: 500;
-    color: var(--text-medium);
-    margin-bottom: 2px;
-    min-width: 280px;
-    flex-wrap: nowrap;
+    display: flex; /* Put text elements side by side */
+    justify-content: space-between; /* Spread them apart */
+    font-size: var(--text-size); /* Use responsive text size */
+    font-weight: 500; /* Medium bold */
+    color: var(--text-medium); /* Gray text color */
+    margin-bottom: 2px; /* Small space below the text */
+    min-width: 280px; /* Don't let it get too narrow */
   }
 
+  /* Make the first part of the text (category name) stand out more */
   .bar-info > span:first-child {
-    font-weight: 700;
-    font-size: calc(var(--text-size) + 0.05rem);
+    font-weight: 700; /* Make it extra bold */
+    font-size: calc(var(--text-size) + 0.05rem); /* Make it slightly bigger */
   }
 
+  /* Make the amount number extra bold */
   .amount {
-    font-weight: 900;
+    font-weight: 900; /* Extra bold */
   }
 
+  /* Style for the separator between amount and percentage */
   .separator {
-    font-weight: 900;
-    margin: 0 8px;
+    font-weight: 900; /* Extra bold */
+    margin: 0 8px; /* Add space on both sides */
   }
 
+  /* Make the percentage number extra bold */
   .percentage {
-    font-weight: 900;
+    font-weight: 900; /* Extra bold */
   }
   
+  /* The background container for each bar */
   .bar-wrapper {
-    width: 100%;
-    background-color: #e5e7eb;
-    height: var(--bar-height);
-    border-radius: calc(var(--bar-height) / 2);
-    overflow: visible;
-    position: relative;
+    background-color: #e5e7eb; /* Light gray background */
+    height: var(--bar-height); /* Use the calculated bar height */
+    border-radius: calc(var(--bar-height) / 2); /* Make it fully rounded */
   }
   
+  /* The actual colored bar that shows the data */
   .bar {
-    height: 100%;
-    border-radius: calc(var(--bar-height) / 2);
-    transition: width 0.3s ease;
+    height: 100%; /* Make it as tall as the container */
+    border-radius: calc(var(--bar-height) / 2); /* Make it fully rounded */
+    transition: width 0.3s ease; /* Smooth animation when the width changes */
   }
   
-  .pink   { background-color: #f472b6; }
-  .yellow { background-color: #fde68a; }
-  .green  { background-color: #a3e635; }
-  .blue   { background-color: #60a5fa; }
-  .purple { background-color: #a78bfa; }
-  .orange { background-color: #fb923c; }
-  .teal   { background-color: #14b8a6; }
+  /* Different colors for the bars - each category gets its own color */
+  .pink   { background-color: #f472b6; } 
+  .yellow { background-color: #fde68a; } 
+  .green  { background-color: #a3e635; } 
+  .blue   { background-color: #60a5fa; } 
+  .purple { background-color: #a78bfa; } 
+  .orange { background-color: #fb923c; } 
+  .teal   { background-color: #14b8a6; } 
   
-  /* Text color classes - darker shades than bar colors for better readability */
-  .text-pink   { color: #be185d; }
-  .text-yellow { color: #d97706; }
-  .text-green  { color: #65a30d; }
-  .text-blue   { color: #2563eb; }
-  .text-purple { color: #7c3aed; }
-  .text-orange { color: #ea580c; }
-  .text-teal   { color: #0d9488; }
+  /* Text colors that match the bar colors - for category names */
+  .text-pink   { color: #be185d; } 
+  .text-yellow { color: #d97706; } 
+  .text-green  { color: #65a30d; } 
+  .text-blue   { color: #2563eb; } 
+  .text-purple { color: #7c3aed; } 
+  .text-orange { color: #ea580c; } 
+  .text-teal   { color: #0d9488; } 
   
+  /* Styles small screens */
   @media (max-width: 768px) {
     .dashboard-header {
-      flex-direction: column;
-      align-items: center;
-      gap: 15px;
+      flex-direction: column; /* Stack title and buttons vertically */
+      gap: 15px; /* Add space between sections */
     }
     
     .dashboard-title-group {
-      flex-direction: column;
-      align-items: center;
-      gap: 12px;
+      flex-direction: column; /* Stack total and date vertically */
+      gap: 12px; /* Add space between them */
     }
     
     .total-display {
-      min-width: 120px;
-      padding: 6px 10px;
+      min-width: 120px; /* Make it a bit smaller */
+      padding: 6px 10px; /* Less padding */
     }
     
     .amount-value {
-      font-size: 1.4rem;
+      font-size: 1.4rem; /* Smaller text */
     }
     
     .currency-symbol {
-      font-size: 1rem;
+      font-size: 1rem; /* Smaller symbol */
     }
     
     .date-display {
-      max-width: 300px;
-      min-width: auto;
-      width: fit-content;
-      padding: 4px 8px;
+      max-width: 300px; /* Don't let it get too wide */
+      padding: 4px 8px; /* Less padding */
     }
     
     .date-item {
-      font-size: 0.7rem;
-      letter-spacing: 0.3px;
+      font-size: 0.7rem; /* Smaller text */
+      letter-spacing: 0.3px; /* Less letter spacing */
     }
     
     .dashboard-buttons {
-      justify-content: center;
-      flex-direction: column;
-      align-items: stretch;
+      justify-content: center; /* Center the buttons */
+      flex-direction: column; /* Stack buttons vertically */
+      align-items: stretch; /* Make buttons full width */
     }
 
     .dashboard-button {
-      justify-content: center;
+      justify-content: center; /* Center button content */
     }
 
     .bar-info {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 4px;
-      min-width: 250px;
+      flex-direction: column; /* Stack text vertically */
+      align-items: flex-start; /* Align to the left */
+      gap: 4px; /* Add space between lines */
+      min-width: 250px; /* Don't let it get too narrow */
     }
   }
 
+  /* Styles for very small screens */
   @media (max-width: 480px) {
     .dashboard-title-group {
-      gap: 8px;
+      gap: 8px; /* Less space between elements */
     }
     
     .total-display {
-      min-width: 100px;
-      padding: 6px 8px;
+      min-width: 100px; /* Even smaller minimum width */
+      padding: 6px 8px; /* Less padding */
     }
     
     .amount-value {
-      font-size: 1.2rem;
+      font-size: 1.2rem; /* Smaller amount text */
     }
     
     .currency-symbol {
-      font-size: 0.9rem;
+      font-size: 0.9rem; /* Smaller currency symbol */
     }
     
     .total-label {
-      font-size: 0.5rem;
+      font-size: 0.5rem; /* Much smaller label text */
     }
     
     .date-display {
-      max-width: 250px;
-      min-width: auto;
-      width: fit-content;
-      padding: 3px 6px;
+      max-width: 250px; /* Even smaller maximum width */
+      padding: 3px 6px; /* Even less padding */
     }
     
     .date-item {
-      font-size: 0.65rem;
-      letter-spacing: 0.2px;
+      font-size: 0.65rem; /* Smaller date text */
+      letter-spacing: 0.2px; /* Less letter spacing */
     }
     
     .bar-info {
-      min-width: 200px;
+      min-width: 200px; /* Smaller minimum width */
     }
     
     .bar-chart {
-      min-width: 250px;
+      min-width: 250px; /* Smaller chart minimum width */
     }
   }
   

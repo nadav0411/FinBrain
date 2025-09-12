@@ -1,34 +1,23 @@
+/* DashBoard.jsx */
+
+
 import React, { useState, useEffect, useRef } from 'react';
 import './Dashboard.css';
 import MonthPickerModal from './MonthPickerModal';
 
 const Dashboard = () => {
-  const [showMonthPicker, setShowMonthPicker] = useState(false);
-  const selectedGraph = "bar";
-  const [selectedCurrency, setSelectedCurrency] = useState("ILS");
+  // State management - these control what the user sees and interacts with
+  const [showMonthPicker, setShowMonthPicker] = useState(false); // Controls if month picker modal is visible
+  const [selectedCurrency, setSelectedCurrency] = useState("ILS"); // Current currency (ILS or USD)
   const [selectedMonths, setSelectedMonths] = useState(() => {
+    // Initialize with current month - this function runs only once when component mounts
     const now = new Date();
     return [{ year: now.getFullYear(), monthIndex: now.getMonth() }];
   });
 
-  const [showEmoji, setShowEmoji] = useState(false);
-  const [chartData, setChartData] = useState([
-    { category: "Food & Drinks", amount: 0, percentage: 0 },
-    { category: "Housing & Bills", amount: 0, percentage: 0 },
-    { category: "Transportation", amount: 0, percentage: 0 },
-    { category: "Education & Personal Growth", amount: 0, percentage: 0 },
-    { category: "Health & Essentials", amount: 0, percentage: 0 },
-    { category: "Leisure & Gifts", amount: 0, percentage: 0 },
-    { category: "Other", amount: 0, percentage: 0 }
-  ]);
-  const [total, setTotal] = useState(0);
-  const prevValuesRef = useRef({});
-
-  // צבעים לסרגלים
-  const barColors = ['blue', 'green', 'yellow', 'pink', 'purple', 'orange', 'teal'];
-  
-  // כל הקטגוריות שצריכות להופיע
-  const allCategories = [
+  const [showEmoji, setShowEmoji] = useState(false); // Controls currency change animation
+  // Predefined expense categories - these match what the backend expects
+  const categories = [
     "Food & Drinks",
     "Housing & Bills", 
     "Transportation",
@@ -37,28 +26,45 @@ const Dashboard = () => {
     "Leisure & Gifts",
     "Other"
   ];
+  
+  // Chart data state - starts with all categories at 0 amount
+  const [chartData, setChartData] = useState(
+    categories.map(category => ({ category, amount: 0 }))
+  );
+  const [total, setTotal] = useState(0); // Sum of all expenses
+  const prevValuesRef = useRef({}); // Tracks previous values to detect changes
 
-  // שליפת נתונים מהשרת
+  // Constants - values that don't change during the component's lifecycle
+  const CHART_TYPE = "bar"; // Type of chart to display
+  const barColors = ['blue', 'green', 'yellow', 'pink', 'purple', 'orange', 'teal']; // Colors for each category bar
+  const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", 
+                     "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]; // Month names for display
+
+  // Function to fetch expense data from the server
   const fetchDashboardData = async () => {
     try {
+      // Get user's session ID from browser storage to authenticate the request
       const sessionId = localStorage.getItem('session_id');
-      if (!sessionId) return;
+      if (!sessionId) return; // Exit if user not logged in
 
+      // Build query parameters for the API request
       const params = new URLSearchParams();
-      params.append("chart", selectedGraph);
+      params.append("chart", CHART_TYPE);
       params.append("currency", selectedCurrency);
+      // Convert selected months to YYYY-MM format for the API
       selectedMonths.forEach(({ year, monthIndex }) => {
-        const paddedMonth = String(monthIndex + 1).padStart(2, "0");
+        const paddedMonth = String(monthIndex + 1).padStart(2, "0"); // Add leading zero if needed
         params.append("months", `${year}-${paddedMonth}`);
       });
 
+      // Make API call to get expense data
       const res = await fetch(
         `${import.meta.env.VITE_API_URL}/expenses_for_dashboard?${params.toString()}`,
         {
           method: "GET",
           headers: {
             'Content-Type': 'application/json',
-            'Session-ID': sessionId
+            'Session-ID': sessionId // Send session ID for authentication
           }
         }
       );
@@ -68,55 +74,57 @@ const Dashboard = () => {
       const data = await res.json();
       const serverData = data.data || [];
       
-      // יצירת נתונים עם כל הקטגוריות, גם אלה עם 0
-      const completeData = allCategories.map(category => {
+      // Create complete data set - ensure ALL categories are present, even with 0 amounts
+      const completeData = categories.map(category => {
         const existingItem = serverData.find(item => item.category === category);
         return existingItem || {
           category: category,
-          amount: 0,
-          percentage: 0
+          amount: 0 // Default to 0 if no data for this category
         };
       });
       
-      console.log('Server data:', serverData);
-      console.log('Complete data:', completeData);
+      // Update the component state with new data
       setChartData(completeData);
-      setTotal(completeData.reduce((sum, item) => sum + item.amount, 0));
+      setTotal(completeData.reduce((sum, item) => sum + item.amount, 0)); // Calculate total expenses
     } catch (err) {
       console.error("Error fetching expenses:", err);
     }
   };
 
-  // שליפה אוטומטית כשהמשתמש משנה מטבע/חודש
+  // Auto-fetch data when user changes currency or selected months
   useEffect(() => {
     const prev = prevValuesRef.current;
+    // Check if currency or months have changed since last render
     const changed =
       prev.currency !== selectedCurrency ||
       JSON.stringify(prev.months) !== JSON.stringify(selectedMonths);
 
     if (changed) {
+      // Update the reference with current values
       prevValuesRef.current = {
         currency: selectedCurrency,
         months: selectedMonths
       };
-      fetchDashboardData();
+      fetchDashboardData(); // Fetch new data from server
     }
-  }, [selectedCurrency, selectedMonths]);
+  }, [selectedCurrency, selectedMonths]); // This effect runs when these values change
 
-  // החלפת מטבע
+  // Function to toggle between currencies (ILS ↔ USD)
   const handleCurrencyToggle = () => {
     setSelectedCurrency((prev) => (prev === "ILS" ? "USD" : "ILS"));
-    setShowEmoji(true);
-    setTimeout(() => setShowEmoji(false), 800);
+    setShowEmoji(true); // Show animation emoji
+    setTimeout(() => setShowEmoji(false), 800); // Hide emoji after 800ms
   };
 
+  // Get the correct currency symbol for display
   const currencySymbol = selectedCurrency === "ILS" ? "₪" : "$";
 
   return (
     <div className="dashboard-container">
-      {/* כותרת */}
+      {/* Main header section with total expenses and controls */}
       <div className="dashboard-header">
         <div className="dashboard-title-group">
+          {/* Display total expenses with currency symbol */}
           <div className="total-display">
             <div className="total-label">Total Expenses</div>
             <div className="total-amount">
@@ -125,20 +133,18 @@ const Dashboard = () => {
             </div>
           </div>
           
+          {/* Display selected months in readable format */}
           <div className="date-display">
-            {selectedMonths.map(({ year, monthIndex }, idx) => {
-              const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", 
-                                "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-              return (
-                <span key={idx} className="date-item">
-                  {monthNames[monthIndex]} {year}
-                  {idx < selectedMonths.length - 1 && <span className="date-separator">, </span>}
-                </span>
-              );
-            })}
+            {selectedMonths.map(({ year, monthIndex }, idx) => (
+              <span key={idx} className="date-item">
+                {monthNames[monthIndex]} {year}
+                {idx < selectedMonths.length - 1 && <span className="date-separator">, </span>}
+              </span>
+            ))}
           </div>
         </div>
 
+        {/* Control buttons for user interactions */}
         <div className="dashboard-buttons">
           <button className="dashboard-button" onClick={() => setShowMonthPicker(true)}>
             📅 Select Date Range
@@ -148,6 +154,7 @@ const Dashboard = () => {
             📊 Bar Graph
           </button>
 
+          {/* Currency toggle button with animation */}
           <button className="dashboard-button currency-button" onClick={handleCurrencyToggle}>
             💵 {selectedCurrency} ({currencySymbol})
             {showEmoji && <span className="currency-emoji">💱</span>}
@@ -155,7 +162,7 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* בחירת חודשים */}
+      {/* Month picker modal - only shows when user clicks the date button */}
       {showMonthPicker && (
         <MonthPickerModal
           onClose={() => setShowMonthPicker(false)}
@@ -163,26 +170,30 @@ const Dashboard = () => {
         />
       )}
 
-      {/* גרף בר */}
+      {/* Bar chart visualization section */}
       <div className="bar-chart-section">
         <div className="bar-chart">
           {chartData.map((item, index) => {
+            // Calculate percentage of total for this category
             const percent = total > 0 ? (item.amount / total) * 100 : 0;
+            // Assign a color to each category (cycles through the color array)
             const colorClass = barColors[index % barColors.length];
             return (
               <div key={index} className="bar-row">
+                {/* Category info row with name, amount, and percentage */}
                 <div className="bar-info">
                   <span>{item.category}</span>
                   <span>
                     <span className={`amount text-${colorClass}`}>{currencySymbol}{item.amount.toFixed(2)}</span>
                     <span className="separator">•</span>
-                    <span className={`percentage text-${colorClass}`}>{item.percentage}%</span>
+                    <span className={`percentage text-${colorClass}`}>{percent.toFixed(1)}%</span>
                   </span>
                 </div>
+                {/* Visual bar that grows based on percentage */}
                 <div className="bar-wrapper">
                   <div
                     className={`bar ${colorClass}`}
-                    style={{ width: `${percent}%` }}
+                    style={{ width: `${percent}%` }} // CSS width controls bar length
                   />
                 </div>
               </div>

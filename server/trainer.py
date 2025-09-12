@@ -1,3 +1,5 @@
+# trainer.py
+
 # NOTE: This code has very detailed comments because it's my first time
 # learning how to build and use an AI model.
 

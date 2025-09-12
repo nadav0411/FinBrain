@@ -1,3 +1,5 @@
+# app.py
+
 from flask import Flask, request
 from flask_cors import CORS
 import logicconnection as logic_connection
@@ -31,6 +33,7 @@ def add_expense():
     result = logic_expenses.handle_add_expense(data, session_id)
     return result
 
+# Get expenses route - This is where the user will get their expenses from their account
 @app.route('/get_expenses', methods=['GET'])
 def get_expenses():
     month = request.args.get('month', type=int)
@@ -39,6 +42,7 @@ def get_expenses():
     result = logic_expenses.handle_get_expenses(month, year, session_id)
     return result
 
+# Get expenses for dashboard route - This is where the user will get their expenses for the dashboard
 @app.route('/expenses_for_dashboard', methods=['GET'])
 def expenses_for_dashboard():
     chart = request.args.get('chart', type=str)

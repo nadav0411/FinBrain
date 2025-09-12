@@ -9,17 +9,20 @@ const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
 function AllExpenses() {
   const today = new Date();
 
-  const [showPopup, setShowPopup] = useState(false);
-  const [calendarOpen, setCalendarOpen] = useState(false);
-  const [month, setMonth] = useState(today.getMonth() + 1);
-  const [year, setYear] = useState(today.getFullYear());
-  const [expenses, setExpenses] = useState([]);
-  const [refreshKey, setRefreshKey] = useState(0);
-  const [activeMenu, setActiveMenu] = useState(null);
+  // State management for UI controls and data
+  const [showPopup, setShowPopup] = useState(false);           // Controls AddExpenseModal visibility
+  const [calendarOpen, setCalendarOpen] = useState(false);     // Controls CalendarModal visibility
+  const [month, setMonth] = useState(today.getMonth() + 1);    // Current selected month (1-12)
+  const [year, setYear] = useState(today.getFullYear());       // Current selected year
+  const [expenses, setExpenses] = useState([]);                // Array of expenses for current month/year
+  const [refreshKey, setRefreshKey] = useState(0);             // Used to trigger data refresh
+  const [activeMenu, setActiveMenu] = useState(null);          // Tracks which expense menu is open
 
+  // Year range constraints for navigation
   const MIN_YEAR = 2015;
   const MAX_YEAR = 2027;
 
+  // Fetches expenses from the server for the current month/year
   const fetchExpenses = async () => {
     try {
       const sessionId = localStorage.getItem('session_id');
@@ -42,11 +45,12 @@ function AllExpenses() {
     }
   };
 
+  // Automatically fetch expenses when month, year, or refreshKey changes
   useEffect(() => {
     fetchExpenses();
   }, [month, year, refreshKey]);
 
-  // Close menu when clicking outside
+  // Close dropdown menu when clicking outside of it
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (activeMenu && !event.target.closest('.menu-container')) {
@@ -60,6 +64,7 @@ function AllExpenses() {
     };
   }, [activeMenu]);
 
+  // Navigation functions for month/year selection
   const handlePrevMonth = () => {
     if (month === 1) {
       if (year > MIN_YEAR) {
@@ -82,24 +87,28 @@ function AllExpenses() {
     }
   };
 
+  // Returns formatted month and year string for display
   const getMonthName = () => {
     return `${monthNames[month - 1]} ${year}`;
   };
 
+  // Handles date selection from calendar modal
   const handleDatePick = (pickedMonth, pickedYear) => {
     if (pickedYear === year && pickedMonth === month) {
-      setRefreshKey(prev => prev + 1);
+      setRefreshKey(prev => prev + 1); // Refresh data if same month/year selected
     } else if (pickedYear >= MIN_YEAR && pickedYear <= MAX_YEAR) {
       setMonth(pickedMonth);
       setYear(pickedYear);
     }
   };
 
+  // Closes add expense modal and refreshes the expenses list
   const handleAddExpenseClose = () => {
     setShowPopup(false);
     setRefreshKey(prev => prev + 1);
   };
 
+  // Converts category names to valid CSS class names
   const cleanCategoryClassName = (category) => {
     return category
       .toLowerCase()
@@ -108,16 +117,18 @@ function AllExpenses() {
       .replace(/[^a-z0-9\-]/g, '');
   };
 
+  // Toggles the dropdown menu for a specific expense
   const handleMenuToggle = (expenseId) => {
     setActiveMenu(activeMenu === expenseId ? null : expenseId);
   };
 
+  // Placeholder for change category functionality (not yet implemented)
   const handleChangeCategory = (expense) => {
-    // TODO: Implement change category functionality
     console.log('Change category for expense:', expense);
     setActiveMenu(null);
   };
 
+  // Deletes an expense after user confirmation
   const handleDeleteExpense = async (expense) => {
     if (window.confirm(`Are you sure you want to delete "${expense.title}"?`)) {
       try {
@@ -132,7 +143,7 @@ function AllExpenses() {
         });
 
         if (res.ok) {
-          setRefreshKey(prev => prev + 1);
+          setRefreshKey(prev => prev + 1); // Refresh the expenses list
         } else {
           alert('Failed to delete expense');
         }
@@ -146,6 +157,7 @@ function AllExpenses() {
 
   return (
     <div className="expenses-container">
+      {/* Header with new expense button and filter controls */}
       <div className="expenses-header">
         <button className="new-expense-button" onClick={() => setShowPopup(true)}>✨ New Expense</button>
         <div className="controls">
@@ -154,6 +166,7 @@ function AllExpenses() {
         </div>
       </div>
 
+      {/* Month/year navigation controls */}
       <div className="month-picker">
         <button className="arrow-button" onClick={handlePrevMonth}>◀</button>
 
@@ -165,6 +178,7 @@ function AllExpenses() {
         <button className="arrow-button" onClick={handleNextMonth}>▶</button>
       </div>
 
+      {/* Calendar modal for date selection */}
       {calendarOpen && (
         <CalendarModal
           onClose={() => setCalendarOpen(false)}
@@ -172,7 +186,7 @@ function AllExpenses() {
         />
       )}
 
-      {/* 🛠️ עטפנו את הטבלה בקונטיינר עם גלילה */}
+      {/* Scrollable table container */}
       <div className="expenses-table-wrapper">
         <table className="expenses-table">
           <thead>
@@ -196,6 +210,7 @@ function AllExpenses() {
                   <td className="amount-cell">${exp.amount_usd.toFixed(2)}</td>
                   <td className="amount-cell">₪{exp.amount_ils.toFixed(2)}</td>
                   <td className="actions-cell">
+                    {/* Dropdown menu for each expense */}
                     <div className="menu-container">
                       <button 
                         className={`menu-button ${activeMenu === exp.serial_number ? 'active' : ''}`}
@@ -232,6 +247,7 @@ function AllExpenses() {
         </table>
       </div>
 
+      {/* Add expense modal */}
       {showPopup && <AddExpenseModal onClose={handleAddExpenseClose} />}
     </div>
   );

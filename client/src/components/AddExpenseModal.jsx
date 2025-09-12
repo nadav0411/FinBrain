@@ -1,8 +1,11 @@
+/* AddExpenseModal.jsx */
+
 import React, { useState } from 'react';
 import './AddExpenseModal.css';
 
-
+// Modal component for adding new expense entries
 function AddExpenseModal({ onClose }) {
+  // State management for form inputs and UI feedback
   const [title, setTitle] = useState('');
   const [date, setDate] = useState('');
   const [amount, setAmount] = useState('');
@@ -10,10 +13,13 @@ function AddExpenseModal({ onClose }) {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
+  // Date constraints for validation
   const today = new Date().toISOString().split("T")[0];        
   const minDate = "2015-01-01";                                 
 
+  // Handles form submission and API communication
   const handleSubmit = async () => {
+    // Client-side validation before sending to server
     if (!title || !date || !amount || !currency) {
       setError("Please fill in all fields.");
       return;
@@ -23,6 +29,7 @@ function AddExpenseModal({ onClose }) {
     setLoading(true);
 
     try {
+      // Send expense data to backend with session authentication
       const response = await fetch(`${import.meta.env.VITE_API_URL}/add_expense`, {
         method: 'POST',
         headers: {
@@ -33,26 +40,24 @@ function AddExpenseModal({ onClose }) {
       });
 
       if (response.ok) {
-        console.log("Expense added!");
-        onClose();
+        onClose(); // Close modal on successful submission
       } else {
         const err = await response.text();
-        console.error("Failed to add expense:", err);
         setError("Server error. Try again.");
       }
     } catch (err) {
-      console.error("Error:", err);
       setError("Connection error.");
     } finally {
       setLoading(false);
     }
   };
 
+  // Input validation for title field - only allows alphanumeric characters and spaces
   const handleTitleChange = (e) => {
     const regex = /^[A-Za-z0-9\s]*$/;
     const value = e.target.value;
     
-    // Limit to 60 characters
+    // Limit to 60 characters and validate format
     if (value.length <= 60 && regex.test(value)) {
       setTitle(value);
       setError('');
@@ -68,8 +73,10 @@ function AddExpenseModal({ onClose }) {
         </div>
 
         <div className="modal-body">
+          {/* Error display for user feedback */}
           {error && <div className="error-message">{error}</div>}
 
+          {/* Title input with character validation */}
           <div className="row">
             <div className="field">
               <label>Title</label>
@@ -86,6 +93,7 @@ function AddExpenseModal({ onClose }) {
             </div>
           </div>
 
+          {/* Date input with range restrictions */}
           <div className="row">
             <div className="field">
               <label>Date</label>
@@ -104,6 +112,7 @@ function AddExpenseModal({ onClose }) {
             </div>
           </div>
 
+          {/* Amount and currency inputs */}
           <div className="row">
             <div className="field">
               <label>Amount</label>
@@ -114,10 +123,10 @@ function AddExpenseModal({ onClose }) {
                 value={amount}
                 onChange={(e) => {
                   const value = e.target.value;
-                  // Remove any non-digit characters except decimal point
+                  // Clean input to only allow numbers and decimal point
                   const cleanValue = value.replace(/[^0-9.]/g, '');
                   
-                  // Limit to 10 digits total (including decimal places)
+                  // Limit to 10 digits total for reasonable expense amounts
                   const digitsOnly = cleanValue.replace(/\./g, '');
                   if (digitsOnly.length <= 10) {
                     setAmount(cleanValue);
@@ -125,6 +134,7 @@ function AddExpenseModal({ onClose }) {
                   }
                 }}
                 onKeyDown={(e) => {
+                  // Prevent non-numeric input except navigation keys
                   if (
                     !/[0-9.]/.test(e.key) &&
                     !["Backspace", "Tab", "ArrowLeft", "ArrowRight", "Delete"].includes(e.key)
@@ -153,6 +163,7 @@ function AddExpenseModal({ onClose }) {
             </div>
           </div>
 
+          {/* Submit button with loading state */}
           <div className="button-container">
             <button className="add-button" onClick={handleSubmit} disabled={loading}>
               {loading ? (

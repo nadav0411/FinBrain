@@ -1,62 +1,68 @@
+/* Main wrapper for the entire expenses section with modern card design */
 .expenses-container {
-  background-color: #f5f8fe;
-  padding: 32px;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
-  height: calc(100vh - 200px);
-  display: flex;
-  flex-direction: column;
-  position: relative;
+  background-color: #f5f8fe; /* Light blue background for modern look */
+  padding: 32px;              
+  border-radius: 12px; /* Rounded corners */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03); /* Subtle shadow */
+  height: calc(100vh - 200px); /* Full height minus header space */
+  display: flex; /* Flexbox for vertical layout */
+  flex-direction: column; /* Stack children vertically */
+  position: relative; /* For absolute positioning of child elements */
 }
 
+/* Top section containing the "New Expense" button and navigation controls */
 .expenses-header {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-between; /* Button on left, controls on right */
   align-items: center;
   margin-bottom: 24px;
 }
 
+/* Primary action button for adding new expenses */
 .new-expense-button {
-  background-color: #4da3ff;
+  background-color: #4da3ff; /* Bright blue for primary action */
   color: white;
   border: none;
   padding: 10px 20px;
   font-weight: 600;
   border-radius: 8px;
   cursor: pointer;
-  transition: background 0.3s ease;
+  transition: background 0.3s ease; /* Smooth color transition on hover */
 }
 
 .new-expense-button:hover {
-  background-color: #1676d6;
+  background-color: #1676d6; /* Darker blue on hover for feedback */
 }
 
+/* Navigation controls */
 .controls {
   display: flex;
-  gap: 24px;
-  color: #4a6fa5;
+  gap: 24px; /* Space between control items */
+  color: #4a6fa5;        
   font-weight: 500;
   cursor: pointer;
 }
 
 .controls span:hover {
-  color: #1676d6;
-  text-decoration: underline;
+  color: #1676d6; /* Darker blue on hover */
+  text-decoration: underline; /* Underline for clear interaction */
 }
 
+/* Interactive month navigation with arrows and current month display */
 .month-picker {
   display: flex;
-  justify-content: center;
+  justify-content: center; /* Center the month picker horizontally */
   align-items: center;
   margin-bottom: 24px;
-  gap: 12px;
+  gap: 12px; /* Space between arrows and month display */
 }
 
+/* Navigation arrows for previous/next month */
 .arrow-button {
   width: 40px;
   height: 40px;
   background-color: #ffffff;
-  border-radius: 20%;
+  border-radius: 20%; /* Slightly rounded square */
   font-size: 18px;
   font-weight: bold;
   color: #111;
@@ -64,76 +70,83 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-  transition: background-color 0.2s, transform 0.2s;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08); /* Subtle shadow for depth */
+  transition: background-color 0.2s, transform 0.2s; /* Smooth animations */
 }
 
 .arrow-button:hover {
-  background-color: #eef4ff;
-  transform: scale(1.05);
+  background-color: #eef4ff; /* Light blue background on hover */
+  transform: scale(1.05); /* Slight scale up for interactive feedback */
 }
 
+/* Current month display with calendar icon */
 .month-display {
   display: flex;
   align-items: center;
-  gap: 10px;
-  background-color: #e6f0ff;
+  gap: 10px; /* Space between text and calendar icon */
+  background-color: #e6f0ff; /* Light blue background */
   padding: 10px 20px;
   border-radius: 12px;
   font-weight: 600;
-  color: #2d4c74;
+  color: #2d4c74; /* Dark blue text */
   font-size: 16px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  cursor: pointer;
+  cursor: pointer; /* Indicates it's clickable */
   transition: background 0.3s ease;
 }
 
 .month-display:hover {
-  background-color: #d4e7ff;
+  background-color: #d4e7ff; /* Slightly darker blue on hover */
 }
 
+/* Calendar icon styling */
 .calendar-icon {
   font-size: 18px;
   cursor: pointer;
 }
 
+/* Wrapper that makes the table scrollable and takes remaining space */
 .expenses-table-wrapper {
-  flex: 1;
-  overflow-y: auto;
-  min-height: 0;
-  padding-right: 8px;
-  padding-bottom: 20px;
-  box-sizing: border-box;
+  flex: 1; /* Take all remaining vertical space */
+  overflow-y: auto; /* Enable vertical scrolling when content overflows */
+  min-height: 0; /* Allow flex item to shrink below content size */
+  padding-right: 8px; /* Space for scrollbar */
+  padding-bottom: 20px; /* Bottom padding for visual breathing room */
+  box-sizing: border-box; /* Include padding in width calculation */
 }
 
-/* טבלה */
+/* Main table styling with modern design and sticky header */
 .expenses-table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: collapse; /* Remove gaps between table cells */
   background-color: white;
-  border-radius: 12px;
-  overflow: visible;
+  border-radius: 12px; /* Rounded corners */
+  overflow: visible; /* Allow dropdowns to extend beyond table */
 }
 
+/* Sticky header that stays visible while scrolling */
 .expenses-table thead {
-  background-color: #eef5ff;
+  background-color: #eef5ff; /* Light blue header background */
   text-align: left;
-  position: sticky;
+  position: sticky; /* Stays at top when scrolling */
   top: 0;
-  z-index: 1;
+  z-index: 1; /* Above table body content */
 }
 
+/* Base styling for all table cells */
 .expenses-table th,
 .expenses-table td {
-  padding: 16px 20px;
+  padding: 16px 20px; /* Generous padding for readability */
   font-size: 15px;
 }
 
+/* Table body cells with subtle borders */
 .expenses-table td {
-  border-top: 1px solid #f0f0f0;
-  vertical-align: middle;
+  border-top: 1px solid #f0f0f0; /* Light border between rows */
+  vertical-align: middle; /* Center content vertically */
 }
 
+/* Column 1: Description - Left aligned, bold text */
 .expenses-table th:nth-child(1),
 .expenses-table td:nth-child(1) {
   text-align: left;
@@ -141,6 +154,7 @@
   color: #333;
 }
 
+/* Column 2: Category - Center aligned, medium weight */
 .expenses-table th:nth-child(2),
 .expenses-table td:nth-child(2) {
   text-align: center;
@@ -148,44 +162,50 @@
   font-weight: 500;
 }
 
+/* Column 3: Date - Center aligned, bold for emphasis */
 .expenses-table th:nth-child(3),
 .expenses-table td:nth-child(3) {
   text-align: center;
   font-weight: 700;
 }
 
+/* Columns 4 & 5: Amount and Actions - Right aligned, monospace for numbers */
 .expenses-table th:nth-child(4),
 .expenses-table td:nth-child(4),
 .expenses-table th:nth-child(5),
 .expenses-table td:nth-child(5) {
   text-align: right;
-  font-family: monospace;
+  font-family: monospace; /* Monospace font for consistent number alignment */
   color: #000000;
   font-weight: 600;
 }
 
+/*Table Row Interactions: smooth transitions for row hover effects */
 .expenses-table tbody tr {
   transition: background-color 0.2s ease, box-shadow 0.2s ease;
 }
 
+/* Hover effect for better user interaction feedback */
 .expenses-table tbody tr:hover {
-  background-color: #f4f9ff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  background-color: #f4f9ff; /* Light blue background on hover */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); /* Subtle shadow for depth */
 }
 
+/* Ensure actions cell doesn't interfere with row hover */
 .expenses-table tbody tr:hover .actions-cell {
   background-color: transparent;
 }
 
-/* קטגוריות */
+/* Base styling for all category badges */
 td[class^="category-"] {
   font-weight: bold;
-  padding: 6px 10px;
-  border-radius: 8px;
+  padding: 6px 10px; /* Compact padding for badge appearance */
+  border-radius: 8px; /* Rounded corners */
   text-align: center;
-  white-space: nowrap;
+  white-space: nowrap; /* Prevent text wrapping */
 }
 
+/* Each category has a unique color for easy visual identification */
 .category-food-and-drinks {
   color: #60a5fa;
 }
@@ -214,26 +234,29 @@ td[class^="category-"] {
   color: #14b8a6;
 }
 
-/* Small dots menu styling */
+/* Actions column styling for the three-dots menu */
 .expenses-table th:nth-child(6),
 .expenses-table td:nth-child(6) {
   text-align: center;
-  width: 60px;
-  padding: 8px !important;
+  width: 60px; /* Fixed width for actions column */
+  padding: 8px !important; /* Override default padding */
 }
 
+/* Container for the actions menu */
 .actions-cell {
   position: relative;
   background-color: transparent !important;
-  isolation: isolate;
+  isolation: isolate; /* Create new stacking context for z-index */
 }
 
+/* Wrapper for the menu button and dropdown */
 .menu-container {
   position: relative;
   display: inline-block;
-  isolation: isolate;
+  isolation: isolate; /* Prevent z-index conflicts */
 }
 
+/* Three-dots menu button */
 .menu-button {
   background: transparent;
   border: none;
@@ -241,7 +264,7 @@ td[class^="category-"] {
   color: #9ca3af;
   cursor: pointer;
   padding: 4px;
-  border-radius: 50%;
+  border-radius: 50%; /* Circle */
   width: 24px;
   height: 24px;
   display: flex;
@@ -249,72 +272,77 @@ td[class^="category-"] {
   justify-content: center;
   line-height: 1;
   position: relative;
-  z-index: 100;
-  transition: none;
+  z-index: 100; /* High z-index to stay above other elements */
+  transition: none; /* No transition for immediate response */
 }
 
 .menu-button:hover {
-  background-color: #f3f4f6;
-  color: #6b7280;
+  background-color: #f3f4f6; /* Light gray background on hover */
+  color: #6b7280; /* Darker gray text on hover */
 }
 
 .menu-button.active {
-  background-color: #e5e7eb;
-  color: #374151;
+  background-color: #e5e7eb; 
+  color: #374151; 
 }
 
+/* Dropdown menu that appears when clicking the three-dots button */
 .menu-dropdown {
   position: absolute;
-  top: 100%;
-  right: 0;
+  top: 100%; /* Position below the button */
+  right: 0; /* Align to the right edge */
   background: white;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  z-index: 99999;
-  min-width: 120px;
-  overflow: visible;
-  transform: scale(0.8);
-  opacity: 0;
-  transition: all 0.15s ease;
-  transform-origin: top right;
-  margin-top: 4px;
-  backdrop-filter: blur(0px);
+  border: 1px solid #d1d5db; /* Light gray border */
+  border-radius: 6px; /* Rounded corners */
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  z-index: 99999; /* Very high z-index to appear above everything */
+  min-width: 120px; /* Minimum width for readability */
+  overflow: visible; /* Allow content to extend beyond bounds */
+  transform: scale(0.8); /* Start smaller for animation */
+  opacity: 0; /* Start invisible */
+  transition: all 0.15s ease; /* Smooth animation */
+  transform-origin: top right; /* Scale from top-right corner */
+  margin-top: 4px; /* Small gap from button */
+  backdrop-filter: blur(0px); /* No blur effect */
 }
 
+/* Open state of the dropdown */
 .menu-dropdown.open {
-  transform: scale(1);
-  opacity: 1;
+  transform: scale(1); /* Full size when open */
+  opacity: 1; /* Fully visible when open */
 }
 
+/* Individual menu items (Change Category, Delete) */
 .menu-dropdown .menu-item {
   display: flex;
   width: 100%;
-  padding: 8px 12px;
+  padding: 8px 12px; /* Comfortable padding for clickability */
   text-align: left;
   background: white;
   border: none;
   color: #374151;
   font-size: 13px;
   cursor: pointer;
-  transition: background-color 0.15s ease;
+  transition: background-color 0.15s ease; /* Smooth hover transition */
   align-items: center;
-  gap: 8px;
-  white-space: nowrap;
-  min-height: 32px;
+  gap: 8px; /* Space between icon and text */
+  white-space: nowrap; /* Prevent text wrapping */
+  min-height: 32px; /* Minimum height for easy clicking */
   position: relative;
   z-index: 1;
 }
 
+/* Hover effect for menu items */
 .menu-dropdown .menu-item:hover {
   background-color: #f9fafb;
 }
 
+/* Special styling for delete/remove actions */
 .menu-dropdown .menu-item.delete-item {
-  color: #dc2626;
+  color: #dc2626; /* Red color for destructive actions */
 }
 
 .menu-dropdown .menu-item.delete-item:hover {
-  background-color: #fef2f2;
-  color: #b91c1c;
+  background-color: #fef2f2; /* Light red background on hover */
+  color: #b91c1c; /* Darker red text on hover */
 }
