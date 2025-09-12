@@ -49,8 +49,6 @@ def handle_signup(data):
         'lastName': data['lastName'],
         'email': data['email'],
         'password': data['password'],
-        'expenses': [],
-        'incomes': []
     })
     
     return jsonify({'message': 'Signup successful'}), 201
