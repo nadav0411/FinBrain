@@ -1,3 +1,5 @@
+/* AllExpenses.jsx */
+
 import React, { useState, useEffect } from 'react';
 import './AllExpenses.css';
 import AddExpenseModal from './AddExpenseModal';
