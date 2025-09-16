@@ -220,7 +220,7 @@ def handle_get_expenses_for_dashboard(chart, currency, months, session_id):
         return jsonify({'message': 'User not found'}), 404
     
     # Check if the chart is valid
-    if chart not in ['bar', 'pie']:
+    if chart not in ['category_breakdown', 'monthly_comparison']:
         return jsonify({'message': 'Invalid chart'}), 400
     
     # Check if the currency is valid
@@ -231,6 +231,10 @@ def handle_get_expenses_for_dashboard(chart, currency, months, session_id):
     for month in months:
         if not re.match(r'^\d{4}-\d{2}$', month):
             return jsonify({'message': 'Invalid month'}), 400
+            
+    # Limit selection to at most 12 months
+    if len(months) > 12:
+        return jsonify({'message': 'Too many months selected. Maximum is 12.'}), 400
     
     # Get the user ID
     user_id = user['_id']

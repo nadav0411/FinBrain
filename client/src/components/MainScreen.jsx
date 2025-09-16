@@ -22,6 +22,7 @@ function MainScreen() {
   const getPageTitle = () => {
     switch (view) {
       case 'expenses': return 'Expenses';
+      case 'comingsoon': return 'Coming Soon';
       case 'settings': return 'Settings';
       default: return 'Dashboard';
     }
@@ -35,6 +36,24 @@ function MainScreen() {
     switch (view) {
       case 'expenses':
         return <AllExpenses />;
+      case 'comingsoon':
+        return (
+          <div style={{
+            background: '#ffffff',
+            borderRadius: '12px',
+            padding: '24px',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.06)'
+          }}>
+            <h3 style={{ marginTop: 0 }}>🚧 Stay Tuned!</h3>
+            <p style={{ margin: 0, color: '#475569' }}>
+              Always working on something new. See my latest journey on LinkedIn.
+              {' '}
+              <a href="https://www.linkedin.com/in/nadav-eshed-b32792363" target="_blank" rel="noopener noreferrer">
+                www.linkedin.com/in/nadav-eshed-b32792363
+              </a>
+            </p>
+          </div>
+        );
       case 'settings':
         return <h1>⚙️ Settings Page</h1>;
       default:
@@ -55,11 +74,36 @@ function MainScreen() {
           <button className={`menu-item ${view === 'expenses' ? 'active' : ''}`} onClick={() => setView('expenses')}>
             💸 All Expenses
           </button>
+          <button className={`menu-item ${view === 'comingsoon' ? 'active' : ''}`} onClick={() => setView('comingsoon')}>
+            🛠️ Coming Soon
+          </button>
           <button className={`menu-item ${view === 'settings' ? 'active' : ''}`} onClick={() => setView('settings')}>
             ⚙️ Settings
           </button>
-          {/* Logout button that refreshes the page to clear any stored data */}
-          <button className="menu-item" onClick={() => window.location.reload()}>
+          {/* Logout button */}
+          <button
+            className="menu-item"
+            onClick={async () => {
+              try {
+                const sessionId = localStorage.getItem('session_id');
+                if (sessionId) {
+                  await fetch(`${import.meta.env.VITE_API_URL}/logout`, {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json',
+                      'Session-ID': sessionId
+                    }
+                  });
+                }
+              } catch (e) {
+                // ignore
+              } finally {
+                localStorage.removeItem('session_id');
+                localStorage.removeItem('user_name');
+                window.location.reload();
+              }
+            }}
+          >
             🚪 Logout
           </button>
         </nav>

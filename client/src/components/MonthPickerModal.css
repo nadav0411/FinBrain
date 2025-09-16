@@ -176,6 +176,17 @@
   background-color: #1676d6;
 }
 
+/* Disabled state */
+.apply-button[disabled], .apply-button[aria-disabled="true"] {
+  background-color: #e5e7eb;
+  color: #9ca3af;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+.apply-button[disabled]:hover, .apply-button[aria-disabled="true"]:hover {
+  background-color: #e5e7eb;
+}
+
 /* Keyframe animation for smooth modal entrance */
 @keyframes fadeIn {
   from { 

@@ -16,6 +16,11 @@ const Dashboard = () => {
   });
 
   const [showEmoji, setShowEmoji] = useState(false); // Controls currency change animation
+  const [showCompareModal, setShowCompareModal] = useState(false); // Controls Compare Graph modal
+  const [selectedCompareCategories, setSelectedCompareCategories] = useState(() => new Set());
+  const barButtonRef = useRef(null);
+  const compareButtonRef = useRef(null);
+  const [activePrimaryButton, setActivePrimaryButton] = useState('bar'); // 'bar' | 'compare'
   // Predefined expense categories - these match what the backend expects
   const categories = [
     "Food & Drinks",
@@ -35,7 +40,7 @@ const Dashboard = () => {
   const prevValuesRef = useRef({}); // Tracks previous values to detect changes
 
   // Constants - values that don't change during the component's lifecycle
-  const CHART_TYPE = "bar"; // Type of chart to display
+  const CHART_TYPE = "category_breakdown"; // Type of chart to display
   const barColors = ['blue', 'green', 'yellow', 'pink', 'purple', 'orange', 'teal']; // Colors for each category bar
   const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", 
                      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]; // Month names for display
@@ -119,6 +124,26 @@ const Dashboard = () => {
   // Get the correct currency symbol for display
   const currencySymbol = selectedCurrency === "ILS" ? "₪" : "$";
 
+  const allCategories = categories; // alias for readability in modal
+
+  const toggleCompareCategory = (category) => {
+    setSelectedCompareCategories(prev => {
+      const next = new Set(prev);
+      if (next.has(category)) next.delete(category); else next.add(category);
+      return next;
+    });
+  };
+
+  const handleApplyCompare = () => {
+    // Keep the chosen categories for later compare graph use
+    setShowCompareModal(false);
+    if (compareButtonRef.current) {
+      // Delay focus until after modal unmounts
+      setTimeout(() => compareButtonRef.current && compareButtonRef.current.focus(), 0);
+    }
+    setActivePrimaryButton('compare');
+  };
+
   return (
     <div className="dashboard-container">
       {/* Main header section with total expenses and controls */}
@@ -150,8 +175,20 @@ const Dashboard = () => {
             📅 Select Date Range
           </button>
 
-          <button className="dashboard-button">
-            📊 Bar Graph
+          <button
+            ref={compareButtonRef}
+            className={`dashboard-button ${activePrimaryButton === 'compare' ? 'active' : ''}`}
+            onClick={() => { setShowCompareModal(true); }}
+          >
+            📈 Monthly Comparison
+          </button>
+
+          <button
+            ref={barButtonRef}
+            className={`dashboard-button ${activePrimaryButton === 'bar' ? 'active' : ''}`}
+            onClick={() => { setActivePrimaryButton('bar'); if (barButtonRef.current) barButtonRef.current.focus(); }}
+          >
+            🧩 Category Breakdown
           </button>
 
           {/* Currency toggle button with animation */}
@@ -168,6 +205,41 @@ const Dashboard = () => {
           onClose={() => setShowMonthPicker(false)}
           onApply={(months) => setSelectedMonths(months)}
         />
+      )}
+
+      {showCompareModal && (
+        <div className="modal-overlay" onClick={() => setShowCompareModal(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3 className="modal-title">Choose Categories to Compare</h3>
+              <button className="modal-close" onClick={() => setShowCompareModal(false)}>✕</button>
+            </div>
+            <div className="modal-body">
+              <div className="category-grid">
+                {allCategories.map((cat) => (
+                  <button
+                    key={cat}
+                    className={`category-tile ${selectedCompareCategories.has(cat) ? 'current' : ''}`}
+                    onClick={() => toggleCompareCategory(cat)}
+                  >
+                    {cat}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="modal-footer">
+              <button className="modal-button" onClick={() => setShowCompareModal(false)}>Cancel</button>
+              <button
+                className="modal-button"
+                onClick={handleApplyCompare}
+                disabled={selectedCompareCategories.size === 0}
+                aria-disabled={selectedCompareCategories.size === 0}
+              >
+                Done
+              </button>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* Bar chart visualization section */}

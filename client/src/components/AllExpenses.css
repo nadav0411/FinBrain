@@ -327,6 +327,7 @@
   border-top: 1px solid #eef2f7;
   display: flex;
   justify-content: flex-end;
+  gap: 10px; /* Add a little space between action buttons */
 }
 
 .modal-button {

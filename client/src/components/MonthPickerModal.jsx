@@ -19,7 +19,7 @@ function MonthPickerModal({ onClose, onApply }) {
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
   const [selected, setSelected] = useState(new Set());
 
-  // Toggle month selection with 15 month limit
+  // Toggle month selection (no popup when exceeding 12; Apply will be disabled)
   const toggleMonth = (year, monthIndex) => {
     const key = `${year}-${monthIndex}`;
     const updated = new Set(selected);
@@ -27,10 +27,6 @@ function MonthPickerModal({ onClose, onApply }) {
     if (updated.has(key)) {
       updated.delete(key); // Remove if already selected
     } else {
-      if (updated.size >= 15) {
-        alert('Maximum 15 months can be selected');
-        return;
-      }
       updated.add(key); // Add if not selected and under limit
     }
     
@@ -111,9 +107,14 @@ function MonthPickerModal({ onClose, onApply }) {
           {/* Footer with selection info and apply button */}
           <div className="calendar-footer">
             <div className="selection-info">
-              <span className="selection-count">
-                {selected.size}/15 months selected
+              <span className="selection-count" style={{ color: selected.size > 12 ? '#b91c1c' : undefined }}>
+                {selected.size}/12 months selected
               </span>
+              {selected.size > 12 && (
+                <div className="selected-preview" style={{ color: '#b91c1c' }}>
+                  Reduce selection to 12 months or fewer to apply.
+                </div>
+              )}
               {/* Show selected months preview when any are selected */}
               {selected.size > 0 && (
                 <div className="selected-preview">
@@ -121,12 +122,16 @@ function MonthPickerModal({ onClose, onApply }) {
                 </div>
               )}
             </div>
-            {/* Apply button only shows when months are selected */}
-            {selected.size > 0 && (
-              <button className="apply-button" onClick={handleApply}>
-                Apply
-              </button>
-            )}
+            {/* Apply button is always visible but disabled when none or over limit */}
+            <button
+              className="apply-button"
+              onClick={handleApply}
+              disabled={selected.size === 0 || selected.size > 12}
+              aria-disabled={selected.size === 0 || selected.size > 12}
+              title={selected.size > 12 ? 'Select up to 12 months' : undefined}
+            >
+              Apply
+            </button>
           </div>
         </div>
       </div>

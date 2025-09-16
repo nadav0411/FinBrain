@@ -2,6 +2,8 @@
 
 from db import users_collection
 from flask import jsonify
+from datetime import datetime, timedelta
+from threading import Thread, Event
 import re
 import uuid
 
@@ -9,6 +11,35 @@ import uuid
 # This is a dictionary that will store the connected sessions
 # The key is the session ID and the value is the user's email
 connected_sessions = {}
+
+# Track last activity per session for expiry handling
+last_seen_sessions = {}
+
+# Session expiry in minutes (logout from the client after 1.5 minutes of inactivity / heartbeat)
+SESSION_TTL_MINUTES = 1.5
+
+# Sweep interval in seconds (check the dictionary for expired sessions every 60 seconds)
+SWEEP_INTERVAL_SECONDS = 60
+
+# This is used to stop the sweeper
+sweeper_stop_event = Event()
+
+
+def get_now_utc():
+    """
+    Get the current UTC time
+    """
+    return datetime.utcnow()
+
+
+def is_session_expired(session_id):
+    """
+    Check if the session is expired
+    """
+    last_seen = last_seen_sessions.get(session_id)
+    if last_seen is None:
+        return False 
+    return get_now_utc() - last_seen > timedelta(minutes=SESSION_TTL_MINUTES)
 
 
 def handle_signup(data):
@@ -81,6 +112,7 @@ def handle_login(data):
     # Create a session ID and store it in the dictionary
     session_id = str(uuid.uuid4())
     connected_sessions[session_id] = email
+    last_seen_sessions[session_id] = get_now_utc()
 
     # Get the name of the user
     name = f"{user['firstName']}"
@@ -94,4 +126,91 @@ def get_email_from_session_id(session_id):
     This function is called when the user wants to get their email from the session ID
     It returns the email from the dictionary
     """
-    return connected_sessions.get(session_id)
+    # Check expiry
+    if is_session_expired(session_id):
+        connected_sessions.pop(session_id, None)
+        last_seen_sessions.pop(session_id, None)
+        return None
+    email = connected_sessions.get(session_id)
+    # Update last seen on the authenticated user
+    if email:
+        last_seen_sessions[session_id] = get_now_utc()
+    return email
+
+
+def handle_logout(session_id):
+    """
+    Logout function
+    This function is called when the user wants to logout from their account
+    It removes the session ID from the dictionary
+    """
+    if not session_id:
+        return jsonify({'message': 'Missing session_id'}), 400
+    
+    # Remove the session if it exists (no error if it doesn't)
+    removed = connected_sessions.pop(session_id, None)
+    last_seen_sessions.pop(session_id, None)
+
+    # Return success regardless of whether it existed
+    return jsonify({'message': 'Logout successful', 'revoked': bool(removed)}), 200
+
+
+def handle_heartbeat(session_id):
+    """
+    Update session last_seen timestamp to keep it alive.
+    """
+    # Check if the session ID is present
+    if not session_id:
+        return jsonify({'message': 'Missing session_id'}), 400
+    # Check if the session ID is in the dictionary
+    if session_id not in connected_sessions:
+        return jsonify({'message': 'No such session', 'active': False}), 200
+    # Check if the session is expired
+    if is_session_expired(session_id):
+        connected_sessions.pop(session_id, None)
+        last_seen_sessions.pop(session_id, None)
+        return jsonify({'message': 'Session expired', 'active': False}), 200
+    # Update the last seen timestamp
+    last_seen_sessions[session_id] = get_now_utc()
+    return jsonify({'message': 'Heartbeat ok', 'active': True, 'ttl_minutes': SESSION_TTL_MINUTES}), 200
+
+
+def sweep_expired_sessions_loop():
+    """
+    Background loop to remove expired sessions periodically.
+    This function is called when the user wants to sweep the expired sessions
+    It removes the expired sessions from the dictionary
+    """
+    while not sweeper_stop_event.is_set():
+        try:
+            now = get_now_utc()
+            expired = []
+            for session_id, last_seen in list(last_seen_sessions.items()):
+                # Check if the session is expired
+                if now - last_seen > timedelta(minutes=SESSION_TTL_MINUTES):
+                    expired.append(session_id)
+            for session_id in expired:
+                # Remove the session from the dictionary (if expired)
+                connected_sessions.pop(session_id, None)
+                last_seen_sessions.pop(session_id, None)
+        except Exception:
+            pass
+        # Wait for the next sweep
+        sweeper_stop_event.wait(SWEEP_INTERVAL_SECONDS)
+        print(now.strftime("%H:%M:%S"))
+        print(f"[sweeper] sessions: {connected_sessions}\nnumber of sessions: {len(connected_sessions)}\n")
+        print(f"[sweeper] last seen sessions: {last_seen_sessions}\nnumber of last seen sessions: {len(last_seen_sessions)}\n")
+
+
+def start_session_sweeper():
+    """
+    Start the session sweeper
+    This function is called when the server wants to start the session sweeper
+    It starts the thread that will check the dictionary for expired sessions every 60 seconds
+    """
+    thread = Thread(target=sweep_expired_sessions_loop, name="session-sweeper", daemon=True)
+    thread.start()
+
+
+# Start sweeper when module loads
+start_session_sweeper()
