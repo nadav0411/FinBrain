@@ -50,6 +50,318 @@
   text-decoration: underline; /* Underline for clear interaction */
 }
 
+/* Filter button styles to match sort */
+.filter-btn {
+  background-color: #e6f0ff;
+  color: #2d4c74;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: background-color 0.2s ease, transform 0.2s ease, color 0.2s ease;
+}
+
+.filter-btn:hover {
+  background-color: #d4e7ff;
+  color: #1f3756;
+  transform: translateY(-1px);
+}
+
+.filter-btn:active {
+  transform: translateY(0);
+}
+
+.filter-btn:focus-visible {
+  outline: 2px solid #4da3ff;
+  outline-offset: 2px;
+}
+
+/* Small numeric badge for active filter count */
+.filter-badge {
+  background: #4da3ff;
+  color: white;
+  border-radius: 9999px;
+  font-size: 11px;
+  line-height: 1;
+  padding: 3px 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Inputs inside filter dropdown */
+.filter-input {
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  padding: 6px 8px;
+  font-size: 13px;
+  outline: none;
+}
+
+.filter-input:focus {
+  border-color: #4da3ff;
+  box-shadow: 0 0 0 3px rgba(77, 163, 255, 0.2);
+}
+
+/* Ensure the filter menu aligns and uses the same dropdown base */
+.filter-menu-container {
+  position: relative;
+}
+
+.filter-menu-container .menu-dropdown {
+  right: 0;
+  min-width: 260px;
+}
+
+/* Filters dropdown sections */
+.filter-section {
+  padding: 6px 8px;
+}
+
+.filter-section-title {
+  font-size: 12px;
+  color: #6b7280;
+  padding: 4px 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.filter-empty {
+  padding: 6px;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.filter-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 6px;
+  cursor: pointer;
+}
+
+.filter-row-label {
+  font-size: 13px;
+  color: #374151;
+}
+
+.filter-input--small {
+  width: 90px;
+}
+
+.filter-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px;
+}
+
+/* Sort button styles aligned with the app's look */
+.sort-btn {
+  background-color: #e6f0ff; /* Match month pill */
+  color: #2d4c74;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: background-color 0.2s ease, transform 0.2s ease, color 0.2s ease;
+}
+
+.sort-btn:hover {
+  background-color: #d4e7ff;
+  color: #1f3756;
+  transform: translateY(-1px);
+}
+
+.sort-btn:active {
+  transform: translateY(0);
+}
+
+.sort-btn:focus-visible {
+  outline: 2px solid #4da3ff;
+  outline-offset: 2px;
+}
+
+/* Ensure the sort menu layers nicely and aligns to the right */
+.sort-menu-container {
+  position: relative;
+}
+
+.sort-menu-container .menu-dropdown {
+  right: 0;
+  min-width: 220px; /* Wider to fit labels */
+  padding: 4px; /* Light inner spacing */
+}
+
+.sort-menu-container .menu-dropdown .menu-item {
+  border-radius: 6px;
+}
+
+/* Divider styling inside dropdowns */
+.menu-dropdown hr {
+  border: none;
+  height: 1px;
+  background: #eceff4;
+  margin: 6px 4px; /* Consistent spacing inside dropdown */
+}
+
+/* Category picker styles inside row menu */
+.category-picker {
+  padding: 8px;
+  min-width: 220px;
+}
+
+.category-title {
+  font-size: 12px;
+  color: #6b7280;
+  padding: 2px 2px 8px 2px;
+}
+
+.category-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.category-chip {
+  border: 1px solid #d1d5db;
+  background: #f8fafc;
+  color: #1f2937;
+  border-radius: 9999px;
+  padding: 6px 10px;
+  font-size: 12px;
+  cursor: pointer;
+  text-align: center;
+  transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+}
+
+.category-chip:hover {
+  background: #eef4ff;
+  border-color: #c7d2fe;
+  transform: translateY(-1px);
+}
+
+.category-chip:focus-visible {
+  outline: 2px solid #4da3ff;
+  outline-offset: 2px;
+}
+
+.category-actions {
+  margin-top: 10px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.category-back {
+  background: transparent;
+  border: none;
+  color: #4a6fa5;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 6px 8px;
+}
+
+.category-back:hover {
+  text-decoration: underline;
+}
+
+/* Centered modal base */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(17, 24, 39, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100000;
+}
+
+.modal-content {
+  background: #ffffff;
+  border-radius: 12px;
+  width: min(520px, 92vw);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.18), 0 6px 18px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid #eef2f7;
+}
+
+.modal-title {
+  margin: 0;
+  font-size: 16px;
+  color: #1f2937;
+}
+
+.modal-close {
+  background: transparent;
+  border: none;
+  font-size: 16px;
+  color: #6b7280;
+  cursor: pointer;
+}
+
+.modal-close:hover { color: #374151; }
+
+.modal-body { padding: 16px; }
+
+.modal-footer {
+  padding: 12px 16px;
+  border-top: 1px solid #eef2f7;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.modal-button {
+  background: #e6f0ff;
+  color: #2d4c74;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.modal-button:hover { background: #d4e7ff; }
+
+/* Category tiles grid */
+.category-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.category-tile {
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 12px;
+  text-align: center;
+  background: #f9fbff;
+  color: #1f2937;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+}
+
+.category-tile:hover { background: #cad7f0; border-color: #c7d2fe; transform: translateY(-5px); }
+.category-tile.current { background: #b8bcc2; border-color: #ffffff; font-weight: 600; }
+
 /* Interactive month navigation with arrows and current month display */
 .month-picker {
   display: flex;
@@ -293,10 +605,10 @@ td[class^="category-"] {
   position: absolute;
   top: 100%; /* Position below the button */
   right: 0; /* Align to the right edge */
-  background: white;
-  border: 1px solid #d1d5db; /* Light gray border */
+  background: rgb(255, 255, 255); 
+  border: 1px solid #e5e7eb; /* Softer border */
   border-radius: 6px; /* Rounded corners */
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  box-shadow: 0 10px 24px rgba(17, 24, 39, 0.12), 0 2px 6px rgba(17, 24, 39, 0.06);
   z-index: 99999; /* Very high z-index to appear above everything */
   min-width: 120px; /* Minimum width for readability */
   overflow: visible; /* Allow content to extend beyond bounds */
@@ -306,19 +618,24 @@ td[class^="category-"] {
   transform-origin: top right; /* Scale from top-right corner */
   margin-top: 4px; /* Small gap from button */
   backdrop-filter: blur(0px); /* No blur effect */
+  pointer-events: none; /* Prevent interaction when hidden */
+  visibility: hidden; /* Hide from a11y and pointer hit-testing */
+  padding: 6px; /* Inner padding for breathing room */
 }
 
 /* Open state of the dropdown */
 .menu-dropdown.open {
   transform: scale(1); /* Full size when open */
   opacity: 1; /* Fully visible when open */
+  pointer-events: auto; /* Enable interaction when open */
+  visibility: visible; /* Allow pointer hit-testing */
 }
 
 /* Individual menu items (Change Category, Delete) */
 .menu-dropdown .menu-item {
   display: flex;
   width: 100%;
-  padding: 8px 12px; /* Comfortable padding for clickability */
+  padding: 10px 12px; /* Comfortable padding for clickability */
   text-align: left;
   background: white;
   border: none;
@@ -332,11 +649,12 @@ td[class^="category-"] {
   min-height: 32px; /* Minimum height for easy clicking */
   position: relative;
   z-index: 1;
+  border-radius: 6px; /* Softer hover background corners */
 }
 
 /* Hover effect for menu items */
 .menu-dropdown .menu-item:hover {
-  background-color: #f9fafb;
+  background-color: #f3f6fb;
 }
 
 /* Special styling for delete/remove actions */

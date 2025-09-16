@@ -10,7 +10,6 @@ import logicexpenses as logic_expenses
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
 
-
 # Signup route - This is where the user will sign up for an account
 @app.route('/signup', methods=['POST'])
 def signup():
@@ -51,6 +50,23 @@ def expenses_for_dashboard():
     session_id = request.headers.get('Session-ID')
     result = logic_expenses.handle_get_expenses_for_dashboard(chart, currency, months, session_id)
     return result
+
+# Update expense category route - This is where the user will update the category of an expense
+@app.route('/update_expense_category', methods=['POST'])
+def update_expense_category():
+    data = request.get_json()
+    session_id = request.headers.get('Session-ID')
+    result = logic_expenses.handle_update_expense_category(data, session_id)
+    return result
+
+# Delete expense route - This is where the user will delete an expense from their account
+@app.route('/delete_expense', methods=['POST'])
+def delete_expense():
+    data = request.get_json()
+    session_id = request.headers.get('Session-ID')
+    result = logic_expenses.handle_delete_expense(data, session_id)
+    return result
+
 
 if __name__ == '__main__':
     app.run(debug=True)

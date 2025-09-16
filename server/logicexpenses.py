@@ -7,6 +7,7 @@ from datetime import datetime
 import requests
 import re
 from predictmodelloader import model, vectorizer
+import pandas as pd
 
 
 
@@ -58,6 +59,10 @@ def handle_add_expense(data, session_id):
     It then checks if the currency is valid and if the expense is valid
     It then adds the expense to the database
     """
+    # Check if session ID is valid
+    if not session_id:
+        return jsonify({'message': 'Session ID is required'}), 400
+
     # Get the email from the session ID
     email = get_email_from_session_id(session_id)
     if not email:
@@ -144,15 +149,29 @@ def handle_add_expense(data, session_id):
 
 
 def handle_get_expenses(month, year, session_id):
+    """    
+    This function is called when the user wants to get their expenses from their account
+    It gets the user from the session ID, checks if the month and year are valid,
+    calculates the start and end dates for the month, gets the expenses for the month,
+    converts the ObjectId to a string and removes the user_id field, and returns the expenses
+    """
+    # Check if session ID is valid
+    if not session_id:
+        return jsonify({'message': 'Session ID is required'}), 400
+
     # Get the user from the session ID
     email = get_email_from_session_id(session_id)
     user = users_collection.find_one({'email': email})
     if not user:
         return jsonify({'message': 'User not found'}), 404
-    
-    # Check if the month and year are valid
+
+    # Check if the month and year are valid (None or not int)
     if month is None or year is None:
         return jsonify({"error": "Missing month or year"}), 400
+    
+    # Check if the month and year are valid
+    if month < 1 or month > 12 or year < 2015 or year > 2027:
+        return jsonify({"error": "Invalid month or year"}), 400
     
     # Calculate the start and end dates for the month
     try:
@@ -190,6 +209,10 @@ def handle_get_expenses_for_dashboard(chart, currency, months, session_id):
     sums the expenses for the categories, calculates the total amount, calculates the percentage for each category,
     and returns the result
     """
+    # Check if session ID is valid
+    if not session_id:
+        return jsonify({'message': 'Session ID is required'}), 400
+
     # Get the user from the session ID
     email = get_email_from_session_id(session_id)
     user = users_collection.find_one({'email': email})
@@ -268,8 +291,118 @@ def handle_get_expenses_for_dashboard(chart, currency, months, session_id):
         'data': result
     }), 200
 
+
+def handle_update_expense_category(data, session_id):
+    """
+    """
+    # Check if session ID is valid
+    if not session_id:
+        return jsonify({'message': 'Session ID is required'}), 400
     
-
-
-
+    # Get the user from the session ID
+    email = get_email_from_session_id(session_id)
+    user = users_collection.find_one({'email': email})
+    if not user:
+        return jsonify({'message': 'User not found'}), 404
     
+    # Get the serial number from the data and check if it is valid
+    serial_number = data.get('serial_number')
+    if not serial_number:
+        return jsonify({'message': 'Serial number is required'}), 400
+    
+    # Get the current category
+    current_category_client = data.get('current_category')
+    if not current_category_client:
+        return jsonify({'message': 'Current category is required'}), 400
+
+    # Get the new category from the data and check if it is valid
+    new_category = data.get('new_category')
+    if not new_category:
+        return jsonify({'message': 'New category is required'}), 400
+    
+    # Get the current category of the expense
+    current_category_db = expenses_collection.find_one({
+        'user_id': user['_id'],
+        'serial_number': serial_number
+    })
+
+    if not current_category_db:
+        return jsonify({'message': 'Expense not found'}), 404
+
+    # Check if the current category in the database is the same as the current category from the client
+    if current_category_db.get('category') != current_category_client:
+        return jsonify({'message': 'Category is already updated'}), 400
+    
+    # List of categories
+    all_categories = [
+        'Food & Drinks',
+        'Housing & Bills',
+        'Transportation',
+        'Education & Personal Growth',
+        'Health & Essentials',
+        'Leisure & Gifts',
+        'Other'
+    ]
+
+    # Check if the new category is in the list of categories
+    if new_category not in all_categories or new_category == current_category_db.get('category'):
+        return jsonify({'message': 'Invalid category'}), 400
+
+    # Update the category of the expense
+    result = expenses_collection.update_one({
+        'user_id': user['_id'],
+        'serial_number': serial_number
+    }, {
+        '$set': {
+            'category': new_category
+        }
+    })
+
+    # Check if the expense was found
+    if result.matched_count == 0:
+        return jsonify({'message': 'Expense not found'}), 404
+    
+    # Get the title of the expense
+    expense_title = current_category_db.get('title')
+    
+    # Add the expense and the new category to user_feedback file to optimize the model
+    df = pd.read_csv('finbrain_model/user_feedback.csv')
+    new_row = pd.DataFrame([{'description': expense_title, 'category': new_category}])
+    df = pd.concat([df, new_row], ignore_index=True)
+    df.to_csv('finbrain_model/user_feedback.csv', index=False)
+
+    return jsonify({'message': 'Category updated', 'new_category': new_category}), 200
+
+
+def handle_delete_expense(data, session_id):
+    """
+    This function is called when the user wants to delete an expense from their account
+    It gets the user from the session ID, checks if the serial number is valid,
+    deletes the expense, and returns the result
+    """
+    # Check if session ID is valid
+    if not session_id:
+        return jsonify({'message': 'Session ID is required'}), 400
+    
+    # Get the user from the session ID
+    email = get_email_from_session_id(session_id)
+    user = users_collection.find_one({'email': email})
+    if not user:
+        return jsonify({'message': 'User not found'}), 404
+    
+    # Get the serial number from the data and check if it is valid
+    serial_number = data.get('serial_number')
+    if not serial_number:
+        return jsonify({'message': 'Serial number is required'}), 400
+    
+    # Delete the expense
+    result = expenses_collection.delete_one({
+        'user_id': user['_id'],
+        'serial_number': serial_number
+    })
+    
+    # Check if the expense was found
+    if result.deleted_count == 0:
+        return jsonify({'message': 'Expense not found'}), 404
+    
+    return jsonify({'message': 'Expense deleted', 'serial_number': serial_number}), 200
