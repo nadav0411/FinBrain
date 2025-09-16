@@ -200,7 +200,7 @@ def handle_get_expenses(month, year, session_id):
     return jsonify({"expenses": expenses}), 200
 
 
-def handle_get_expenses_for_dashboard(chart, currency, months, session_id):
+def handle_get_expenses_for_dashboard(chart, currency, months, categories, session_id):
     """
     This function is called when the user wants to get the expenses for the dashboard
     It gets the user from the session ID, checks if the chart and currency are valid,
@@ -236,11 +236,47 @@ def handle_get_expenses_for_dashboard(chart, currency, months, session_id):
     if len(months) > 12:
         return jsonify({'message': 'Too many months selected. Maximum is 12.'}), 400
     
+    # Check if the categories are not empty
+    if categories is None:
+        return jsonify({'message': 'Categories are required'}), 400
+    
+    # Check if the categories are valid
+    if len(categories) == 1:
+        if categories[0] not in ['Food & Drinks', 'Housing & Bills', 'Transportation', 'Education & Personal Growth', 'Health & Essentials', 'Leisure & Gifts', 'Other', 'All']:
+            return jsonify({'message': 'Invalid category'}), 400
+    else:
+        for category in categories:
+            if category not in ['Food & Drinks', 'Housing & Bills', 'Transportation', 'Education & Personal Growth', 'Health & Essentials', 'Leisure & Gifts', 'Other']:
+                return jsonify({'message': 'Invalid category'}), 400
+    
     # Get the user ID
     user_id = user['_id']
     # Get the month regexes
     month_regexes = [re.compile(f'^{month}') for month in months]
 
+    # Handle the category breakdown chart
+    if chart == 'category_breakdown':
+        result = handle_category_breakdown(month_regexes, user_id, currency)
+
+    # Handle the monthly comparison chart
+    elif chart == 'monthly_comparison':
+        result = handle_monthly_comparison(month_regexes, user_id, currency, categories, months)
+    
+    return jsonify({
+        'currency': currency,
+        'chart': chart,
+        'months': months,
+        'data': result
+    }), 200
+
+
+def handle_category_breakdown(month_regexes, user_id, currency):
+    """
+    This function is called when the user wants to get the category breakdown for the dashboard
+    It gets the expenses for the months, initializes the categories totals, sets the amount key,
+    sums the expenses for the categories, calculates the total amount, calculates the percentage for each category,
+    and returns the result
+    """
     # Get the expenses for the months
     expenses_cursor = expenses_collection.find({
         'user_id': user_id,
@@ -287,17 +323,56 @@ def handle_get_expenses_for_dashboard(chart, currency, months, session_id):
             'amount': round(amount, 2),
             'percentage': round(percentage, 2)
         })
+    
+    return result
 
-    return jsonify({
-        'currency': currency,
-        'chart': chart,
-        'months': months,
-        'data': result
-    }), 200
 
+def handle_monthly_comparison(month_regexes, user_id, currency, categories, months):
+   
+    # Get the expenses for the months and categories
+    expenses_cursor = expenses_collection.find({
+    'user_id': user_id,
+    'date': {'$in': month_regexes},
+    'category': {'$in': categories} 
+    })
+
+    # Initialize dictionary for monthly comparison
+    monthly_comparison = {}
+    for month in months:
+        monthly_comparison[month] = 0
+
+    # Set the amount key
+    amount_key = 'amount_ils'
+    if currency == 'USD':
+        amount_key = 'amount_usd'
+
+    # Sum the expenses for each month
+    for expense in expenses_cursor:
+        expense_date = expense['date']
+        # Extract month from full date (e.g., "2025-09-10" -> "2025-09")
+        expense_month = expense_date[:7]  # Take first 7 characters (YYYY-MM)
+        
+        if expense_month in monthly_comparison:
+            monthly_comparison[expense_month] += expense[amount_key]
+        else:
+            print(f"Warning: Expense month {expense_month} not found in monthly_comparison keys: {list(monthly_comparison.keys())}")
+    
+    result = []
+    # Add the month and amount to the result
+    for month, amount in monthly_comparison.items():
+        result.append({
+            'month': month,
+            'amount': amount
+        })
+
+    return result
 
 def handle_update_expense_category(data, session_id):
     """
+    This function is called when the user wants to update the category of an expense
+    It gets the user from the session ID, checks if the serial number is valid,
+    checks if the current category is valid, checks if the new category is valid,
+    updates the category of the expense, and returns the result
     """
     # Check if session ID is valid
     if not session_id:

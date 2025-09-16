@@ -54,8 +54,9 @@ def expenses_for_dashboard():
     chart = request.args.get('chart', type=str)
     currency = request.args.get('currency', type=str)
     months = request.args.getlist('months')
+    categories = request.args.getlist('categories')
     session_id = request.headers.get('Session-ID')
-    result = logic_expenses.handle_get_expenses_for_dashboard(chart, currency, months, session_id)
+    result = logic_expenses.handle_get_expenses_for_dashboard(chart, currency, months, categories, session_id)
     return result
 
 # Update expense category route - This is where the user will update the category of an expense
