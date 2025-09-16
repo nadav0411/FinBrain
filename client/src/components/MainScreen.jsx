@@ -22,7 +22,6 @@ function MainScreen() {
   const getPageTitle = () => {
     switch (view) {
       case 'expenses': return 'Expenses';
-      case 'coming': return 'Coming Soon';
       case 'settings': return 'Settings';
       default: return 'Dashboard';
     }
@@ -36,8 +35,6 @@ function MainScreen() {
     switch (view) {
       case 'expenses':
         return <AllExpenses />;
-      case 'coming':
-        return <h1>🛠️ Coming Soon</h1>;
       case 'settings':
         return <h1>⚙️ Settings Page</h1>;
       default:
@@ -57,9 +54,6 @@ function MainScreen() {
           </button>
           <button className={`menu-item ${view === 'expenses' ? 'active' : ''}`} onClick={() => setView('expenses')}>
             💸 All Expenses
-          </button>
-          <button className={`menu-item ${view === 'coming' ? 'active' : ''}`} onClick={() => setView('coming')}>
-            🛠️ Coming Soon
           </button>
           <button className={`menu-item ${view === 'settings' ? 'active' : ''}`} onClick={() => setView('settings')}>
             ⚙️ Settings
