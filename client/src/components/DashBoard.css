@@ -286,6 +286,13 @@
   .purple { background-color: #a78bfa; } 
   .orange { background-color: #fb923c; } 
   .teal   { background-color: #14b8a6; } 
+  /* Additional colors for monthly comparison (ensure 12 unique colors) */
+  .red    { background-color: #ef4444; }
+  .indigo { background-color: #6366f1; }
+  .cyan   { background-color: #06b6d4; }
+  .lime   { background-color: #84cc16; }
+  .amber  { background-color: #f59e0b; }
+  .rose   { background-color: #f43f5e; }
   
   /* Text colors that match the bar colors - for category names */
   .text-pink   { color: #be185d; } 
@@ -465,7 +472,6 @@
   }
 
   .comparison-bar-wrapper {
-    background-color: #e5e7eb;
     width: 100%;
     height: 300px;
     border-radius: 6px 6px 0 0;
@@ -480,7 +486,6 @@
     border-radius: 6px 6px 0 0;
     transition: height 0.6s ease;
     position: relative;
-    background: linear-gradient(180deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.1) 100%);
     min-height: 4px;
   }
 

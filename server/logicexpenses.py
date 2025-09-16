@@ -351,20 +351,24 @@ def handle_monthly_comparison(month_regexes, user_id, currency, categories, mont
         expense_date = expense['date']
         # Extract month from full date (e.g., "2025-09-10" -> "2025-09")
         expense_month = expense_date[:7]  # Take first 7 characters (YYYY-MM)
-        
-        if expense_month in monthly_comparison:
-            monthly_comparison[expense_month] += expense[amount_key]
-        else:
-            print(f"Warning: Expense month {expense_month} not found in monthly_comparison keys: {list(monthly_comparison.keys())}")
+        monthly_comparison[expense_month] += expense[amount_key]
+    
+    # Get the value of the month with the max amount
+    max_amount = max(monthly_comparison.values())
     
     result = []
     # Add the month and amount to the result
     for month, amount in monthly_comparison.items():
+        if max_amount > 0:
+            percentage = (amount / max_amount) * 100
+        else:
+            percentage = 0
         result.append({
             'month': month,
-            'amount': amount
+            'amount': round(amount, 2),
+            'percentage': round(percentage, 2)
         })
-
+    
     return result
 
 def handle_update_expense_category(data, session_id):

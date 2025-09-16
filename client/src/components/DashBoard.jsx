@@ -44,6 +44,7 @@ const Dashboard = () => {
   // Constants - values that don't change during the component's lifecycle
   const CHART_TYPE = "category_breakdown"; // Type of chart to display
   const barColors = ['blue', 'green', 'yellow', 'pink', 'purple', 'orange', 'teal']; // Colors for each category bar
+  const monthColors = ['blue', 'green', 'amber', 'purple', 'teal', 'rose', 'indigo', 'orange', 'cyan', 'lime', 'pink', 'red']; // 12 distinct colors for months
   const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", 
                      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]; // Month names for display
 
@@ -98,7 +99,7 @@ const Dashboard = () => {
       const serverData = data.data || [];
       const completeData = categories.map(category => {
         const existingItem = serverData.find(item => item.category === category);
-        return existingItem || { category, amount: 0 };
+        return existingItem || { category, amount: 0, percentage: 0 };
       });
       setChartData(completeData);
       setTotal(completeData.reduce((sum, item) => sum + item.amount, 0));
@@ -119,7 +120,15 @@ const Dashboard = () => {
         currency: selectedCurrency,
         months: selectedMonths
       };
-      fetchDashboardData(); // Fetch new data from server
+      // Always refresh the category breakdown
+      fetchDashboardData();
+
+      // If Monthly Comparison is active and there are applied categories,
+      // refresh it as well using the same categories with the new months
+      if (activePrimaryButton === 'compare' && previousCompareCategories && previousCompareCategories.size > 0) {
+        const appliedCategories = Array.from(previousCompareCategories);
+        fetchMonthlyComparison(appliedCategories);
+      }
     }
   }, [selectedCurrency, selectedMonths]); // This effect runs when these values change
 
@@ -157,6 +166,9 @@ const Dashboard = () => {
     await fetchChartData({ chartName: 'monthly_comparison', categoriesList: categoryList }, (data) => {
       console.log('Monthly comparison data received:', data);
       setMonthlyComparisonData(data);
+      // Client-side total: sum all returned monthly amounts
+      const sumTotal = (data?.data || []).reduce((acc, item) => acc + (item?.amount || 0), 0);
+      setTotal(sumTotal);
     });
   };
 
@@ -229,7 +241,14 @@ const Dashboard = () => {
           <button
             ref={barButtonRef}
             className={`dashboard-button ${activePrimaryButton === 'bar' ? 'active' : ''}`}
-            onClick={() => { setActivePrimaryButton('bar'); if (barButtonRef.current) barButtonRef.current.focus(); }}
+            onClick={() => { 
+              // Reset monthly comparison selections when leaving comparison view
+              setSelectedCompareCategories(new Set());
+              setPreviousCompareCategories(new Set());
+              setActivePrimaryButton('bar'); 
+              fetchDashboardData(); 
+              if (barButtonRef.current) barButtonRef.current.focus(); 
+            }}
           >
             🧩 Category Breakdown
           </button>
@@ -291,8 +310,8 @@ const Dashboard = () => {
           /* Category Breakdown Chart */
           <div className="bar-chart">
             {chartData.map((item, index) => {
-              // Calculate percentage of total for this category
-              const percent = total > 0 ? (item.amount / total) * 100 : 0;
+              // Use server-sent percentage instead of calculating locally
+              const percent = item.percentage || 0;
               // Assign a color to each category (cycles through the color array)
               const colorClass = barColors[index % barColors.length];
               return (
@@ -346,8 +365,8 @@ const Dashboard = () => {
                     const monthName = monthNames[monthDate.getMonth()];
                     const year = monthDate.getFullYear();
                     const totalAmount = monthData.amount;
-                    const maxAmount = Math.max(...monthlyComparisonData.data.map(m => m.amount));
-                    const percent = maxAmount > 0 ? (totalAmount / maxAmount) * 100 : 0;
+                    // Use server-sent percentage instead of calculating locally
+                    const percent = monthData.percentage || 0;
                     const colorClass = barColors[index % barColors.length];
                     
                     return (
