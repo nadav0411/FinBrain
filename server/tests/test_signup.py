@@ -1,12 +1,16 @@
+# test_signup.py
+
 from app import app
-from db import users_collection
+from db import users_collection, db
 import pytest
 
 
 # Clean the users collection before each test
 @pytest.fixture(autouse=True)
 def clean_users_collection():
-    users_collection.delete_many({})
+    # Check if the database is FINBRAIN or FINBRAINTEST to make sure we are using the correct database for the test
+    if db.name == 'FinBrainTest':
+        users_collection.delete_many({})
 
 
 def test_signup_creates_user():
@@ -150,7 +154,6 @@ def test_signup_fails_with_mismatched_passwords():
 
     # Check if the user was not created in the database
     assert users_collection.find_one({"email": "mismatch@user.com"}) is None
-
 
 
 def test_signup_fails_when_email_already_in_use():

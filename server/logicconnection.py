@@ -111,7 +111,7 @@ def handle_signup(data):
 def handle_login(data):
     """
     Login function
-    This function is called when the user wants to login to their account
+    This function is called when the user wants to login to his account
     It checks if the email and password are present and if the user exists
     It then checks if the password is correct
     If everything is correct, it returns a success message
@@ -123,24 +123,31 @@ def handle_login(data):
     if not email or not password:
         return jsonify({'message': 'Email and password are required'}), 400
     
-    # Check if the user exists
-    user = users_collection.find_one({'email': email})
-    if not user:
-        return jsonify({'message': 'User not found'}), 404
+    # Email checks (format and max length)
+    email_regex = re.compile(r'^[^@\s]+@[^@\s]+\.[^@\s]+$')
+    if len(email) > 254 or not email_regex.match(email):
+        return jsonify({'message': 'Invalid credentials'}), 401
     
-    # Check if the password is correct
-    if user['password'] != password:
-        return jsonify({'message': 'Incorrect password'}), 401
+    # Fetch user and validate credentials
+    try:
+        user = users_collection.find_one({'email': email})
+    except Exception:
+        return jsonify({'message': 'Login failed'}), 500
+
+    stored_password = (user or {}).get('password')
+    if not stored_password or stored_password != password:
+        # Use a single generic message to avoid account enumeration
+        return jsonify({'message': 'Invalid credentials'}), 401
     
     # Create a session ID and store it in the dictionary
     session_id = str(uuid.uuid4())
     connected_sessions[session_id] = email
     last_seen_sessions[session_id] = get_now_utc()
 
-    # Get the name of the user
-    name = f"{user['firstName']}"
+    # Only include the first name in the response
+    first_name = (user or {}).get('firstName') or ''
 
-    return jsonify({'message': 'Login successful', 'session_id': session_id, 'name': name}), 200
+    return jsonify({'message': 'Login successful', 'session_id': session_id, 'name': first_name}), 200
 
 
 def get_email_from_session_id(session_id):

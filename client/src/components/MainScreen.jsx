@@ -5,6 +5,7 @@ import './MainScreen.css';
 import AllExpenses from './AllExpenses';
 import logo from '../assets/logo.png'; 
 import Dashboard from './DashBoard';
+import Settings from './Settings';
 
 /**
  * MainScreen Component - The main layout component that handles navigation between different views
@@ -55,7 +56,7 @@ function MainScreen() {
           </div>
         );
       case 'settings':
-        return <h1>⚙️ Settings Page</h1>;
+        return <Settings />;
       default:
         return <Dashboard />;
     }
