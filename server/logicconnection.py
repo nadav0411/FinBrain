@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 from threading import Thread, Event
 import re
 import uuid
+from pymongo.errors import DuplicateKeyError
 
 
 # This is a dictionary that will store the connected sessions
@@ -46,42 +47,64 @@ def handle_signup(data):
     """
     Signup function
     This function is called when the user wants to signup for an account
-    It checks if all the required fields are present and if the name is valid,
-    the passwords match and if the email is already in use
-    It then creates the user in the database
+    It checks if all the required fields are present and does validation for the fields,
+    then creates the user in the database
     """
     required_fields = ['firstName', 'lastName', 'email', 'password', 'confirmPassword']
 
+    # Normalize and trim inputs
+    first_name = (data.get('firstName') or '').strip()
+    last_name = (data.get('lastName') or '').strip()
+    email = (data.get('email') or '').strip().lower()
+    password = data.get('password') or ''
+    confirm_password = data.get('confirmPassword') or ''
+
     # Check if all required fields are present
+    normalized = {
+        'firstName': first_name,
+        'lastName': last_name,
+        'email': email,
+        'password': password,
+        'confirmPassword': confirm_password,
+    }
     for field in required_fields:
-        if not data.get(field):
+        if not normalized.get(field):
             return jsonify({'message': f'Missing field {field}'}), 400
-    
-    # Check if the name is valid
-    name_regex = re.compile(r'^[A-Za-z\s]*$')
-    if not name_regex.match(data['firstName']) or not name_regex.match(data['lastName']):
+
+    # Check email format and length
+    email_regex = re.compile(r'^[^@\s]+@[^@\s]+\.[^@\s]+$')
+    if not email_regex.match(email) or len(email) > 254:
+        return jsonify({'message': 'Invalid email'}), 400
+
+    # Check names validation
+    name_regex = re.compile(r"^[A-Za-z\s\-']+$")
+    if not name_regex.match(first_name) or not name_regex.match(last_name):
         return jsonify({'message': 'Invalid name'}), 400
-    
-    # Check if the name length is within limits (40 characters max)
-    if len(data['firstName']) > 40 or len(data['lastName']) > 40:
+    if len(first_name) > 40 or len(last_name) > 40:
         return jsonify({'message': 'First name and last name must be 40 characters or less'}), 400
-    
-    # Check if the passwords match
-    if data.get('password') != data.get('confirmPassword'):
+
+    # Password checks
+    if password != confirm_password:
         return jsonify({'message': 'Passwords do not match'}), 400
-    
+
     # Check if the email is already in use
-    if users_collection.find_one({'email': data['email']}):
-        return jsonify({'message': 'Email already in use'}), 400
-    
+    if users_collection.find_one({'email': email}):
+        return jsonify({'message': 'Email already in use'}), 409
+
     # Create the user
-    users_collection.insert_one({
-        'firstName': data['firstName'],
-        'lastName': data['lastName'],
-        'email': data['email'],
-        'password': data['password'],
-    })
-    
+    try:
+        users_collection.insert_one({
+            'firstName': first_name,
+            'lastName': last_name,
+            'email': email,
+            'password': password,
+        })
+    # If there is any error, return an error message
+    except DuplicateKeyError:
+        return jsonify({'message': 'Email already in use'}), 409
+    except Exception:
+        return jsonify({'message': 'Signup failed'}), 500
+
     return jsonify({'message': 'Signup successful'}), 201
 
 
@@ -93,8 +116,8 @@ def handle_login(data):
     It then checks if the password is correct
     If everything is correct, it returns a success message
     """
-    email = data.get('email')
-    password = data.get('password')
+    email = (data.get('email') or '').strip().lower()
+    password = data.get('password') or ''
 
     # Check if the email and password are present
     if not email or not password:
