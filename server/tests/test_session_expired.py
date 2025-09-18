@@ -2,13 +2,13 @@
 
 
 import pytest
-from datetime import datetime, timedelta
+from datetime import timedelta
 import logicconnection as lc
 
 
 # Clean the last seen sessions before each test
 @pytest.fixture(autouse=True)
-def clean_users_collection():
+def clean_last_seen_sessions():
     lc.last_seen_sessions.clear()
 
 

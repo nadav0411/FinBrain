@@ -25,6 +25,13 @@ jobs:
           pip install -r requirements.txt
           pip install pytest
 
+      - name: Set up test environment
+        env:
+          TEST_MONGO_URI: ${{ secrets.TEST_MONGO_URI }}
+        run: |
+          echo "ENV=test" >> $GITHUB_ENV
+          echo "MONGO_URI=$TEST_MONGO_URI" >> $GITHUB_ENV
+
       - name: Run all tests
         run: |
           cd server

@@ -156,7 +156,7 @@ def get_email_from_session_id(session_id):
     This function is called when the user wants to get their email from the session ID
     It returns the email from the dictionary
     """
-    # Check expiry
+    # Check expiry of the session
     if is_session_expired(session_id):
         connected_sessions.pop(session_id, None)
         last_seen_sessions.pop(session_id, None)
