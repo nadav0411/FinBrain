@@ -156,15 +156,20 @@ def get_email_from_session_id(session_id):
     This function is called when the user wants to get their email from the session ID
     It returns the email from the dictionary
     """
-    # Check expiry of the session
-    if is_session_expired(session_id):
+    # Get current time once to avoid timing issues
+    now = get_now_utc()
+    
+    # Check expiry of the session using the same timestamp
+    last_seen = last_seen_sessions.get(session_id)
+    if last_seen is not None and now - last_seen >= timedelta(minutes=SESSION_TTL_MINUTES):
         connected_sessions.pop(session_id, None)
         last_seen_sessions.pop(session_id, None)
         return None
+    
     email = connected_sessions.get(session_id)
     # Update last seen on the authenticated user
     if email:
-        last_seen_sessions[session_id] = get_now_utc()
+        last_seen_sessions[session_id] = now
     return email
 
 
