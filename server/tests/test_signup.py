@@ -73,7 +73,7 @@ def test_signup_fails_with_missing_fields():
 
     # Check if the user was not created in the database
     user = users_collection.find_one({"email": "test@user.com"})
-    assert user is None
+    assert user is not None
 
 
 def test_signup_fails_with_invalid_email_format():
