@@ -2,7 +2,7 @@
 
 from db import users_collection
 from flask import jsonify
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from threading import Thread, Event
 import re
 import uuid
@@ -30,7 +30,7 @@ def get_now_utc():
     """
     Get the current UTC time
     """
-    return datetime.utcnow()
+    return datetime.now(timezone.utc)
 
 
 def is_session_expired(session_id):
@@ -40,7 +40,7 @@ def is_session_expired(session_id):
     last_seen = last_seen_sessions.get(session_id)
     if last_seen is None:
         return False 
-    return get_now_utc() - last_seen > timedelta(minutes=SESSION_TTL_MINUTES)
+    return get_now_utc() - last_seen >= timedelta(minutes=SESSION_TTL_MINUTES)
 
 
 def handle_signup(data):
@@ -217,7 +217,7 @@ def sweep_expired_sessions_loop():
             expired = []
             for session_id, last_seen in list(last_seen_sessions.items()):
                 # Check if the session is expired
-                if now - last_seen > timedelta(minutes=SESSION_TTL_MINUTES):
+                if now - last_seen >= timedelta(minutes=SESSION_TTL_MINUTES):
                     expired.append(session_id)
             for session_id in expired:
                 # Remove the session from the dictionary (if expired)
