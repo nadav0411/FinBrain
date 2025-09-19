@@ -219,6 +219,28 @@ def test_large_number_of_sessions():
             assert session_id in lc.last_seen_sessions
 
 
+def test_handle_invalid_timestamp_data():
+    """
+    Test handling of invalid timestamp data in last_seen_sessions
+    """
+    # Create session with invalid timestamp data
+    session_id = "invalid_timestamp"
+    email = "invalid@test.com"
+    lc.connected_sessions[session_id] = email
+    lc.last_seen_sessions[session_id] = "invalid_string_timestamp"
+    
+    # Handle the expired session loop - should not crash
+    now = lc.get_now_utc()
+    try:
+        lc.handle_expired_session_loop(now)
+    except Exception as e:
+        pytest.fail(f"handle_expired_session_loop should handle invalid timestamps gracefully, but raised: {e}")
+    
+    # Session should still exist since we can't determine if it's expired
+    assert session_id in lc.connected_sessions
+    assert session_id in lc.last_seen_sessions
+
+
 
 
 

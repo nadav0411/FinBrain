@@ -261,3 +261,39 @@ def test_login_fails_with_email_too_short():
     assert data['message'] == 'Invalid credentials'
     assert data.get('session_id') is None
     assert data.get('name') is None
+
+
+def test_login_handles_database_error():
+    """
+    Test the login function handles database errors
+    This test checks if the login function returns 500 when database fails
+    """
+    # Create a test client
+    client = app.test_client()
+
+    # Insert a test user into the database
+    insert_test_user()
+
+    # Mock database error by temporarily breaking the collection
+    original_find_one = users_collection.find_one
+    def mock_find_one(*args, **kwargs):
+        raise Exception("Database connection failed")
+    
+    users_collection.find_one = mock_find_one
+
+    # Create login data for the test
+    login_data = {
+        "email": "user@login.com",
+        "password": "Secret123",
+    }
+
+    # Send a POST request to the login route and get the response
+    response = client.post('/login', json=login_data)
+    data = response.get_json()
+
+    # Check if the response is unsuccessful
+    assert response.status_code == 500
+    assert data['message'] == 'Login failed'
+
+    # Restore original function
+    users_collection.find_one = original_find_one

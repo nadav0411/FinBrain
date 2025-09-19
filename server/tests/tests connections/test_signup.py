@@ -331,3 +331,46 @@ def test_signup_fails_with_missing_password():
 
     # Check if the user was not created in the database
     assert users_collection.find_one({"email": "missingpass@user.com"}) is None
+
+
+def test_signup_handles_database_error():
+    """
+    Test the signup function handles database errors gracefully
+    This test checks if the signup function returns 500 when database fails
+    """
+    # Create a test client
+    client = app.test_client()
+
+    # Create data for the test
+    test_data = {
+        "firstName": "Test",
+        "lastName": "User",
+        "email": "dberror@user.com",
+        "password": "Password123",
+        "confirmPassword": "Password123"
+    }
+
+    # Mock database error by temporarily breaking the collection
+    original_find_one = users_collection.find_one
+    original_insert_one = users_collection.insert_one
+    
+    def mock_find_one(*args, **kwargs):
+        return None 
+    
+    def mock_insert_one(*args, **kwargs):
+        raise Exception("Database connection failed")
+    
+    users_collection.find_one = mock_find_one
+    users_collection.insert_one = mock_insert_one
+
+    # Send a POST request to the signup route
+    response = client.post('/signup', json=test_data)
+    data = response.get_json()
+
+    # Check if the response is unsuccessful
+    assert response.status_code == 500
+    assert data['message'] == 'Signup failed'
+
+    # Restore original functions
+    users_collection.find_one = original_find_one
+    users_collection.insert_one = original_insert_one
