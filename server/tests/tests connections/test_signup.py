@@ -374,3 +374,47 @@ def test_signup_handles_database_error():
     # Restore original functions
     users_collection.find_one = original_find_one
     users_collection.insert_one = original_insert_one
+
+
+def test_signup_handles_duplicate_key_error():
+    """
+    Test the signup function handles DuplicateKeyError
+    This test checks if the signup function returns 409 when DuplicateKeyError occurs
+    """
+    # Create a test client
+    client = app.test_client()
+
+    # Create data for the test
+    test_data = {
+        "firstName": "Test",
+        "lastName": "User",
+        "email": "duplicatekey@user.com",
+        "password": "Password123",
+        "confirmPassword": "Password123"
+    }
+
+    # Mock database to simulate DuplicateKeyError
+    original_find_one = users_collection.find_one
+    original_insert_one = users_collection.insert_one
+    
+    def mock_find_one(*args, **kwargs):
+        return None  # No existing user found
+    
+    def mock_insert_one(*args, **kwargs):
+        from pymongo.errors import DuplicateKeyError
+        raise DuplicateKeyError("Duplicate key error")
+    
+    users_collection.find_one = mock_find_one
+    users_collection.insert_one = mock_insert_one
+
+    # Send a POST request to the signup route
+    response = client.post('/signup', json=test_data)
+    data = response.get_json()
+
+    # Check if the response is unsuccessful with 409 status
+    assert response.status_code == 409
+    assert data['message'] == 'Email already in use'
+
+    # Restore original functions
+    users_collection.find_one = original_find_one
+    users_collection.insert_one = original_insert_one

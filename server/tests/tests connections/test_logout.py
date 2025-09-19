@@ -7,22 +7,26 @@ import logicconnection as lc
 from app import app
 
 
-# Clean the connected and last seen sessions before each test
+# Clean Redis sessions before each test
 @pytest.fixture(autouse=True)
 def clean_sessions():
-    lc.connected_sessions.clear()
-    lc.last_seen_sessions.clear()
+    # Clean up any existing test sessions
+    keys = lc.r.keys("session:*")
+    if keys:
+        lc.r.delete(*keys)
 
 
 def test_logout():
     """
     Test that a logout is successful
     """
-    # Create session ID and email and store it in the dictionary
+    # Create session ID and email and store it in Redis
     session_id = "s1"
     email = "test@user.com"
-    lc.connected_sessions[session_id] = email
-    lc.last_seen_sessions[session_id] = lc.get_now_utc() - timedelta(minutes=lc.SESSION_TTL_MINUTES - 1)
+    session_timestamp = lc.get_now_utc() - timedelta(seconds=lc.SESSION_TTL_SECONDS - 1)
+    lc.r.hset(f"session:{session_id}", "email", email)
+    lc.r.hset(f"session:{session_id}", "last_seen", session_timestamp.isoformat())
+    lc.r.expire(f"session:{session_id}", lc.SESSION_TTL_SECONDS)
 
     # Create a test client
     client = app.test_client()
@@ -36,11 +40,9 @@ def test_logout():
     
     # Check if the user was logged out
     assert data['message'] == 'Logout successful'
-    assert data['revoked'] is True
 
-    # Check if the session is removed from the dictionary
-    assert session_id not in lc.connected_sessions
-    assert session_id not in lc.last_seen_sessions
+    # Check if the session is removed from Redis
+    assert not lc.r.exists(f"session:{session_id}")
 
 
 def test_logout_none():
@@ -61,14 +63,15 @@ def test_logout_none():
     assert data['message'] == 'Missing session_id'
 
 
-def test_logout_exist_only_connected_session():
+def test_logout_existing_session():
     """
-    Test that a logout is successful if the session ID is only in the connected sessions dictionary
+    Test that a logout is successful if the session ID exists in Redis
     """
-    # Create session ID and email and store it in the dictionary
+    # Create session ID and email and store it in Redis
     session_id = "s2"
     email = "test@user.com"
-    lc.connected_sessions[session_id] = email
+    lc.r.hset(f"session:{session_id}", "email", email)
+    lc.r.expire(f"session:{session_id}", lc.SESSION_TTL_SECONDS)
 
     # Create a test client
     client = app.test_client()
@@ -82,18 +85,16 @@ def test_logout_exist_only_connected_session():
     
     # Check if the user was logged out
     assert data['message'] == 'Logout successful'
-    assert data['revoked'] is True
 
-    # Check if the session is removed from the dictionary
-    assert session_id not in lc.connected_sessions
-    assert session_id not in lc.last_seen_sessions
+    # Check if the session is removed from Redis
+    assert not lc.r.exists(f"session:{session_id}")
 
 
-def test_logout_not_exist_session():
+def test_logout_nonexistent_session():
     """
-    Test that a logout is not successful if the session ID is not exist
+    Test that a logout is successful even if the session ID doesn't exist
     """
-    # Create session ID that not exist in the dictionary
+    # Create session ID that doesn't exist in Redis
     session_id = "s3"
 
     # Create a test client
@@ -108,18 +109,16 @@ def test_logout_not_exist_session():
     
     # Check if the user was logged out
     assert data['message'] == 'Logout successful'
-    assert data['revoked'] is False
 
-    # Check if the session is not in the dictionary
-    assert session_id not in lc.connected_sessions
-    assert session_id not in lc.last_seen_sessions
+    # Check if the session is not in Redis
+    assert not lc.r.exists(f"session:{session_id}")
     
 
 
     
 def test_logout_no_header():
     """
-    POST /logout without Session-ID header or query param should return 400
+    POST /logout without session_id should return 400
     """
     # Create a test client
     client = app.test_client()
@@ -135,7 +134,7 @@ def test_logout_no_header():
 
 def test_logout_empty_header():
     """
-    Empty Session-ID header should be treated as missing
+    Empty session_id should be treated as missing
     """    
     # Create a test client
     client = app.test_client()
@@ -151,7 +150,7 @@ def test_logout_empty_header():
 
 def test_logout_whitespace_header():
     """
-    Whitespace-only Session-ID header should be treated as missing
+    Whitespace-only session_id should be treated as missing
     """
     # Create a test client
     client = app.test_client()
@@ -184,13 +183,14 @@ def test_logout_null_like_header_values(raw):
 
 def test_two_logout_calls_for_the_same_session():
     """
-    Logging out twice: first True, then False
+    Logging out twice: both should succeed
     """
-    # Create session ID and email and store it in the dictionary
+    # Create session ID and email and store it in Redis
     session_id = 'same_session'
     email = 'same@session.com'
-    lc.connected_sessions[session_id] = email
-    lc.last_seen_sessions[session_id] = lc.get_now_utc()
+    lc.r.hset(f"session:{session_id}", "email", email)
+    lc.r.hset(f"session:{session_id}", "last_seen", lc.get_now_utc().isoformat())
+    lc.r.expire(f"session:{session_id}", lc.SESSION_TTL_SECONDS)
 
     # Create a test client
     client = app.test_client()
@@ -199,29 +199,31 @@ def test_two_logout_calls_for_the_same_session():
     r1 = client.post('/logout', headers={'Session-ID': session_id})
     d1 = r1.get_json()
     assert r1.status_code == 200
-    assert d1['revoked'] is True
+    assert d1['message'] == 'Logout successful'
 
-    # Check if the session is removed from the dictionary
-    assert session_id not in lc.connected_sessions
-    assert session_id not in lc.last_seen_sessions
+    # Check if the session is removed from Redis
+    assert not lc.r.exists(f"session:{session_id}")
 
     # Second logout for same session
     r2 = client.post('/logout', headers={'Session-ID': session_id})
     d2 = r2.get_json()
     assert r2.status_code == 200
-    assert d2['revoked'] is False
+    assert d2['message'] == 'Logout successful'
 
 
 def test_logout_for_multiple_sessions():
     """
     Only the targeted session should be removed; others remain
     """
-    # Create session IDs and emails and store them in the dictionary
+    # Create session IDs and emails and store them in Redis
     s1, s2 = 'sA', 'sB'
-    lc.connected_sessions[s1] = 'a@u.com'
-    lc.connected_sessions[s2] = 'b@u.com'
-    lc.last_seen_sessions[s1] = lc.get_now_utc()
-    lc.last_seen_sessions[s2] = lc.get_now_utc()
+    lc.r.hset(f"session:{s1}", "email", "a@u.com")
+    lc.r.hset(f"session:{s1}", "last_seen", lc.get_now_utc().isoformat())
+    lc.r.expire(f"session:{s1}", lc.SESSION_TTL_SECONDS)
+    
+    lc.r.hset(f"session:{s2}", "email", "b@u.com")
+    lc.r.hset(f"session:{s2}", "last_seen", lc.get_now_utc().isoformat())
+    lc.r.expire(f"session:{s2}", lc.SESSION_TTL_SECONDS)
 
     # Create a test client
     client = app.test_client()
@@ -232,15 +234,13 @@ def test_logout_for_multiple_sessions():
 
     # Check if the response is successful
     assert response.status_code == 200
-    assert data['revoked'] is True
+    assert data['message'] == 'Logout successful'
 
-    # Check if the session is removed from the dictionary
-    assert s1 not in lc.connected_sessions
-    assert s1 not in lc.last_seen_sessions
+    # Check if the session is removed from Redis
+    assert not lc.r.exists(f"session:{s1}")
 
-    # Check if the other session is not removed from the dictionary
-    assert s2 in lc.connected_sessions
-    assert s2 in lc.last_seen_sessions
+    # Check if the other session is not removed from Redis
+    assert lc.r.exists(f"session:{s2}")
 
 
 def test_logout_wrong_http_method_get():
@@ -261,13 +261,15 @@ def test_logout_expired_session():
     """
     Logout should work on expired sessions (logout doesn't check expiry)
     """
-    # Create session ID and email and store it in the dictionary
+    # Create session ID and email and store it in Redis
     session_id = 's_expired'
     email = 'expired@user.com'
+    expired_timestamp = lc.get_now_utc() - timedelta(seconds=lc.SESSION_TTL_SECONDS + 1)
 
-    # Store the email and last seen timestamp in the dictionary
-    lc.connected_sessions[session_id] = email
-    lc.last_seen_sessions[session_id] = lc.get_now_utc() - timedelta(minutes=lc.SESSION_TTL_MINUTES + 1)
+    # Store the email and timestamp in Redis
+    lc.r.hset(f"session:{session_id}", "email", email)
+    lc.r.hset(f"session:{session_id}", "last_seen", expired_timestamp.isoformat())
+    lc.r.expire(f"session:{session_id}", lc.SESSION_TTL_SECONDS)
 
     # Create a test client
     client = app.test_client()
@@ -279,8 +281,72 @@ def test_logout_expired_session():
     # Check if the response is successful
     assert response.status_code == 200
     assert data['message'] == 'Logout successful'
-    assert data['revoked'] is True
 
-    # Check if the session is removed from the dictionary
-    assert session_id not in lc.connected_sessions
-    assert session_id not in lc.last_seen_sessions
+    # Check if the session is removed from Redis
+    assert not lc.r.exists(f"session:{session_id}")
+
+
+def test_logout_null_strings():
+    """
+    Test that logout with various "null" strings returns 400
+    """
+    # Create a test client
+    client = app.test_client()
+    
+    # Test various "null" string values
+    null_values = ["null", "None", "undefined", "  null  ", "  None  ", "  undefined  "]
+    
+    for null_val in null_values:
+        # Send a POST request to the logout route and get the response
+        response = client.post('/logout', headers={'Session-ID': null_val})
+        data = response.get_json()
+
+        # Check if the response is unsuccessful
+        assert response.status_code == 400
+
+        # Check if the user is not logged out
+        assert data['message'] == 'Missing session_id'
+
+
+def test_logout_whitespace_strings():
+    """
+    Test that logout with whitespace only strings returns 400
+    """
+    # Create a test client
+    client = app.test_client()
+    
+    # Test various whitespace only values
+    whitespace_values = ["   ", "\t", "  \t  "]
+    
+    for whitespace_val in whitespace_values:
+        # Send a POST request to the logout route and get the response
+        response = client.post('/logout', headers={'Session-ID': whitespace_val})
+        data = response.get_json()
+
+        # Check if the response is unsuccessful
+        assert response.status_code == 400
+
+        # Check if the user is not logged out
+        assert data['message'] == 'Missing session_id'
+
+
+def test_logout_mixed_case_null_strings():
+    """
+    Test that logout with mixed case "null" strings returns 400
+    """
+    # Create a test client
+    client = app.test_client()
+    
+    # Test various mixed case "null" string values
+    null_values = ["NULL", "NONE", "UNDEFINED", "Null", "None", "Undefined"]
+    
+    for null_val in null_values:
+        # Send a POST request to the logout route and get the response
+        response = client.post('/logout', headers={'Session-ID': null_val})
+        data = response.get_json()
+
+        # Check if the response is unsuccessful
+        assert response.status_code == 400
+
+        # Check if the user is not logged out
+        assert data['message'] == 'Missing session_id'

@@ -225,6 +225,7 @@ def test_login_fails_with_email_too_long():
     # Send a POST request to the login route and get the response
     response = client.post('/login', json=login_data)
     data = response.get_json()
+    
     # Check if the response is unsuccessful
     assert response.status_code == 401
     
@@ -254,6 +255,7 @@ def test_login_fails_with_email_too_short():
     # Send a POST request to the login route and get the response
     response = client.post('/login', json=login_data)
     data = response.get_json()
+    
     # Check if the response is unsuccessful
     assert response.status_code == 401
 
