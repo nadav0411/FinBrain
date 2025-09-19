@@ -255,7 +255,6 @@ def sweep_expired_sessions_loop():
         })
 
 
-
 def handle_expired_session_loop(now):
     """
     Handle expired session loop
@@ -263,16 +262,13 @@ def handle_expired_session_loop(now):
     It removes the expired sessions from the dictionary
     """
     try:
-        expired = []
         for session_id, last_seen in list(last_seen_sessions.items()):
             # Check if the session is expired
             if now - last_seen >= timedelta(minutes=SESSION_TTL_MINUTES):
-                expired.append(session_id)
-        for session_id in expired:
-            # Remove the session from the dictionary (if expired)
-            connected_sessions.pop(session_id, None)
-            last_seen_sessions.pop(session_id, None)
-    except Exception as e:
+                # Remove the session from the dictionary (if expired)
+                connected_sessions.pop(session_id, None)
+                last_seen_sessions.pop(session_id, None)
+    except Exception:
         logger.exception("Error in handle_expired_session_loop")
 
 

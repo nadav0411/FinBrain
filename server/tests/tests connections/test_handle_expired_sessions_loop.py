@@ -1,7 +1,6 @@
 # test_handle_expired_sessions_loop.py
 
 
-from tkinter import N
 import pytest
 from datetime import timedelta
 import logicconnection as lc
