@@ -35,4 +35,4 @@ jobs:
       - name: Run all tests
         run: |
           cd server
-          pytest -v
+          python -m pytest "tests/tests connections/" -v

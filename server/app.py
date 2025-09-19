@@ -7,6 +7,7 @@ import logicconnection as logic_connection
 import logicexpenses as logic_expenses
 
 
+
 # Configure logging at the main entry point
 logging.basicConfig(
     level=logging.INFO,
@@ -14,13 +15,16 @@ logging.basicConfig(
     datefmt="%Y-%m-%d %H:%M:%S"
 )
 
+
 # Create logger for this module
 logger = logging.getLogger(__name__)
+
 
 
 # Creates a Flask app - my web server and allows other applications to connect to it (such as my React client)
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
+
 
 
 # Signup route - This is where the user will sign up for an account
@@ -32,6 +36,7 @@ def signup():
     logger.info(f"Signup request completed with status {result[1]}")
     return result
 
+
 # Login route - This is where the user will login to their account
 @app.route('/login', methods=['POST'])
 def login():
@@ -40,6 +45,7 @@ def login():
     result = logic_connection.handle_login(data)
     logger.info(f"Login request completed with status {result[1]}")
     return result
+
 
 # Logout route - revoke the current session
 @app.route('/logout', methods=['POST'])
@@ -50,6 +56,7 @@ def logout():
     logger.info(f"Logout request completed with status {result[1]}")
     return result
 
+
 # Add expense route - This is where the user will add an expense to their account
 @app.route('/add_expense', methods=['POST'])
 def add_expense():
@@ -57,6 +64,7 @@ def add_expense():
     session_id = request.headers.get('Session-ID')
     result = logic_expenses.handle_add_expense(data, session_id)
     return result
+
 
 # Get expenses route - This is where the user will get their expenses from their account
 @app.route('/get_expenses', methods=['GET'])
@@ -66,6 +74,7 @@ def get_expenses():
     session_id = request.headers.get('Session-ID')
     result = logic_expenses.handle_get_expenses(month, year, session_id)
     return result
+
 
 # Get expenses for dashboard route - This is where the user will get their expenses for the dashboard
 @app.route('/expenses_for_dashboard', methods=['GET'])
@@ -78,6 +87,7 @@ def expenses_for_dashboard():
     result = logic_expenses.handle_get_expenses_for_dashboard(chart, currency, months, categories, session_id)
     return result
 
+
 # Update expense category route - This is where the user will update the category of an expense
 @app.route('/update_expense_category', methods=['POST'])
 def update_expense_category():
@@ -86,6 +96,7 @@ def update_expense_category():
     result = logic_expenses.handle_update_expense_category(data, session_id)
     return result
 
+
 # Delete expense route - This is where the user will delete an expense from their account
 @app.route('/delete_expense', methods=['POST'])
 def delete_expense():
@@ -93,6 +104,7 @@ def delete_expense():
     session_id = request.headers.get('Session-ID')
     result = logic_expenses.handle_delete_expense(data, session_id)
     return result
+
 
 # Heartbeat route - keep session alive while tab is open
 @app.route('/heartbeat', methods=['POST'])
