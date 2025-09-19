@@ -20,11 +20,9 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-
 # Creates a Flask app - my web server and allows other applications to connect to it (such as my React client)
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
-
 
 
 # Signup route - This is where the user will sign up for an account
@@ -118,7 +116,5 @@ def heartbeat():
 
 
 if __name__ == '__main__':
-    # Start the session sweeper when the server starts
-    logic_connection.start_session_sweeper()
     # Start the server
     app.run(debug=True, use_reloader=False)
