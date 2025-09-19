@@ -156,6 +156,10 @@ def get_email_from_session_id(session_id):
     This function is called when the user wants to get their email from the session ID
     It returns the email from the dictionary
     """
+    # Treat None, empty, or string forms of "null" values as missing
+    if not session_id or str(session_id).strip().lower() in {"", "none", "null", "undefined"}:
+        return None
+    
     # Get current time once to avoid timing issues
     now = get_now_utc()
     
@@ -179,7 +183,8 @@ def handle_logout(session_id):
     This function is called when the user wants to logout from their account
     It removes the session ID from the dictionary
     """
-    if not session_id:
+    # Treat None, empty, or string forms of "null" values as missing
+    if not session_id or str(session_id).strip().lower() in {"", "none", "null", "undefined"}:
         return jsonify({'message': 'Missing session_id'}), 400
     
     # Remove the session if it exists (no error if it doesn't)
@@ -194,8 +199,8 @@ def handle_heartbeat(session_id):
     """
     Update session last_seen timestamp to keep it alive.
     """
-    # Check if the session ID is present
-    if not session_id:
+    # Check if the session ID is present (handle common "null" strings)
+    if not session_id or str(session_id).strip().lower() in {"", "none", "null", "undefined"}:
         return jsonify({'message': 'Missing session_id'}), 400
     # Check if the session ID is in the dictionary
     if session_id not in connected_sessions:

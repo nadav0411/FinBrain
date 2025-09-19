@@ -59,8 +59,8 @@ def handle_add_expense(data, session_id):
     It then checks if the currency is valid and if the expense is valid
     It then adds the expense to the database
     """
-    # Check if session ID is valid
-    if not session_id:
+    # Check if session ID is valid (handle common "null" strings)
+    if not session_id or str(session_id).strip().lower() in {"", "none", "null", "undefined"}:
         return jsonify({'message': 'Session ID is required'}), 400
 
     # Get the email from the session ID
@@ -155,8 +155,8 @@ def handle_get_expenses(month, year, session_id):
     calculates the start and end dates for the month, gets the expenses for the month,
     converts the ObjectId to a string and removes the user_id field, and returns the expenses
     """
-    # Check if session ID is valid
-    if not session_id:
+    # Check if session ID is valid (handle common "null" strings)
+    if not session_id or str(session_id).strip().lower() in {"", "none", "null", "undefined"}:
         return jsonify({'message': 'Session ID is required'}), 400
 
     # Get the user from the session ID
@@ -209,8 +209,8 @@ def handle_get_expenses_for_dashboard(chart, currency, months, categories, sessi
     sums the expenses for the categories, calculates the total amount, calculates the percentage for each category,
     and returns the result
     """
-    # Check if session ID is valid
-    if not session_id:
+    # Check if session ID is valid (handle common "null" strings)
+    if not session_id or str(session_id).strip().lower() in {"", "none", "null", "undefined"}:
         return jsonify({'message': 'Session ID is required'}), 400
 
     # Get the user from the session ID
@@ -378,8 +378,8 @@ def handle_update_expense_category(data, session_id):
     checks if the current category is valid, checks if the new category is valid,
     updates the category of the expense, and returns the result
     """
-    # Check if session ID is valid
-    if not session_id:
+    # Check if session ID is valid (handle common "null" strings)
+    if not session_id or str(session_id).strip().lower() in {"", "none", "null", "undefined"}:
         return jsonify({'message': 'Session ID is required'}), 400
     
     # Get the user from the session ID
@@ -463,8 +463,8 @@ def handle_delete_expense(data, session_id):
     It gets the user from the session ID, checks if the serial number is valid,
     deletes the expense, and returns the result
     """
-    # Check if session ID is valid
-    if not session_id:
+    # Check if session ID is valid (handle common "null" strings)
+    if not session_id or str(session_id).strip().lower() in {"", "none", "null", "undefined"}:
         return jsonify({'message': 'Session ID is required'}), 400
     
     # Get the user from the session ID
