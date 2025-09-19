@@ -1,5 +1,6 @@
 # logicconnection.py
 
+import logging
 from db import users_collection
 from flask import jsonify
 from datetime import datetime, timedelta, timezone
@@ -24,6 +25,9 @@ SWEEP_INTERVAL_SECONDS = 60
 
 # This is used to stop the sweeper
 sweeper_stop_event = Event()
+
+# Create a logger for this module
+logger = logging.getLogger(__name__)
 
 
 def get_now_utc():
@@ -103,15 +107,17 @@ def handle_signup(data):
     except DuplicateKeyError:
         return jsonify({'message': 'Email already in use'}), 409
     except Exception:
+        logger.exception("Signup failed unexpectedly", extra={"email": email})
         return jsonify({'message': 'Signup failed'}), 500
 
+    logger.info("Signup successful", extra={"email": email})
     return jsonify({'message': 'Signup successful'}), 201
 
 
 def handle_login(data):
     """
     Login function
-    This function is called when the user wants to login to his account
+    This function is called when the user wants to log in to their account
     It checks if the email and password are present and if the user exists
     It then checks if the password is correct
     If everything is correct, it returns a success message
@@ -121,22 +127,26 @@ def handle_login(data):
 
     # Check if the email and password are present
     if not email or not password:
+        logger.warning("Login missing fields")
         return jsonify({'message': 'Email and password are required'}), 400
     
     # Email checks (format and max length)
     email_regex = re.compile(r'^[^@\s]+@[^@\s]+\.[^@\s]+$')
     if len(email) > 254 or not email_regex.match(email):
+        logger.warning("Invalid login credentials", extra={"email": email})
         return jsonify({'message': 'Invalid credentials'}), 401
     
     # Fetch user and validate credentials
     try:
         user = users_collection.find_one({'email': email})
     except Exception:
+        logger.exception("Login DB error", extra={"email": email})
         return jsonify({'message': 'Login failed'}), 500
 
     stored_password = (user or {}).get('password')
     if not stored_password or stored_password != password:
         # Use a single generic message to avoid account enumeration
+        logger.warning("Invalid login credentials", extra={"email": email})
         return jsonify({'message': 'Invalid credentials'}), 401
     
     # Create a session ID and store it in the dictionary
@@ -147,6 +157,7 @@ def handle_login(data):
     # Only include the first name in the response
     first_name = (user or {}).get('firstName') or ''
 
+    logger.info("Login successful", extra={"email": email, "session_id": session_id, "first_name": first_name})
     return jsonify({'message': 'Login successful', 'session_id': session_id, 'name': first_name}), 200
 
 
@@ -158,6 +169,7 @@ def get_email_from_session_id(session_id):
     """
     # Treat None, empty, or string forms of "null" values as missing
     if not session_id or str(session_id).strip().lower() in {"", "none", "null", "undefined"}:
+        logger.debug("Session ID not found", extra={"session_id": session_id})
         return None
     
     # Get current time once to avoid timing issues
@@ -168,6 +180,7 @@ def get_email_from_session_id(session_id):
     if last_seen is not None and now - last_seen >= timedelta(minutes=SESSION_TTL_MINUTES):
         connected_sessions.pop(session_id, None)
         last_seen_sessions.pop(session_id, None)
+        logger.info("Session expired on access", extra={"session_id": session_id})
         return None
     
     email = connected_sessions.get(session_id)
@@ -192,6 +205,7 @@ def handle_logout(session_id):
     last_seen_sessions.pop(session_id, None)
 
     # Return success regardless of whether it existed
+    logger.info("Logout", extra={"session_id": session_id, "revoked": bool(removed)})
     return jsonify({'message': 'Logout successful', 'revoked': bool(removed)}), 200
 
 
@@ -201,17 +215,22 @@ def handle_heartbeat(session_id):
     """
     # Check if the session ID is present (handle common "null" strings)
     if not session_id or str(session_id).strip().lower() in {"", "none", "null", "undefined"}:
+        logger.info("Heartbeat for unknown session", extra={"session_id": session_id})
         return jsonify({'message': 'Missing session_id'}), 400
     # Check if the session ID is in the dictionary
     if session_id not in connected_sessions:
+        logger.info("Heartbeat for non-existent session", extra={"session_id": session_id})
         return jsonify({'message': 'No such session', 'active': False}), 200
     # Check if the session is expired
     if is_session_expired(session_id):
+        logger.info("Heartbeat expired session", extra={"session_id": session_id})
         connected_sessions.pop(session_id, None)
         last_seen_sessions.pop(session_id, None)
         return jsonify({'message': 'Session expired', 'active': False}), 200
     # Update the last seen timestamp
     last_seen_sessions[session_id] = get_now_utc()
+
+    logger.debug("Heartbeat ok", extra={"session_id": session_id})
     return jsonify({'message': 'Heartbeat ok', 'active': True, 'ttl_minutes': SESSION_TTL_MINUTES}), 200
 
 
@@ -222,24 +241,39 @@ def sweep_expired_sessions_loop():
     It removes the expired sessions from the dictionary
     """
     while not sweeper_stop_event.is_set():
-        try:
-            now = get_now_utc()
-            expired = []
-            for session_id, last_seen in list(last_seen_sessions.items()):
-                # Check if the session is expired
-                if now - last_seen >= timedelta(minutes=SESSION_TTL_MINUTES):
-                    expired.append(session_id)
-            for session_id in expired:
-                # Remove the session from the dictionary (if expired)
-                connected_sessions.pop(session_id, None)
-                last_seen_sessions.pop(session_id, None)
-        except Exception:
-            pass
+        # Get the current time
+        now = get_now_utc()
+        # Handle the expired session loop
+        handle_expired_session_loop(now)
+
         # Wait for the next sweep
         sweeper_stop_event.wait(SWEEP_INTERVAL_SECONDS)
-        print(now.strftime("%H:%M:%S"))
-        print(f"[sweeper] sessions: {connected_sessions}\nnumber of sessions: {len(connected_sessions)}\n")
-        print(f"[sweeper] last seen sessions: {last_seen_sessions}\nnumber of last seen sessions: {len(last_seen_sessions)}\n")
+        logger.debug("Sweeper tick", extra={
+        "time": now.strftime("%H:%M:%S"),
+        "connected_count": len(connected_sessions),
+        "last_seen_count": len(last_seen_sessions),
+        })
+
+
+
+def handle_expired_session_loop(now):
+    """
+    Handle expired session loop
+    This function is called when the server wants to handle the expired session loop
+    It removes the expired sessions from the dictionary
+    """
+    try:
+        expired = []
+        for session_id, last_seen in list(last_seen_sessions.items()):
+            # Check if the session is expired
+            if now - last_seen >= timedelta(minutes=SESSION_TTL_MINUTES):
+                expired.append(session_id)
+        for session_id in expired:
+            # Remove the session from the dictionary (if expired)
+            connected_sessions.pop(session_id, None)
+            last_seen_sessions.pop(session_id, None)
+    except Exception as e:
+        logger.exception("Error in handle_expired_session_loop")
 
 
 def start_session_sweeper():
@@ -250,7 +284,3 @@ def start_session_sweeper():
     """
     thread = Thread(target=sweep_expired_sessions_loop, name="session-sweeper", daemon=True)
     thread.start()
-
-
-# Start sweeper when module loads
-start_session_sweeper()

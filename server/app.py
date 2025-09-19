@@ -1,34 +1,53 @@
 # app.py
 
+import logging
 from flask import Flask, request
 from flask_cors import CORS
 import logicconnection as logic_connection
 import logicexpenses as logic_expenses
 
 
+# Configure logging at the main entry point
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)s %(name)s %(funcName)s:%(lineno)d - %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S"
+)
+
+# Create logger for this module
+logger = logging.getLogger(__name__)
+
+
 # Creates a Flask app - my web server and allows other applications to connect to it (such as my React client)
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
 
+
 # Signup route - This is where the user will sign up for an account
 @app.route('/signup', methods=['POST'])
 def signup():
+    logger.info(f"Signup request received from {request.remote_addr}")
     data = request.get_json()
     result = logic_connection.handle_signup(data)
+    logger.info(f"Signup request completed with status {result[1]}")
     return result
 
 # Login route - This is where the user will login to their account
 @app.route('/login', methods=['POST'])
 def login():
+    logger.info(f"Login request received from {request.remote_addr}")
     data = request.get_json()
     result = logic_connection.handle_login(data)
+    logger.info(f"Login request completed with status {result[1]}")
     return result
 
 # Logout route - revoke the current session
 @app.route('/logout', methods=['POST'])
 def logout():
     session_id = request.headers.get('Session-ID') or request.args.get('session_id')
+    logger.info(f"Logout request received from {request.remote_addr} for session {session_id[:8] if session_id else 'none'}")
     result = logic_connection.handle_logout(session_id)
+    logger.info(f"Logout request completed with status {result[1]}")
     return result
 
 # Add expense route - This is where the user will add an expense to their account
@@ -79,10 +98,15 @@ def delete_expense():
 @app.route('/heartbeat', methods=['POST'])
 def heartbeat():
     session_id = request.headers.get('Session-ID') or request.args.get('session_id')
+    logger.info(f"Heartbeat request received from {request.remote_addr} for session {session_id[:8] if session_id else 'none'}")
     result = logic_connection.handle_heartbeat(session_id)
+    logger.info(f"Heartbeat request completed with status {result[1]}")
     return result
 
 
 
 if __name__ == '__main__':
+    # Start the session sweeper when the server starts
+    logic_connection.start_session_sweeper()
+    # Start the server
     app.run(debug=True, use_reloader=False)
