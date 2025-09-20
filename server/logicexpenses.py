@@ -1,5 +1,6 @@
 # logicexpenses.py
 
+
 from flask import jsonify
 from db import users_collection, expenses_collection
 from logicconnection import get_email_from_session_id
@@ -29,7 +30,7 @@ categories = [
 def classify_expense(text):
     """
     This function gets a sentence (like 'Bought medicine')
-    and returns the best category (like 'health')
+    and returns the best category (like 'health & essentials')
     """
     # First, make sure the input is a string and is not empty or whitespace-only
     if not text or not isinstance(text, str) or not text.strip():
@@ -71,7 +72,7 @@ def get_usd_to_ils_rate(date_str):
     # If the API returns an error, return a default rate
     except Exception as e:
         logger.exception("Error calling exchange rate API", extra={"url": url})
-    return 3.4 
+    return None
 
 
 def handle_add_expense(data, session_id):
@@ -131,6 +132,8 @@ def handle_add_expense(data, session_id):
     
     # Check valid currencies and convert
     usd_to_ils_rate = get_usd_to_ils_rate(date)
+    if usd_to_ils_rate is None:
+        return jsonify({'message': 'Failed to get exchange rate'}), 500
     if currency == 'USD':
         amount_usd = amount
         amount_ils = amount * usd_to_ils_rate
