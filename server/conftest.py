@@ -1,16 +1,14 @@
 # conftest.py
 
-
 import os
 import sys
 from pathlib import Path
+import pytest
 
 # Add the server directory to Python path for imports
-server_dir = Path(__file__).parent.parent
+server_dir = Path(__file__).parent
 if str(server_dir) not in sys.path:
     sys.path.insert(0, str(server_dir))
 
 # Ensure tests use the test database
 os.environ.setdefault('ENV', 'test')
-
-

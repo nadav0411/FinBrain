@@ -4,7 +4,11 @@ from pymongo import MongoClient
 from pymongo.server_api import ServerApi
 from dotenv import load_dotenv
 import os
+import logging
 
+
+# Create a logger for this module
+logger = logging.getLogger(__name__)
 
 # Check if we're running in CI (GitHub Actions) first (that use mongomock)
 is_ci = os.getenv('GITHUB_ACTIONS') == 'true'
@@ -22,7 +26,7 @@ mongo_uri = os.getenv('MONGO_URI')
 
 # Use in-memory database only when no MongoDB URI is available (probably in CI -> GitHub Actions)
 if not mongo_uri:
-    print("No MongoDB URI found, using in-memory database for testing")
+    logger.info("No MongoDB URI found, using in-memory database for testing")
     from pymongo import MongoClient
     from mongomock import MongoClient as MockMongoClient
     
@@ -35,7 +39,7 @@ if not mongo_uri:
     # Create unique index for email
     users_collection.create_index('email', unique=True)
     
-    print("Connected to in-memory MongoDB (mongomock)")
+    logger.info("Connected to in-memory MongoDB (mongomock)")
 
 else:
     # Creates a connection to MongoDB Atlas
@@ -51,12 +55,13 @@ else:
     # Ensure unique index on users.email to prevent duplicates
     try:
         users_collection.create_index('email', unique=True)
+        logger.info("Created unique index on users.email")
     except Exception as e:
-        print(f"Warning: could not ensure unique index on users.email: {e}")
+        logger.warning("Could not ensure unique index on users.email", extra={"error": str(e)})
     
     # Ping MongoDB to test the connection
     try:
         client.admin.command('ping')
-        print("Connected to MongoDB")
+        logger.info("Connected to MongoDB", extra={"database": db.name})
     except Exception as e:
-        print(f"Error connecting to MongoDB: {e}")
+        logger.error("Error connecting to MongoDB", extra={"error": str(e)})

@@ -8,7 +8,22 @@ import requests
 import re
 from predictmodelloader import model, vectorizer
 import pandas as pd
+import logging
 
+
+# Create a logger for this module
+logger = logging.getLogger(__name__)
+
+# List of categories
+categories = [
+    'Food & Drinks',
+    'Housing & Bills',
+    'Transportation',
+    'Education & Personal Growth',
+    'Health & Essentials',
+    'Leisure & Gifts',
+    'Other'
+]
 
 
 def classify_expense(text):
@@ -16,18 +31,24 @@ def classify_expense(text):
     This function gets a sentence (like 'Bought medicine')
     and returns the best category (like 'health')
     """
-    # First, make sure the input is a string and is not empty
-    if not text or not isinstance(text, str):
-        return "other"  # If the text is bad, we return 'other' by default
+    # First, make sure the input is a string and is not empty or whitespace-only
+    if not text or not isinstance(text, str) or not text.strip():
+        logger.warning("Invalid text input for classification", extra={"text": text})
+        # If the text is bad, we return 'other' by default
+        return "other"  
 
-    # Use the saved vectorizer to turn the text into a number vector
-    vector = vectorizer.transform([text])
+    try:
+        # Use the saved vectorizer to turn the text into a number vector
+        vector = vectorizer.transform([text])
 
-    # Now we use the trained model to predict the category
-    prediction = model.predict(vector)
+        # Now we use the trained model to predict the category
+        prediction = model.predict(vector)
 
-    # Return the predicted category (it's a list with one value)
-    return prediction[0]
+        # Return the predicted category (it's a list with one value)
+        return prediction[0]
+    except Exception as e:
+        logger.error("Error during expense classification", extra={"text": text, "error": str(e)})
+        return "other"
 
 
 def get_usd_to_ils_rate(date_str):
@@ -42,12 +63,14 @@ def get_usd_to_ils_rate(date_str):
         response = requests.get(url, timeout=3)
         if response.status_code == 200:
             data = response.json()
-            return(data['rates']['ILS'])
+            rate = data['rates']['ILS']
+            logger.info("Exchange rate retrieved successfully", extra={"date": date_str, "rate": rate})
+            return rate
         else:
-            print("API returned non-200 status:", response.status_code)
+            logger.warning("API returned non-200 status", extra={"status_code": response.status_code})
     # If the API returns an error, return a default rate
     except Exception as e:
-        print("Error calling exchange rate API:", e)
+        logger.exception("Error calling exchange rate API", extra={"url": url})
     return 3.4 
 
 
@@ -66,6 +89,7 @@ def handle_add_expense(data, session_id):
     # Get the email from the session ID
     email = get_email_from_session_id(session_id)
     if not email:
+        logger.warning("Unauthorized access attempt", extra={"session_id": session_id})
         return jsonify({'message': 'Unauthorized'}), 401
     
     # Get the required fields
@@ -118,6 +142,7 @@ def handle_add_expense(data, session_id):
     
     user = users_collection.find_one({'email': email})
     if not user:
+        logger.warning("User not found during expense addition", extra={"email": email})
         return jsonify({'message': 'User not found'}), 404
     
     # Classify the expense
@@ -135,16 +160,21 @@ def handle_add_expense(data, session_id):
         serial_number = 1
     
     # Create the expense item
-    expenses_collection.insert_one({
-        "user_id": user['_id'],
-        "title": title,
-        "date": date.isoformat(),
-        "amount_usd": amount_usd,
-        "amount_ils": amount_ils,
-        "category": category,
-        "serial_number": serial_number
-    })
+    try:
+        expenses_collection.insert_one({
+            "user_id": user['_id'],
+            "title": title,
+            "date": date.isoformat(),
+            "amount_usd": amount_usd,
+            "amount_ils": amount_ils,
+            "category": category,
+            "serial_number": serial_number
+        })
+    except Exception as e:
+        logger.error("Failed to insert expense", extra={"title": title, "email": email, "error": str(e)})
+        return jsonify({'message': 'Failed to add expense'}), 500
 
+    logger.info("Expense added", extra={"title": title, "date": date, "amount": amount, "currency": currency, "category": category, "serial_number": serial_number})
     return jsonify({'message': 'Expense added'}), 200
 
 
@@ -163,6 +193,7 @@ def handle_get_expenses(month, year, session_id):
     email = get_email_from_session_id(session_id)
     user = users_collection.find_one({'email': email})
     if not user:
+        logger.warning("User not found during get expenses", extra={"email": email})
         return jsonify({'message': 'User not found'}), 404
 
     # Check if the month and year are valid (None or not int)
@@ -197,6 +228,7 @@ def handle_get_expenses(month, year, session_id):
         if "user_id" in expense:
             expense["user_id"] = str(expense["user_id"])
 
+    logger.info("Get expenses successful", extra={"month": month, "year": year, "expense_count": len(expenses), "email": email})
     return jsonify({"expenses": expenses}), 200
 
 
@@ -217,6 +249,7 @@ def handle_get_expenses_for_dashboard(chart, currency, months, categories, sessi
     email = get_email_from_session_id(session_id)
     user = users_collection.find_one({'email': email})
     if not user:
+        logger.warning("User not found during dashboard request", extra={"email": email})
         return jsonify({'message': 'User not found'}), 404
     
     # Check if the chart is valid
@@ -262,6 +295,7 @@ def handle_get_expenses_for_dashboard(chart, currency, months, categories, sessi
     elif chart == 'monthly_comparison':
         result = handle_monthly_comparison(month_regexes, user_id, currency, categories, months)
     
+    logger.info("Get expenses for dashboard successful", extra={"chart": chart, "currency": currency, "months": months, "categories": categories, "email": email})
     return jsonify({
         'currency': currency,
         'chart': chart,
@@ -386,6 +420,7 @@ def handle_update_expense_category(data, session_id):
     email = get_email_from_session_id(session_id)
     user = users_collection.find_one({'email': email})
     if not user:
+        logger.warning("User not found during category update", extra={"email": email})
         return jsonify({'message': 'User not found'}), 404
     
     # Get the serial number from the data and check if it is valid
@@ -432,14 +467,18 @@ def handle_update_expense_category(data, session_id):
         return jsonify({'message': 'Invalid category'}), 400
 
     # Update the category of the expense
-    result = expenses_collection.update_one({
-        'user_id': user['_id'],
-        'serial_number': serial_number
-    }, {
-        '$set': {
-            'category': new_category
-        }
-    })
+    try:
+        result = expenses_collection.update_one({
+            'user_id': user['_id'],
+            'serial_number': serial_number
+        }, {
+            '$set': {
+                'category': new_category
+            }
+        })
+    except Exception as e:
+        logger.error("Failed to update expense category", extra={"serial_number": serial_number, "email": email, "error": str(e)})
+        return jsonify({'message': 'Failed to update category'}), 500
 
     # Check if the expense was found
     if result.matched_count == 0:
@@ -449,11 +488,16 @@ def handle_update_expense_category(data, session_id):
     expense_title = current_category_db.get('title')
     
     # Add the expense and the new category to user_feedback file to optimize the model
-    df = pd.read_csv('finbrain_model/user_feedback.csv')
-    new_row = pd.DataFrame([{'description': expense_title, 'category': new_category}])
-    df = pd.concat([df, new_row], ignore_index=True)
-    df.to_csv('finbrain_model/user_feedback.csv', index=False)
+    try:
+        df = pd.read_csv('finbrain_model/user_feedback.csv')
+        new_row = pd.DataFrame([{'description': expense_title, 'category': new_category}])
+        df = pd.concat([df, new_row], ignore_index=True)
+        df.to_csv('finbrain_model/user_feedback.csv', index=False)
+        logger.info("User feedback updated", extra={"expense_title": expense_title, "new_category": new_category})
+    except Exception as e:
+        logger.error("Failed to update user feedback", extra={"expense_title": expense_title, "new_category": new_category, "error": str(e)})
 
+    logger.info("Expense category updated", extra={"serial_number": serial_number, "old_category": current_category_db.get('category'), "new_category": new_category, "email": email})
     return jsonify({'message': 'Category updated', 'new_category': new_category}), 200
 
 
@@ -471,6 +515,7 @@ def handle_delete_expense(data, session_id):
     email = get_email_from_session_id(session_id)
     user = users_collection.find_one({'email': email})
     if not user:
+        logger.warning("User not found during expense deletion", extra={"email": email})
         return jsonify({'message': 'User not found'}), 404
     
     # Get the serial number from the data and check if it is valid
@@ -479,13 +524,18 @@ def handle_delete_expense(data, session_id):
         return jsonify({'message': 'Serial number is required'}), 400
     
     # Delete the expense
-    result = expenses_collection.delete_one({
-        'user_id': user['_id'],
-        'serial_number': serial_number
-    })
+    try:
+        result = expenses_collection.delete_one({
+            'user_id': user['_id'],
+            'serial_number': serial_number
+        })
+    except Exception as e:
+        logger.error("Failed to delete expense", extra={"serial_number": serial_number, "email": email, "error": str(e)})
+        return jsonify({'message': 'Failed to delete expense'}), 500
     
     # Check if the expense was found
     if result.deleted_count == 0:
         return jsonify({'message': 'Expense not found'}), 404
     
+    logger.info("Expense deleted", extra={"serial_number": serial_number, "email": email})
     return jsonify({'message': 'Expense deleted', 'serial_number': serial_number}), 200

@@ -28,20 +28,20 @@ CORS(app, resources={r"/*": {"origins": "*"}})
 # Signup route - This is where the user will sign up for an account
 @app.route('/signup', methods=['POST'])
 def signup():
-    logger.info(f"Signup request received from {request.remote_addr}")
+    logger.info("Signup request received", extra={"remote_addr": request.remote_addr})
     data = request.get_json()
     result = logic_connection.handle_signup(data)
-    logger.info(f"Signup request completed with status {result[1]}")
+    logger.info("Signup request completed", extra={"status_code": result[1], "remote_addr": request.remote_addr})
     return result
 
 
 # Login route - This is where the user will login to their account
 @app.route('/login', methods=['POST'])
 def login():
-    logger.info(f"Login request received from {request.remote_addr}")
+    logger.info("Login request received", extra={"remote_addr": request.remote_addr})
     data = request.get_json()
     result = logic_connection.handle_login(data)
-    logger.info(f"Login request completed with status {result[1]}")
+    logger.info("Login request completed", extra={"status_code": result[1], "remote_addr": request.remote_addr})
     return result
 
 
@@ -49,9 +49,9 @@ def login():
 @app.route('/logout', methods=['POST'])
 def logout():
     session_id = request.headers.get('Session-ID') or request.args.get('session_id')
-    logger.info(f"Logout request received from {request.remote_addr} for session {session_id[:8] if session_id else 'none'}")
+    logger.info("Logout request received", extra={"remote_addr": request.remote_addr, "session_id": session_id[:8] if session_id else None})
     result = logic_connection.handle_logout(session_id)
-    logger.info(f"Logout request completed with status {result[1]}")
+    logger.info("Logout request completed", extra={"status_code": result[1], "remote_addr": request.remote_addr})
     return result
 
 
@@ -59,18 +59,20 @@ def logout():
 @app.route('/heartbeat', methods=['POST'])
 def heartbeat():
     session_id = request.headers.get('Session-ID') or request.args.get('session_id')
-    logger.info(f"Heartbeat request received from {request.remote_addr} for session {session_id[:8] if session_id else 'none'}")
+    logger.info("Heartbeat request received", extra={"remote_addr": request.remote_addr, "session_id": session_id[:8] if session_id else None})
     result = logic_connection.handle_heartbeat(session_id)
-    logger.info(f"Heartbeat request completed with status {result[1]}")
+    logger.info("Heartbeat request completed", extra={"status_code": result[1], "remote_addr": request.remote_addr})
     return result
 
 
 # Add expense route - This is where the user will add an expense to their account
 @app.route('/add_expense', methods=['POST'])
 def add_expense():
+    logger.info("Add expense request received", extra={"remote_addr": request.remote_addr})
     data = request.get_json()
     session_id = request.headers.get('Session-ID')
     result = logic_expenses.handle_add_expense(data, session_id)
+    logger.info("Add expense request completed", extra={"status_code": result[1], "remote_addr": request.remote_addr})
     return result
 
 
@@ -80,7 +82,9 @@ def get_expenses():
     month = request.args.get('month', type=int)
     year = request.args.get('year', type=int)
     session_id = request.headers.get('Session-ID')
+    logger.info("Get expenses request received", extra={"month": month, "year": year, "remote_addr": request.remote_addr})
     result = logic_expenses.handle_get_expenses(month, year, session_id)
+    logger.info("Get expenses request completed", extra={"status_code": result[1], "month": month, "year": year, "remote_addr": request.remote_addr})
     return result
 
 
@@ -92,25 +96,31 @@ def expenses_for_dashboard():
     months = request.args.getlist('months')
     categories = request.args.getlist('categories')
     session_id = request.headers.get('Session-ID')
+    logger.info("Get expenses for dashboard request received", extra={"chart": chart, "currency": currency, "months": months, "categories": categories, "remote_addr": request.remote_addr})
     result = logic_expenses.handle_get_expenses_for_dashboard(chart, currency, months, categories, session_id)
+    logger.info("Get expenses for dashboard request completed", extra={"status_code": result[1], "chart": chart, "currency": currency, "remote_addr": request.remote_addr})
     return result
 
 
 # Update expense category route - This is where the user will update the category of an expense
 @app.route('/update_expense_category', methods=['POST'])
 def update_expense_category():
+    logger.info("Update expense category request received", extra={"remote_addr": request.remote_addr})
     data = request.get_json()
     session_id = request.headers.get('Session-ID')
     result = logic_expenses.handle_update_expense_category(data, session_id)
+    logger.info("Update expense category request completed", extra={"status_code": result[1], "remote_addr": request.remote_addr})
     return result
 
 
 # Delete expense route - This is where the user will delete an expense from their account
 @app.route('/delete_expense', methods=['POST'])
 def delete_expense():
+    logger.info("Delete expense request received", extra={"remote_addr": request.remote_addr})
     data = request.get_json()
     session_id = request.headers.get('Session-ID')
     result = logic_expenses.handle_delete_expense(data, session_id)
+    logger.info("Delete expense request completed", extra={"status_code": result[1], "remote_addr": request.remote_addr})
     return result
 
 
