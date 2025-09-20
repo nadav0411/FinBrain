@@ -44,7 +44,7 @@ function AuthSwitcher() {
           // ignore transient errors
         }
       };
-      // fire immediately, then every 1 minute (keep TTL 15m fresh)
+      // fire immediately, then every 0.5 minutes
       send();
       heartbeatInterval = setInterval(send, 0.5 * 60 * 1000);
     };

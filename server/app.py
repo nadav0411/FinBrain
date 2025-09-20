@@ -55,6 +55,16 @@ def logout():
     return result
 
 
+# Heartbeat route - keep session alive while tab is open
+@app.route('/heartbeat', methods=['POST'])
+def heartbeat():
+    session_id = request.headers.get('Session-ID') or request.args.get('session_id')
+    logger.info(f"Heartbeat request received from {request.remote_addr} for session {session_id[:8] if session_id else 'none'}")
+    result = logic_connection.handle_heartbeat(session_id)
+    logger.info(f"Heartbeat request completed with status {result[1]}")
+    return result
+
+
 # Add expense route - This is where the user will add an expense to their account
 @app.route('/add_expense', methods=['POST'])
 def add_expense():
@@ -102,17 +112,6 @@ def delete_expense():
     session_id = request.headers.get('Session-ID')
     result = logic_expenses.handle_delete_expense(data, session_id)
     return result
-
-
-# Heartbeat route - keep session alive while tab is open
-@app.route('/heartbeat', methods=['POST'])
-def heartbeat():
-    session_id = request.headers.get('Session-ID') or request.args.get('session_id')
-    logger.info(f"Heartbeat request received from {request.remote_addr} for session {session_id[:8] if session_id else 'none'}")
-    result = logic_connection.handle_heartbeat(session_id)
-    logger.info(f"Heartbeat request completed with status {result[1]}")
-    return result
-
 
 
 if __name__ == '__main__':
