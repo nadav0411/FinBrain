@@ -5,6 +5,7 @@
 from app import app
 from db import users_collection, db
 import pytest
+from password_hashing import hash_password
 
 
 # Clean the users collection before each test
@@ -46,7 +47,10 @@ def test_signup_creates_user():
     # Check if the user's data is correct
     assert user["firstName"] == "Test"
     assert user["lastName"] == "User"
-    assert user["password"] == "Password123"
+    # Password should be hashed, not plain text
+    assert user["password"] != "Password123"
+    # Argon2 hashes are long
+    assert len(user["password"]) > 50
 
 
 def test_signup_fails_with_missing_fields():
@@ -171,7 +175,7 @@ def test_signup_fails_when_email_already_in_use():
         "firstName": "Existing",
         "lastName": "User",
         "email": "duplicate@user.com",
-        "password": "Secret123",
+        "password": hash_password("Secret123"),
     })
 
     # Create data for the test
@@ -232,7 +236,7 @@ def test_signup_duplicate_detection_is_case_insensitive():
         "firstName": "Existing",
         "lastName": "Case",
         "email": "user@x.com",
-        "password": "Secret123",
+        "password": hash_password("Secret123"),
     })
 
     # Create data for the test with mixed case

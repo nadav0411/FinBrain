@@ -5,6 +5,7 @@
 from app import app
 from db import users_collection, db
 import pytest
+from password_hashing import hash_password
 
 
 # Clean the users collection before each test
@@ -23,7 +24,7 @@ def insert_test_user():
         "firstName": "User",
         "lastName": "Login",
         "email": "user@login.com",
-        "password": "Secret123",
+        "password": hash_password("Secret123"),
     })
 
 

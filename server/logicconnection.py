@@ -8,6 +8,7 @@ import re
 import uuid
 from pymongo.errors import DuplicateKeyError
 from cache import r
+from password_hashing import hash_password, verify_password
 
 
 # Session expiry in seconds (1.5 minutes of inactivity)
@@ -92,11 +93,13 @@ def handle_signup(data):
 
     # Create user account
     try:
+        # Hash the password before storing
+        hashed_password = hash_password(password)
         users_collection.insert_one({
             'firstName': first_name,
             'lastName': last_name,
             'email': email,
-            'password': password,
+            'password': hashed_password,
         })
     except DuplicateKeyError:
         return jsonify({'message': 'Email already in use'}), 409
@@ -134,7 +137,7 @@ def handle_login(data):
         return jsonify({'message': 'Login failed'}), 500
 
     stored_password = (user or {}).get('password')
-    if not stored_password or stored_password != password:
+    if not stored_password or not verify_password(password, stored_password):
         logger.warning("Invalid login credentials", extra={"email": email})
         return jsonify({'message': 'Invalid credentials'}), 401
     
