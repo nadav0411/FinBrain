@@ -1,6 +1,7 @@
 # test_login.py
 
 
+# type: ignore
 from app import app
 from db import users_collection, db
 import pytest

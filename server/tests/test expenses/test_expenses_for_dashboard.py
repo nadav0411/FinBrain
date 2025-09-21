@@ -1,6 +1,7 @@
 # test_expenses_for_dashboard.py
 
 
+# type: ignore
 from db import users_collection, expenses_collection, db
 import pytest
 from app import app

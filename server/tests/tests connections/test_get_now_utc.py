@@ -1,6 +1,7 @@
 # test_get_now_utc.py
 
 
+# type: ignore
 import pytest
 import logicconnection as lc
 from datetime import datetime, timezone

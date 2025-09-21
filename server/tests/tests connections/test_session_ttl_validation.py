@@ -1,6 +1,7 @@
 # test_session_ttl_validation.py
 
 
+# type: ignore
 import pytest
 from datetime import timedelta
 import logicconnection as lc

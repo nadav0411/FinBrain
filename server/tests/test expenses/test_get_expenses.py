@@ -1,6 +1,7 @@
 # test_get_expenses.py
 
 
+# type: ignore
 from db import users_collection, expenses_collection, db
 import pytest
 from app import app

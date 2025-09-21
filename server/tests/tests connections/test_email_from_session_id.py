@@ -1,6 +1,7 @@
 # test_email_from_session_id.py
 
 
+# type: ignore
 import pytest
 from datetime import timedelta
 import logicconnection as lc

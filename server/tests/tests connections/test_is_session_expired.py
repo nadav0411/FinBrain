@@ -1,6 +1,7 @@
 # test_is_session_expired.py
 
 
+# type: ignore
 import pytest
 from datetime import timedelta
 import logicconnection as lc
