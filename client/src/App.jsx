@@ -123,7 +123,7 @@ function App() {
       window.removeEventListener('userLoggedOut', handleUserLoggedOut);
       window.removeEventListener('userLoggedIn', handleUserLoggedIn);
     };
-  }, []);
+  }, []); // Empty dependency array is correct here
 
   return (
     <div className="App">

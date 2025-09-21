@@ -249,3 +249,10 @@ def test_get_email_from_session_id_session_with_empty_email():
 
     # Check if the session still exists in Redis
     assert lc.r.exists(f"session:{session_id}")
+
+
+def test_pass():
+    """
+    Test that the test passes (to clean up the test database)
+    """
+    assert True

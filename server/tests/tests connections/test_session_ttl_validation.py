@@ -267,3 +267,10 @@ def test_session_ttl_without_heartbeat_expires():
     # Check if session is expired
     assert lc.is_session_expired(session_id)
     assert not lc.r.exists(f"session:{session_id}")
+
+
+def test_pass():
+    """
+    Test that the test passes (to clean up the test database)
+    """
+    assert True

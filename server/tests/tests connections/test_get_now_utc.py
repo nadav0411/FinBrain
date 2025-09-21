@@ -97,3 +97,10 @@ def test_get_now_utc_consistency():
     # Check if they are very close (within 1 second)
     time_diff = abs((our_time - python_time).total_seconds())
     assert time_diff < 1.0
+
+
+def test_pass():
+    """
+    Test that the test passes (to clean up the test database)
+    """
+    assert True

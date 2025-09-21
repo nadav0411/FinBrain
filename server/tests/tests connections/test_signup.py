@@ -418,3 +418,10 @@ def test_signup_handles_duplicate_key_error():
     # Restore original functions
     users_collection.find_one = original_find_one
     users_collection.insert_one = original_insert_one
+
+
+def test_pass():
+    """
+    Test that the test passes (to clean up the test database)
+    """
+    assert True

@@ -794,3 +794,10 @@ def test_get_expenses_multiple_months_years():
         }
     }))
     assert len(january_expenses) == 2
+
+
+def test_pass():
+    """
+    Test that the test passes (to clean up the test database)
+    """
+    assert True

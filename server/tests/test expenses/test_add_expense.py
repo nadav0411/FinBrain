@@ -663,3 +663,10 @@ def test_add_expense_missing_required_fields(mock_classify_expense, mock_get_usd
     # Check if the response is unsuccessful
     assert response.status_code == 400
     assert response.json['message'] == 'Missing required fields'
+
+
+def test_pass():
+    """
+    Test that the test passes (to clean up the test database)
+    """
+    assert True

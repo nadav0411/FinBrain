@@ -941,3 +941,10 @@ def test_expenses_for_dashboard_comprehensive_multiple_months_categories():
     assert feb_data['amount'] == 200.0                                                                       
     assert mar_data is not None
     assert mar_data['amount'] == 75.0  
+
+
+def test_pass():
+    """
+    Test that the test passes (to clean up the test database)
+    """
+    assert True

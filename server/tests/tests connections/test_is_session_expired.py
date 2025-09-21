@@ -143,3 +143,10 @@ def test_is_session_expired_empty_session_data():
 
     # Check if the session no longer exists in Redis (Redis deletes empty hashes)
     assert not lc.r.exists(f"session:{session_id}")
+
+
+def test_pass():
+    """
+    Test that the test passes (to clean up the test database)
+    """
+    assert True

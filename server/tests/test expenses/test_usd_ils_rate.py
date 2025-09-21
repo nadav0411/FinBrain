@@ -161,6 +161,11 @@ def test_get_usd_to_ils_rate_empty_date():
     assert rate == None
 
 
+def test_pass():
+    """
+    Test that the test passes (to clean up the test database)
+    """
+    assert True
 
 
     

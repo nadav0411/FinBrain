@@ -29,6 +29,7 @@ function AllExpenses() {
   const [categoryPickerFor, setCategoryPickerFor] = useState(null); // Serial number currently showing category picker (inline)
   const [categoryModalOpen, setCategoryModalOpen] = useState(false); // Controls centered category modal visibility
   const [categoryModalExpense, setCategoryModalExpense] = useState(null); // Expense currently being edited
+  const [isUpdatingCategory, setIsUpdatingCategory] = useState(false); // Prevents multiple category updates
 
   // Year range constraints for navigation
   const MIN_YEAR = 2015;
@@ -274,6 +275,11 @@ function AllExpenses() {
 
   // Apply category change and notify server
   const applyCategoryChange = async (expense, newCategory) => {
+    // Prevent multiple simultaneous updates
+    if (isUpdatingCategory) {
+      return;
+    }
+
     if (!newCategory || newCategory === expense.category) {
       setCategoryPickerFor(null);
       setActiveMenu(null);
@@ -281,6 +287,8 @@ function AllExpenses() {
       setCategoryModalExpense(null);
       return;
     }
+
+    setIsUpdatingCategory(true);
     try {
       const sessionId = localStorage.getItem('session_id');
       const res = await fetch(`${import.meta.env.VITE_API_URL}/update_expense_category`, {
@@ -308,6 +316,7 @@ function AllExpenses() {
       console.error('Error updating category:', err);
       alert('Error updating category');
     } finally {
+      setIsUpdatingCategory(false);
       setCategoryPickerFor(null);
       setActiveMenu(null);
       setCategoryModalOpen(false);
@@ -567,6 +576,7 @@ function AllExpenses() {
                     key={cat}
                     className={`category-tile ${cat === categoryModalExpense.category ? 'current' : ''}`}
                     onClick={() => applyCategoryChange(categoryModalExpense, cat)}
+                    disabled={isUpdatingCategory}
                   >
                     {cat}
                   </button>

@@ -101,6 +101,8 @@ function MainScreen() {
               } finally {
                 localStorage.removeItem('session_id');
                 localStorage.removeItem('user_name');
+                // Dispatch logout event to stop timers BEFORE reload
+                window.dispatchEvent(new CustomEvent('userLoggedOut'));
                 window.location.reload();
               }
             }}

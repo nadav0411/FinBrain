@@ -350,3 +350,10 @@ def test_logout_mixed_case_null_strings():
 
         # Check if the user is not logged out
         assert data['message'] == 'Missing session_id'
+
+
+def test_pass():
+    """
+    Test that the test passes (to clean up the test database)
+    """
+    assert True

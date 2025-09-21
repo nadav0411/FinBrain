@@ -221,8 +221,8 @@ def handle_get_expenses(month, year, session_id):
     expenses = list(expenses_collection.find({
         "user_id": user["_id"],
         "date": {
-            "$gte": start_date.isoformat(),
-            "$lt": end_date.isoformat()
+            "$gte": start_date.date().isoformat(),
+            "$lt": end_date.date().isoformat()
     }}))
 
     # Convert the ObjectId to a string and remove the user_id field

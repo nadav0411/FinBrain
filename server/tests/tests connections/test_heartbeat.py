@@ -265,3 +265,10 @@ def test_heartbeat_session_ttl_is_refreshed():
     new_ttl = lc.r.ttl(f"session:{session_id}")
     assert new_ttl == lc.SESSION_TTL_SECONDS
     assert new_ttl > initial_ttl
+
+
+def test_pass():
+    """
+    Test that the test passes (to clean up the test database)
+    """
+    assert True

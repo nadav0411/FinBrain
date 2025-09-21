@@ -299,3 +299,10 @@ def test_login_handles_database_error():
 
     # Restore original function
     users_collection.find_one = original_find_one
+
+
+def test_pass():
+    """
+    Test that the test passes (to clean up the test database)
+    """
+    assert True

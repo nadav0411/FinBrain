@@ -15,15 +15,6 @@ function AuthSwitcher() {
   // State to track if user is successfully authenticated
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('session_id'));
 
-  // Listen for custom logout event from inactivity timer
-  useEffect(() => {
-    const handleLogout = () => {
-      setIsLoggedIn(false);
-    };
-    window.addEventListener('userLoggedOut', handleLogout);
-    return () => window.removeEventListener('userLoggedOut', handleLogout);
-  }, []);
-
   // On mount, set up a beforeunload handler to notify backend and clear local storage on surprise exit
   useEffect(() => {
     let heartbeatInterval;
@@ -53,6 +44,13 @@ function AuthSwitcher() {
       if (heartbeatInterval) clearInterval(heartbeatInterval);
       heartbeatInterval = undefined;
     };
+
+    // Combined logout handler for both state change and heartbeat cleanup
+    const handleLogout = () => {
+      stopHeartbeat();
+      setIsLoggedIn(false);
+    };
+    window.addEventListener('userLoggedOut', handleLogout);
 
     if (localStorage.getItem('session_id')) {
       startHeartbeat();
@@ -96,6 +94,7 @@ function AuthSwitcher() {
     window.addEventListener('beforeunload', handleBeforeUnload);
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
+      window.removeEventListener('userLoggedOut', handleLogout);
       stopHeartbeat();
     };
   }, [isLoggedIn]);

@@ -90,3 +90,10 @@ def test_classify_expense_consistency():
     result1 = le.classify_expense(test_input)
     result2 = le.classify_expense(test_input)
     assert result1 == result2, "Function should return consistent results for the same input"
+
+
+def test_pass():
+    """
+    Test that the test passes (to clean up the test database)
+    """
+    assert True
