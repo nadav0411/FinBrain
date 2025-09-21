@@ -47,7 +47,6 @@ htmlcov/
 # ============================================
 # Machine Learning & Data Artifacts
 # ============================================
-*.pkl
 *.joblib
 *.h5
 *.hdf5
@@ -58,8 +57,9 @@ htmlcov/
 *.parquet
 *.feather
 
+# ============================================
 # Model directories
-finbrain_model/
+# ============================================
 models/
 data/
 datasets/
