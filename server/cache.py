@@ -1,6 +1,7 @@
 # cache.py
 
 
+# type: ignore
 import os
 import redis
 from dotenv import load_dotenv

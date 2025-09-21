@@ -1,7 +1,8 @@
 # app.py
 
+
 import logging
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from flask_cors import CORS
 import logicconnection as logic_connection
 import logicexpenses as logic_expenses
@@ -29,7 +30,18 @@ CORS(app, resources={r"/*": {"origins": "*"}})
 @app.route('/signup', methods=['POST'])
 def signup():
     logger.info("Signup request received", extra={"remote_addr": request.remote_addr})
-    data = request.get_json()
+
+    # Get the JSON data from the request 
+    try:
+        data = request.get_json()
+        if data is None:
+            logger.warning("Signup request with invalid JSON", extra={"remote_addr": request.remote_addr})
+            return jsonify({'message': 'Invalid JSON format'}), 400
+    except Exception as e:
+        logger.warning("Signup request with invalid JSON", extra={"remote_addr": request.remote_addr, "error": str(e)})
+        return jsonify({'message': 'Invalid JSON format'}), 400
+    
+    # Get the session ID from the request headers and handle the request
     result = logic_connection.handle_signup(data)
     logger.info("Signup request completed", extra={"status_code": result[1], "remote_addr": request.remote_addr})
     return result
@@ -39,7 +51,18 @@ def signup():
 @app.route('/login', methods=['POST'])
 def login():
     logger.info("Login request received", extra={"remote_addr": request.remote_addr})
-    data = request.get_json()
+
+    # Get the JSON data from the request 
+    try:
+        data = request.get_json()
+        if data is None:
+            logger.warning("Login request with invalid JSON", extra={"remote_addr": request.remote_addr})
+            return jsonify({'message': 'Invalid JSON format'}), 400
+    except Exception as e:
+        logger.warning("Login request with invalid JSON", extra={"remote_addr": request.remote_addr, "error": str(e)})
+        return jsonify({'message': 'Invalid JSON format'}), 400
+    
+    # Get the session ID from the request headers and handle the request
     result = logic_connection.handle_login(data)
     logger.info("Login request completed", extra={"status_code": result[1], "remote_addr": request.remote_addr})
     return result
@@ -69,7 +92,18 @@ def heartbeat():
 @app.route('/add_expense', methods=['POST'])
 def add_expense():
     logger.info("Add expense request received", extra={"remote_addr": request.remote_addr})
-    data = request.get_json()
+
+    # Get the JSON data from the request 
+    try:
+        data = request.get_json()
+        if data is None:
+            logger.warning("Add expense request with invalid JSON", extra={"remote_addr": request.remote_addr})
+            return jsonify({'message': 'Invalid JSON format'}), 400
+    except Exception as e:
+        logger.warning("Add expense request with invalid JSON", extra={"remote_addr": request.remote_addr, "error": str(e)})
+        return jsonify({'message': 'Invalid JSON format'}), 400
+    
+    # Get the session ID from the request headers and handle the request
     session_id = request.headers.get('Session-ID')
     result = logic_expenses.handle_add_expense(data, session_id)
     logger.info("Add expense request completed", extra={"status_code": result[1], "remote_addr": request.remote_addr})
@@ -106,7 +140,18 @@ def expenses_for_dashboard():
 @app.route('/update_expense_category', methods=['POST'])
 def update_expense_category():
     logger.info("Update expense category request received", extra={"remote_addr": request.remote_addr})
-    data = request.get_json()
+    
+    # Get the JSON data from the request 
+    try:
+        data = request.get_json()
+        if data is None:
+            logger.warning("Update expense category request with invalid JSON", extra={"remote_addr": request.remote_addr})
+            return jsonify({'message': 'Invalid JSON format'}), 400
+    except Exception as e:
+        logger.warning("Update expense category request with invalid JSON", extra={"remote_addr": request.remote_addr, "error": str(e)})
+        return jsonify({'message': 'Invalid JSON format'}), 400
+    
+    # Get the session ID from the request headers and handle the request
     session_id = request.headers.get('Session-ID')
     result = logic_expenses.handle_update_expense_category(data, session_id)
     logger.info("Update expense category request completed", extra={"status_code": result[1], "remote_addr": request.remote_addr})
@@ -117,7 +162,18 @@ def update_expense_category():
 @app.route('/delete_expense', methods=['POST'])
 def delete_expense():
     logger.info("Delete expense request received", extra={"remote_addr": request.remote_addr})
-    data = request.get_json()
+    
+    # Get the JSON data from the request 
+    try:
+        data = request.get_json()
+        if data is None:
+            logger.warning("Delete expense request with invalid JSON", extra={"remote_addr": request.remote_addr})
+            return jsonify({'message': 'Invalid JSON format'}), 400
+    except Exception as e:
+        logger.warning("Delete expense request with invalid JSON", extra={"remote_addr": request.remote_addr, "error": str(e)})
+        return jsonify({'message': 'Invalid JSON format'}), 400
+    
+    # Get the session ID from the request headers and handle the request
     session_id = request.headers.get('Session-ID')
     result = logic_expenses.handle_delete_expense(data, session_id)
     logger.info("Delete expense request completed", extra={"status_code": result[1], "remote_addr": request.remote_addr})

@@ -2,7 +2,6 @@
 
 
 # type: ignore
-from requests import patch
 from db import users_collection, expenses_collection, db
 import pytest
 import logicexpenses as le

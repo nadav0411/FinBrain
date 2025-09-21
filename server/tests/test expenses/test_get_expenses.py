@@ -124,7 +124,7 @@ def test_get_expenses_missing_month():
     
     # Check if the response is unsuccessful
     assert response.status_code == 400
-    assert response.json['error'] == 'Missing month or year'
+    assert response.json['message'] == 'Missing month or year'
 
 
 def test_get_expenses_missing_year():
@@ -142,7 +142,7 @@ def test_get_expenses_missing_year():
     
     # Check if the response is unsuccessful
     assert response.status_code == 400
-    assert response.json['error'] == 'Missing month or year'
+    assert response.json['message'] == 'Missing month or year'
 
 
 def test_get_expenses_invalid_month():
@@ -158,12 +158,12 @@ def test_get_expenses_invalid_month():
     # Test month too low
     response = client.get('/get_expenses?month=0&year=2025', headers={'Session-ID': session_id})
     assert response.status_code == 400
-    assert response.json['error'] == 'Invalid month or year'
+    assert response.json['message'] == 'Invalid month or year'
     
     # Test month too high
     response = client.get('/get_expenses?month=13&year=2025', headers={'Session-ID': session_id})
     assert response.status_code == 400
-    assert response.json['error'] == 'Invalid month or year'
+    assert response.json['message'] == 'Invalid month or year'
 
 
 def test_get_expenses_invalid_year():
@@ -179,12 +179,12 @@ def test_get_expenses_invalid_year():
     # Test year too low
     response = client.get('/get_expenses?month=1&year=2014', headers={'Session-ID': session_id})
     assert response.status_code == 400
-    assert response.json['error'] == 'Invalid month or year'
+    assert response.json['message'] == 'Invalid month or year'
     
     # Test year too high
     response = client.get('/get_expenses?month=1&year=2035', headers={'Session-ID': session_id})
     assert response.status_code == 400
-    assert response.json['error'] == 'Invalid month or year'
+    assert response.json['message'] == 'Invalid month or year'
 
 
 def test_get_expenses_without_session_id():
@@ -406,12 +406,12 @@ def test_get_expenses_non_numeric_parameters():
     # Send a GET request with non-numeric month
     response = client.get('/get_expenses?month=abc&year=2025', headers={'Session-ID': session_id})
     assert response.status_code == 400
-    assert response.json['error'] == 'Missing month or year'
+    assert response.json['message'] == 'Missing month or year'
     
     # Send a GET request with non-numeric year
     response = client.get('/get_expenses?month=1&year=abc', headers={'Session-ID': session_id})
     assert response.status_code == 400
-    assert response.json['error'] == 'Missing month or year'
+    assert response.json['message'] == 'Missing month or year'
 
 
 def test_get_expenses_session_id_null():
@@ -551,7 +551,7 @@ def test_get_expenses_year_before_2015():
     
     # Check if the response is unsuccessful
     assert response.status_code == 400
-    assert response.json['error'] == 'Invalid month or year'
+    assert response.json['message'] == 'Invalid month or year'
 
 
 def test_get_expenses_year_after_2027():
@@ -569,7 +569,7 @@ def test_get_expenses_year_after_2027():
     
     # Check if the response is unsuccessful
     assert response.status_code == 400
-    assert response.json['error'] == 'Invalid month or year'
+    assert response.json['message'] == 'Invalid month or year'
 
 
 def test_get_expenses_expired_session():
@@ -638,14 +638,14 @@ def test_get_expenses_float_parameters():
 
     # Check if the response is unsuccessful
     assert response.status_code == 400
-    assert response.json['error'] == 'Missing month or year'
+    assert response.json['message'] == 'Missing month or year'
     
     # Send a GET request with float year
     response = client.get('/get_expenses?month=1&year=2025.5', headers={'Session-ID': session_id})
 
     # Check if the response is unsuccessful
     assert response.status_code == 400
-    assert response.json['error'] == 'Missing month or year'
+    assert response.json['message'] == 'Missing month or year'
 
 
 def test_get_expenses_negative_parameters():
@@ -663,14 +663,14 @@ def test_get_expenses_negative_parameters():
 
     # Check if the response is unsuccessful
     assert response.status_code == 400
-    assert response.json['error'] == 'Invalid month or year'
+    assert response.json['message'] == 'Invalid month or year'
     
     # Send a GET request with negative year
     response = client.get('/get_expenses?month=1&year=-2025', headers={'Session-ID': session_id})
 
     # Check if the response is unsuccessful
     assert response.status_code == 400
-    assert response.json['error'] == 'Invalid month or year'
+    assert response.json['message'] == 'Invalid month or year'
 
 
 def test_get_expenses_zero_parameters():
@@ -688,14 +688,14 @@ def test_get_expenses_zero_parameters():
     
     # Check if the response is unsuccessful
     assert response.status_code == 400
-    assert response.json['error'] == 'Invalid month or year'
+    assert response.json['message'] == 'Invalid month or year'
     
     # Send a GET request with zero year
     response = client.get('/get_expenses?month=1&year=0', headers={'Session-ID': session_id})
     
     # Check if the response is unsuccessful
     assert response.status_code == 400
-    assert response.json['error'] == 'Invalid month or year'
+    assert response.json['message'] == 'Invalid month or year'
 
 
 def test_get_expenses_multiple_months_years():

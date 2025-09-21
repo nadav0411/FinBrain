@@ -153,9 +153,9 @@ def handle_add_expense(data, session_id):
     
     # Get the last expense number
     last_expense = expenses_collection.find_one(
-    {"user_id": user["_id"]},
-    sort=[("serial_number", -1)]
-)
+        {"user_id": user["_id"]},
+        sort=[("serial_number", -1)]
+    )
     # If there is a last expense, add 1 to the serial number
     if last_expense:
         serial_number = last_expense.get("serial_number", 0) + 1
@@ -201,11 +201,11 @@ def handle_get_expenses(month, year, session_id):
 
     # Check if the month and year are valid (None or not int)
     if month is None or year is None:
-        return jsonify({"error": "Missing month or year"}), 400
+        return jsonify({"message": "Missing month or year"}), 400
     
     # Check if the month and year are valid
     if month < 1 or month > 12 or year < 2015 or year > 2027:
-        return jsonify({"error": "Invalid month or year"}), 400
+        return jsonify({"message": "Invalid month or year"}), 400
     
     # Calculate the start and end dates for the month
     try:
@@ -215,7 +215,7 @@ def handle_get_expenses(month, year, session_id):
         else:
             end_date = datetime(year, month + 1, 1)
     except ValueError:
-        return jsonify({"error": "Invalid month or year"}), 400
+        return jsonify({"message": "Invalid month or year"}), 400
     
     # Get the expenses for the month
     expenses = list(expenses_collection.find({
@@ -277,12 +277,13 @@ def handle_get_expenses_for_dashboard(chart, currency, months, categories, sessi
         return jsonify({'message': 'Categories are required'}), 400
     
     # Check if the categories are valid
+    valid_categories = ['Food & Drinks', 'Housing & Bills', 'Transportation', 'Education & Personal Growth', 'Health & Essentials', 'Leisure & Gifts', 'Other'] + ['All']
     if len(categories) == 1:
-        if categories[0] not in ['Food & Drinks', 'Housing & Bills', 'Transportation', 'Education & Personal Growth', 'Health & Essentials', 'Leisure & Gifts', 'Other', 'All']:
+        if categories[0] not in valid_categories:
             return jsonify({'message': 'Invalid category'}), 400
     else:
         for category in categories:
-            if category not in ['Food & Drinks', 'Housing & Bills', 'Transportation', 'Education & Personal Growth', 'Health & Essentials', 'Leisure & Gifts', 'Other']:
+            if category not in valid_categories:
                 return jsonify({'message': 'Invalid category'}), 400
     
     # Get the user ID
@@ -365,7 +366,11 @@ def handle_category_breakdown(month_regexes, user_id, currency):
 
 
 def handle_monthly_comparison(month_regexes, user_id, currency, categories, months):
-   
+    """
+    This function is called when the user wants to get the monthly comparison for the dashboard
+    It gets the expenses for the months and categories, initializes monthly comparison dictionary,
+    sums the expenses for each month, calculates percentages, and returns the result
+    """
     # Get the expenses for the months and categories
     # If "All" is in categories, don't filter by category
     if 'All' in categories:
@@ -398,7 +403,7 @@ def handle_monthly_comparison(month_regexes, user_id, currency, categories, mont
         monthly_comparison[expense_month] += expense[amount_key]
     
     # Get the value of the month with the max amount
-    max_amount = max(monthly_comparison.values())
+    max_amount = max(monthly_comparison.values()) if monthly_comparison else 0
     
     result = []
     # Add the month and amount to the result
@@ -433,9 +438,13 @@ def handle_update_expense_category(data, session_id):
         logger.warning("User not found during category update", extra={"email": email})
         return jsonify({'message': 'User not found'}), 404
     
+    # Check if data is None (missing JSON)
+    if data is None:
+        return jsonify({'message': 'Serial number is required'}), 400
+    
     # Get the serial number from the data and check if it is valid
     serial_number = data.get('serial_number')
-    if not serial_number:
+    if serial_number is None or serial_number == '':
         return jsonify({'message': 'Serial number is required'}), 400
     
     # Get the current category
@@ -449,31 +458,20 @@ def handle_update_expense_category(data, session_id):
         return jsonify({'message': 'New category is required'}), 400
     
     # Get the current category of the expense
-    current_category_db = expenses_collection.find_one({
+    existing_expense = expenses_collection.find_one({
         'user_id': user['_id'],
         'serial_number': serial_number
     })
 
-    if not current_category_db:
+    if not existing_expense:
         return jsonify({'message': 'Expense not found'}), 404
 
     # Check if the current category in the database is the same as the current category from the client
-    if current_category_db.get('category') != current_category_client:
+    if existing_expense.get('category') != current_category_client:
         return jsonify({'message': 'Category is already updated'}), 400
     
-    # List of categories
-    all_categories = [
-        'Food & Drinks',
-        'Housing & Bills',
-        'Transportation',
-        'Education & Personal Growth',
-        'Health & Essentials',
-        'Leisure & Gifts',
-        'Other'
-    ]
-
     # Check if the new category is in the list of categories
-    if new_category not in all_categories or new_category == current_category_db.get('category'):
+    if new_category not in categories or new_category == existing_expense.get('category'):
         return jsonify({'message': 'Invalid category'}), 400
 
     # Update the category of the expense
@@ -495,7 +493,7 @@ def handle_update_expense_category(data, session_id):
         return jsonify({'message': 'Expense not found'}), 404
     
     # Get the title of the expense
-    expense_title = current_category_db.get('title')
+    expense_title = existing_expense.get('title')
     
     # Add the expense and the new category to user_feedback file to optimize the model
     try:
@@ -507,7 +505,7 @@ def handle_update_expense_category(data, session_id):
     except Exception as e:
         logger.error("Failed to update user feedback", extra={"expense_title": expense_title, "new_category": new_category, "error": str(e)})
 
-    logger.info("Expense category updated", extra={"serial_number": serial_number, "old_category": current_category_db.get('category'), "new_category": new_category, "email": email})
+    logger.info("Expense category updated", extra={"serial_number": serial_number, "old_category": existing_expense.get('category'), "new_category": new_category, "email": email})
     return jsonify({'message': 'Category updated', 'new_category': new_category}), 200
 
 
@@ -528,10 +526,23 @@ def handle_delete_expense(data, session_id):
         logger.warning("User not found during expense deletion", extra={"email": email})
         return jsonify({'message': 'User not found'}), 404
     
+    # Check if data is None (missing JSON)
+    if data is None:
+        return jsonify({'message': 'Serial number is required'}), 400
+    
     # Get the serial number from the data and check if it is valid
     serial_number = data.get('serial_number')
-    if not serial_number:
+    if serial_number is None or serial_number == '':
         return jsonify({'message': 'Serial number is required'}), 400
+    
+    # Check if the expense exists for this user first
+    existing_expense = expenses_collection.find_one({
+        'user_id': user['_id'],
+        'serial_number': serial_number
+    })
+    
+    if not existing_expense:
+        return jsonify({'message': 'Expense not found'}), 404
     
     # Delete the expense
     try:
