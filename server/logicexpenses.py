@@ -367,11 +367,18 @@ def handle_category_breakdown(month_regexes, user_id, currency):
 def handle_monthly_comparison(month_regexes, user_id, currency, categories, months):
    
     # Get the expenses for the months and categories
-    expenses_cursor = expenses_collection.find({
-    'user_id': user_id,
-    'date': {'$in': month_regexes},
-    'category': {'$in': categories} 
-    })
+    # If "All" is in categories, don't filter by category
+    if 'All' in categories:
+        expenses_cursor = expenses_collection.find({
+            'user_id': user_id,
+            'date': {'$in': month_regexes}
+        })
+    else:
+        expenses_cursor = expenses_collection.find({
+            'user_id': user_id,
+            'date': {'$in': month_regexes},
+            'category': {'$in': categories} 
+        })
 
     # Initialize dictionary for monthly comparison
     monthly_comparison = {}
