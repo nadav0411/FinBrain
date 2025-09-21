@@ -1,6 +1,7 @@
 # password_hashing.py
 
 
+# type: ignore
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError
 import logging

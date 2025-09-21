@@ -54,8 +54,6 @@ htmlcov/
 *.model
 *.bin
 *.sav
-*.pickle
-*.csv
 *.json
 *.parquet
 *.feather
