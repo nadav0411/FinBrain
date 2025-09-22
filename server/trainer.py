@@ -56,7 +56,7 @@ def train_and_save_model():
     # Create the Logistic Regression model. This is a simple model that works for text classification.
     # max_iter=1000 means "try up to 1000 times to learn" (just in case it's slow to learn).
     # This is where the model "learns" what text belongs to what category.
-    model = LogisticRegression(max_iter=1000, solver='liblinear')
+    model = LogisticRegression(max_iter=1000, solver='lbfgs')
     logger.info("Starting model training with Logistic Regression")
 
     # Train the model using the input data (X) and correct answers (y).

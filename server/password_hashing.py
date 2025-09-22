@@ -17,10 +17,10 @@ password_hasher = PasswordHasher(
     memory_cost=65536, # How much computer memory to use (64MB - more = safer but slower)
     parallelism=4, # How many computer cores to use at the same time
     hash_len=32, # How long the scrambled password should be (32 characters)
-    salt_len=16 # How long the random salt should be (16 characters)
+    salt_len=16 # How long the random salt (= unique identifier) should be (16 characters)
 )
 
-def hash_password(password) -> str:
+def hash_password(password):
     """
     Turn a plain text password into a scrambled version that can be safely stored
     """
