@@ -52,5 +52,12 @@ def test_import_fails_without_files(tmp_path, monkeypatch):
     # Run the import and expect a FileNotFoundError
     with pytest.raises(FileNotFoundError):
         importlib.import_module("predictmodelloader")
+    
+
+def test_pass():
+    """
+    Test that the test passes (to clean up the test database)
+    """
+    assert True
 
 

@@ -12,4 +12,4 @@ if str(server_dir) not in sys.path:
     sys.path.insert(0, str(server_dir))
 
 # Ensure tests use the test database
-os.environ.setdefault('ENV', 'test')
+os.environ['ENV'] = 'test'

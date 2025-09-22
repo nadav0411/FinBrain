@@ -10,6 +10,7 @@ import re
 from predictmodelloader import model, vectorizer
 import pandas as pd
 import logging
+import cache
 
 
 # Create a logger for this module
@@ -58,6 +59,12 @@ def get_usd_to_ils_rate(date_str):
     This function is called when the user wants to add an expense
     It returns the USD to ILS rate for the given date
     """
+    # Check cache first
+    cached_rate = cache.get_cached_currency_rate(date_str)
+    if cached_rate is not None:
+        return cached_rate
+    
+    # If not in cache, get from API
     url = f"https://api.frankfurter.app/{date_str}?from=USD&to=ILS"
     try:
         # Wait for the API to respond
@@ -66,6 +73,13 @@ def get_usd_to_ils_rate(date_str):
             data = response.json()
             rate = data['rates']['ILS']
             logger.info("Exchange rate retrieved successfully", extra={"date": date_str, "rate": rate})
+            
+            # Cache the rate for future use (don't fail if caching fails)
+            try:
+                cache.add_to_cache_currency_rate(date_str, rate)
+            except Exception as cache_error:
+                logger.warning("Failed to cache currency rate", extra={"date": date_str, "rate": rate, "error": str(cache_error)})
+            
             return rate
         else:
             logger.warning("API returned non-200 status", extra={"status_code": response.status_code})
@@ -177,6 +191,12 @@ def handle_add_expense(data, session_id):
         logger.error("Failed to insert expense", extra={"title": title, "email": email, "error": str(e)})
         return jsonify({'message': 'Failed to add expense'}), 500
 
+    # delete cache for this month and year for the user
+    try:
+        cache.delete_user_expenses_cache(user['_id'], date.month, date.year)
+    except Exception as cache_error:
+        logger.warning("Failed to delete cache after adding expense", extra={"month": date.month, "year": date.year, "email": email, "error": str(cache_error)})
+
     logger.info("Expense added", extra={"title": title, "date": date, "amount": amount, "currency": currency, "category": category, "serial_number": serial_number})
     return jsonify({'message': 'Expense added'}), 200
 
@@ -207,6 +227,12 @@ def handle_get_expenses(month, year, session_id):
     if month < 1 or month > 12 or year < 2015 or year > 2027:
         return jsonify({"message": "Invalid month or year"}), 400
     
+    # Check cache first
+    cached_expenses = cache.get_cached_user_expenses(user["_id"], month, year)
+    if cached_expenses is not None:
+        logger.info("Get expenses from cache successful", extra={"month": month, "year": year, "expense_count": len(cached_expenses), "email": email})
+        return jsonify({"expenses": cached_expenses}), 200
+    
     # Calculate the start and end dates for the month
     try:
         start_date = datetime(year, month, 1)
@@ -230,6 +256,12 @@ def handle_get_expenses(month, year, session_id):
         expense["_id"] = str(expense["_id"])
         if "user_id" in expense:
             expense["user_id"] = str(expense["user_id"])
+
+    # Cache the expenses for future use (don't fail if caching fails)
+    try:
+        cache.add_to_cache_user_expenses(user["_id"], month, year, expenses)
+    except Exception as cache_error:
+        logger.warning("Failed to cache user expenses", extra={"month": month, "year": year, "email": email, "error": str(cache_error)})
 
     logger.info("Get expenses successful", extra={"month": month, "year": year, "expense_count": len(expenses), "email": email})
     return jsonify({"expenses": expenses}), 200
@@ -505,6 +537,13 @@ def handle_update_expense_category(data, session_id):
     except Exception as e:
         logger.error("Failed to update user feedback", extra={"expense_title": expense_title, "new_category": new_category, "error": str(e)})
 
+    # delete cache for the month and year of this expense
+    try:
+        expense_date = datetime.strptime(existing_expense.get('date'), '%Y-%m-%d').date()
+        cache.delete_user_expenses_cache(user['_id'], expense_date.month, expense_date.year)
+    except Exception as cache_error:
+        logger.warning("Failed to delete cache after updating expense category", extra={"serial_number": serial_number, "email": email, "error": str(cache_error)})
+
     logger.info("Expense category updated", extra={"serial_number": serial_number, "old_category": existing_expense.get('category'), "new_category": new_category, "email": email})
     return jsonify({'message': 'Category updated', 'new_category': new_category}), 200
 
@@ -558,5 +597,12 @@ def handle_delete_expense(data, session_id):
     if result.deleted_count == 0:
         return jsonify({'message': 'Expense not found'}), 404
     
+    # delete cache for the month and year of this expense
+    try:
+        expense_date = datetime.strptime(existing_expense.get('date'), '%Y-%m-%d').date()
+        cache.delete_user_expenses_cache(user['_id'], expense_date.month, expense_date.year)
+    except Exception as cache_error:
+        logger.warning("Failed to delete cache after deleting expense", extra={"serial_number": serial_number, "email": email, "error": str(cache_error)})
+
     logger.info("Expense deleted", extra={"serial_number": serial_number, "email": email})
     return jsonify({'message': 'Expense deleted', 'serial_number': serial_number}), 200

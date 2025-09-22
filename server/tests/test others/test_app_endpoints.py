@@ -152,3 +152,10 @@ def test_expenses_for_dashboard_ok(monkeypatch):
     assert data["months"] == ["1", "2"]
     assert data["categories"] == ["Food", "Transport"]
     assert data["sid"] == "sid2"
+
+
+def test_pass():
+    """
+    Test that the test passes (to clean up the test database)
+    """
+    assert True

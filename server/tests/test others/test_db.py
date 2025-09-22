@@ -19,3 +19,9 @@ def test_collections_are_usable():
     # Clean up - delete the dummy documents
     db.users_collection.delete_one({"email": "test@example.com"})
     db.expenses_collection.delete_one({"user_email": "test@example.com"})
+
+def test_pass():
+    """
+    Test that the test passes (to clean up the test database)
+    """
+    assert True

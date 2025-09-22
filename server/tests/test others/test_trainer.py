@@ -101,3 +101,10 @@ def test_missing_file_raises_no_files(tmp_path, monkeypatch):
     assert not os.path.exists(os.path.join(finbrain_dir, "model.pkl"))
     assert not os.path.exists(os.path.join(finbrain_dir, "vectorizer.pkl"))
 
+
+def test_pass():
+    """
+    Test that the test passes (to clean up the test database)
+    """
+    assert True
+

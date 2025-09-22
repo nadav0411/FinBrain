@@ -43,3 +43,10 @@ def test_hash_outputs_are_unique():
     assert verify_password(plain_password, hash_two) is True
 
 
+def test_pass():
+    """
+    Test that the test passes (to clean up the test database)
+    """
+    assert True
+
+
