@@ -14,6 +14,10 @@ from unittest.mock import patch
 # Clean the users collection before each test
 @pytest.fixture(autouse=True)
 def clean_collections():
+    """
+    Clean the users and expenses collections before each test
+    Ensures test isolation by using FinBrainTest database
+    """
     # Check if the database is FINBRAIN or FINBRAINTEST to make sure we are using the correct database for the test
     if db.name == 'FinBrainTest':
         users_collection.delete_many({})
@@ -23,6 +27,10 @@ def clean_collections():
 # Clean Redis sessions before each test
 @pytest.fixture(autouse=True)
 def clean_sessions():
+    """
+    Clean Redis sessions before each test
+    Ensures test isolation by removing any existing test sessions
+    """
     # Clean up any existing test sessions
     keys = lc.r.keys("session:*")
     if keys:
@@ -31,7 +39,7 @@ def clean_sessions():
 
 def insert_test_user():
     """
-    Insert a test user into the database
+    Insert a test user into the database and create a valid session
     """
     email = "user@login.com"
     # Insert a test user into the database
@@ -53,7 +61,7 @@ def insert_test_user():
 
 def get_user_id_from_email(email):
     """
-    Get user ID from email
+    Get user ID from email address
     """
     user = users_collection.find_one({'email': email})
     return user['_id'] if user else None

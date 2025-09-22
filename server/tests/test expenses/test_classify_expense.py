@@ -1,6 +1,7 @@
 # test_classify_expense.py
 
 
+# type: ignore
 import logicexpenses as le
 
 
