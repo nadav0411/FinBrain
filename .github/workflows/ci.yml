@@ -47,8 +47,4 @@ jobs:
       - name: Run all tests
         run: |
           cd server
-          python -m pytest \
-            "tests/tests connections/" \
-            "tests/test expenses/" \
-            "tests/test others/" \
-            -v
+          python -m pytest -v
