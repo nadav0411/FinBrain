@@ -1,0 +1,40 @@
+# This docker-compose file runs two services:
+# 1. Redis runs in its own container called "redis"
+# 2. Flask backend runs in a separate container called "backend"
+# They communicate over Docker's internal network using the service name "redis"
+
+
+services:
+  backend:
+    build: .
+    container_name: finbrain-backend
+    ports:
+      - "5000:5000" # Connects port 5000 inside the container (Flask Server) to port 5000 on my own computer (localhost)
+    depends_on:
+      - redis # Wait for Redis to start before starting the backend
+      - mongo # Wait for MongoDB to start before starting the backend
+    
+    env_file:
+      - .env.docker # Tell Docker to use the .env.docker file for environment variables (Tell Flask where to find Redis and MongoDB inside Docker network)
+
+  redis:
+    image: redis:7.2
+    container_name: finbrain-redis # Name of the container
+
+  mongo:
+      image: mongo:6
+      container_name: finbrain-mongo # Name of the container
+
+  
+# Important Note:
+# --- Code Changes ---
+# docker compose down (stop and remove all containers)
+# docker compose up --build (build from scratch and running the containers)
+# docker compose down -v (stop and remove all containers, network and data)
+
+# --- Running Frequently ---
+# docker compose up (start the containers)
+# docker compose down (stop and remove all containers)
+# docker compose logs -f backend (view the logs of the backend container)
+# docker ps (view all running containers)
+# docker images (view all images)
