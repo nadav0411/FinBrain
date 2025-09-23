@@ -107,6 +107,10 @@ def handle_add_expense(data, session_id):
         logger.warning("Unauthorized access attempt", extra={"session_id": session_id})
         return jsonify({'message': 'Unauthorized'}), 401
     
+    # Check if the user is a demo user
+    if email == 'demo':
+        return jsonify({'message': 'Demo user cannot add expenses'}), 400
+    
     # Get the required fields
     title = data.get('title')
     date = data.get('date')
@@ -193,7 +197,7 @@ def handle_add_expense(data, session_id):
 
     # delete cache for this month and year for the user
     try:
-        cache.delete_user_expenses_cache(user['_id'], date.month, date.year)
+        cache.delete_user_expenses_cache(email, date.month, date.year)
     except Exception as cache_error:
         logger.warning("Failed to delete cache after adding expense", extra={"month": date.month, "year": date.year, "email": email, "error": str(cache_error)})
 
@@ -228,7 +232,7 @@ def handle_get_expenses(month, year, session_id):
         return jsonify({"message": "Invalid month or year"}), 400
     
     # Check cache first
-    cached_expenses = cache.get_cached_user_expenses(user["_id"], month, year)
+    cached_expenses = cache.get_cached_user_expenses(email, month, year)
     if cached_expenses is not None:
         logger.info("Get expenses from cache successful", extra={"month": month, "year": year, "expense_count": len(cached_expenses), "email": email})
         return jsonify({"expenses": cached_expenses}), 200
@@ -259,7 +263,7 @@ def handle_get_expenses(month, year, session_id):
 
     # Cache the expenses for future use (don't fail if caching fails)
     try:
-        cache.add_to_cache_user_expenses(user["_id"], month, year, expenses)
+        cache.add_to_cache_user_expenses(email, month, year, expenses)
     except Exception as cache_error:
         logger.warning("Failed to cache user expenses", extra={"month": month, "year": year, "email": email, "error": str(cache_error)})
 
@@ -463,8 +467,14 @@ def handle_update_expense_category(data, session_id):
     if not session_id or str(session_id).strip().lower() in {"", "none", "null", "undefined"}:
         return jsonify({'message': 'Session ID is required'}), 400
     
-    # Get the user from the session ID
+    # Get the email from the session ID
     email = get_email_from_session_id(session_id)
+
+    # Check if the user is a demo user
+    if email == 'demo':
+        return jsonify({'message': 'Demo user cannot update expenses'}), 400
+    
+    # Get the user from the email
     user = users_collection.find_one({'email': email})
     if not user:
         logger.warning("User not found during category update", extra={"email": email})
@@ -540,7 +550,7 @@ def handle_update_expense_category(data, session_id):
     # delete cache for the month and year of this expense
     try:
         expense_date = datetime.strptime(existing_expense.get('date'), '%Y-%m-%d').date()
-        cache.delete_user_expenses_cache(user['_id'], expense_date.month, expense_date.year)
+        cache.delete_user_expenses_cache(email, expense_date.month, expense_date.year)
     except Exception as cache_error:
         logger.warning("Failed to delete cache after updating expense category", extra={"serial_number": serial_number, "email": email, "error": str(cache_error)})
 
@@ -558,8 +568,14 @@ def handle_delete_expense(data, session_id):
     if not session_id or str(session_id).strip().lower() in {"", "none", "null", "undefined"}:
         return jsonify({'message': 'Session ID is required'}), 400
     
-    # Get the user from the session ID
+    # Get the email from the session ID
     email = get_email_from_session_id(session_id)
+
+    # Check if the user is a demo user
+    if email == 'demo':
+        return jsonify({'message': 'Demo user cannot delete expenses'}), 400
+    
+    # Get the user from the email
     user = users_collection.find_one({'email': email})
     if not user:
         logger.warning("User not found during expense deletion", extra={"email": email})
@@ -600,7 +616,7 @@ def handle_delete_expense(data, session_id):
     # delete cache for the month and year of this expense
     try:
         expense_date = datetime.strptime(existing_expense.get('date'), '%Y-%m-%d').date()
-        cache.delete_user_expenses_cache(user['_id'], expense_date.month, expense_date.year)
+        cache.delete_user_expenses_cache(email, expense_date.month, expense_date.year)
     except Exception as cache_error:
         logger.warning("Failed to delete cache after deleting expense", extra={"serial_number": serial_number, "email": email, "error": str(cache_error)})
 

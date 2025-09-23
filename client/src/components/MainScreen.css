@@ -77,6 +77,16 @@
   box-sizing: border-box;
 }
 
+.demo-banner {
+  background: #fff4e5;
+  color: #8a4b08;
+  border: 1px solid #ffd8a8;
+  padding: 5px 14px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  font-size: 14px;
+}
+
 /* Page Header - Top section with title and user info */
 .page-header {
   padding-bottom: 16px;

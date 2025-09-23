@@ -14,6 +14,7 @@ function LoginModal({ onGoToSignup, onLoginSuccess }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  const [showForgotInfo, setShowForgotInfo] = useState(false);
 
   // Called when the user submits the form
   const handleSubmit = async (e) => {
@@ -32,7 +33,7 @@ function LoginModal({ onGoToSignup, onLoginSuccess }) {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
+        body: JSON.stringify({ email, password, demo: false })
       });
 
       // Wait for response from server
@@ -67,6 +68,42 @@ function LoginModal({ onGoToSignup, onLoginSuccess }) {
       setError('Server error. Please try again later.');
     }
 
+    setLoading(false);
+  };
+
+  const handleDemoLogin = async () => {
+    setLoading(true);
+    setError('');
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: 'demo', password: '', demo: true})
+      });
+
+      const data = await response.json();
+      if (response.status === 200) {
+        if (data.session_id) {
+          localStorage.setItem('session_id', data.session_id);
+        }
+        if (data.name) {
+          localStorage.setItem('user_name', data.name);
+        }
+        // Mark demo mode so UI can show banner
+        localStorage.setItem('is_demo_user', 'true');
+        setSuccess(true);
+        setTimeout(() => {
+          setSuccess(false);
+          setEmail('');
+          setPassword('');
+          onLoginSuccess();
+        }, 800);
+      } else {
+        setError(data.message || 'Demo login failed.');
+      }
+    } catch (err) {
+      setError('Server error. Please try again later.');
+    }
     setLoading(false);
   };
 
@@ -110,7 +147,13 @@ function LoginModal({ onGoToSignup, onLoginSuccess }) {
           <div className="row link-row">
             {/* Sign up link */}
             <a href="#" onClick={onGoToSignup} className="side-link">Sign Up</a>
-            <a href="#" className="side-link">Forgot Password?</a>
+            <a
+              href="#"
+              onClick={(e) => { e.preventDefault(); setShowForgotInfo(true); }}
+              className="side-link"
+            >
+              Forgot Password?
+            </a>
           </div>
 
           {/* Error message */}
@@ -130,7 +173,7 @@ function LoginModal({ onGoToSignup, onLoginSuccess }) {
               Login
             </button>
             {/* Demo button */}
-            <button type="button" className="main-button demo-button">
+            <button type="button" className="main-button demo-button" onClick={handleDemoLogin}>
               Demo Mode
             </button>
           </div>
@@ -143,6 +186,17 @@ function LoginModal({ onGoToSignup, onLoginSuccess }) {
           )}
         </form>
       </div>
+      {showForgotInfo && (
+        <div className="tiny-popup-overlay" onClick={() => setShowForgotInfo(false)}>
+          <div className="tiny-popup" onClick={(e) => e.stopPropagation()}>
+            <div className="tiny-popup-title">Password Reset coming soon</div>
+            <div className="tiny-popup-body">
+              We're polishing this feature. In the meantime, contact this email "nadav0411@gmail.com" or try signing up again with a new password.
+            </div>
+            <button className="tiny-popup-button" onClick={() => setShowForgotInfo(false)}>Got it</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

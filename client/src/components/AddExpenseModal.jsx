@@ -19,6 +19,11 @@ function AddExpenseModal({ onClose }) {
 
   // Handles form submission and API communication
   const handleSubmit = async () => {
+    // In demo mode, ignore Add action entirely
+    if (localStorage.getItem('is_demo_user') === 'true') {
+      onClose();
+      return;
+    }
     // Client-side validation before sending to server
     if (!title || !date || !amount || !currency) {
       setError("Please fill in all fields.");

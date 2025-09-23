@@ -101,6 +101,7 @@ function MainScreen() {
               } finally {
                 localStorage.removeItem('session_id');
                 localStorage.removeItem('user_name');
+                localStorage.removeItem('is_demo_user');
                 // Dispatch logout event to stop timers BEFORE reload
                 window.dispatchEvent(new CustomEvent('userLoggedOut'));
                 window.location.reload();
@@ -114,6 +115,11 @@ function MainScreen() {
 
       {/* Main content area */}
       <main className="content">
+        {localStorage.getItem('is_demo_user') === 'true' && (
+          <div className="demo-banner" role="status" aria-live="polite">
+            You are in Demo Mode — adding, changing, and deleting are disabled. To upgrade to the full version, please sign up and login.
+          </div>
+        )}
         <div className="page-header">
           <h2>{getPageTitle()}</h2>
           {/* Personalized welcome message using localStorage */}

@@ -118,17 +118,19 @@ def handle_login(data):
     """
     email = (data.get('email') or '').strip().lower()
     password = data.get('password') or ''
+    demo = data.get('demo')
 
-    # Validate required fields
-    if not email or not password:
-        logger.warning("Login missing fields", extra={"email": email, "password_provided": bool(password)})
-        return jsonify({'message': 'Email and password are required'}), 400
-    
-    # Validate email format
-    email_regex = re.compile(r'^[^@\s]+@[^@\s]+\.[^@\s]+$')
-    if len(email) > 254 or not email_regex.match(email):
-        logger.warning("Invalid login credentials", extra={"email": email})
-        return jsonify({'message': 'Invalid credentials'}), 401
+    if not demo:
+        # Validate required fields
+        if not email or not password:
+            logger.warning("Login missing fields", extra={"email": email, "password_provided": bool(password)})
+            return jsonify({'message': 'Email and password are required'}), 400
+        
+        # Validate email format
+        email_regex = re.compile(r'^[^@\s]+@[^@\s]+\.[^@\s]+$')
+        if len(email) > 254 or not email_regex.match(email):
+            logger.warning("Invalid login credentials", extra={"email": email})
+            return jsonify({'message': 'Invalid credentials'}), 401
     
     # Authenticate user
     try:

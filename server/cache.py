@@ -71,58 +71,58 @@ def add_to_cache_currency_rate(date_str, rate):
         logger.error("Error adding currency rate to cache", extra={"date": date_str, "rate": rate, "error": str(e)})
 
 
-def get_cached_user_expenses(user_id, month, year):
+def get_cached_user_expenses(email, month, year):
     """
     Get cached user expenses for a specific month and year
     Returns the expenses if found in cache, None otherwise
     """
     try:
         # Get the cache key with user expenses prefix
-        cache_key = f"{get_user_expenses_cache_key_prefix()}user:{user_id}:month:{year}-{month:02d}"
+        cache_key = f"{get_user_expenses_cache_key_prefix()}user:{str(email).strip().lower()}:month:{year}-{month:02d}"
         
         # Get the cached expenses if they exist (None if not found)
         cached_expenses = r.get(cache_key)
         if cached_expenses:
-            logger.info("User expenses found in cache", extra={"user_id": str(user_id), "month": month, "year": year})
+            logger.info("User expenses found in cache", extra={"email": str(email), "month": month, "year": year})
             return json.loads(cached_expenses)
         return None
     except Exception as e:
-        logger.error("Error getting cached user expenses", extra={"user_id": str(user_id), "month": month, "year": year, "error": str(e)})
+        logger.error("Error getting cached user expenses", extra={"email": str(email), "month": month, "year": year, "error": str(e)})
         return None
 
 
-def add_to_cache_user_expenses(user_id, month, year, expenses):
+def add_to_cache_user_expenses(email, month, year, expenses):
     """
     Add user expenses for a specific month and year to the cache
     TTL is set to 1 week (604800 seconds)
     """
     try:
         # Get the cache key with user expenses prefix
-        cache_key = f"{get_user_expenses_cache_key_prefix()}user:{user_id}:month:{year}-{month:02d}"
+        cache_key = f"{get_user_expenses_cache_key_prefix()}user:{str(email).strip().lower()}:month:{year}-{month:02d}"
         
         # Add the expenses to the cache with TTL of 1 week (604800 seconds)
         r.setex(cache_key, 604800, json.dumps(expenses))
-        logger.info("User expenses added to cache", extra={"user_id": str(user_id), "month": month, "year": year, "expense_count": len(expenses)})
+        logger.info("User expenses added to cache", extra={"email": str(email), "month": month, "year": year, "expense_count": len(expenses)})
     except Exception as e:
-        logger.error("Error adding user expenses to cache", extra={"user_id": str(user_id), "month": month, "year": year, "error": str(e)})
+        logger.error("Error adding user expenses to cache", extra={"email": str(email), "month": month, "year": year, "error": str(e)})
 
 
-def delete_user_expenses_cache(user_id, month, year):
+def delete_user_expenses_cache(email, month, year):
     """
     Delete cached user expenses for a specific month and year
     """
     try:
         # Get the cache key with user expenses prefix
-        cache_key = f"{get_user_expenses_cache_key_prefix()}user:{user_id}:month:{year}-{month:02d}"
+        cache_key = f"{get_user_expenses_cache_key_prefix()}user:{str(email).strip().lower()}:month:{year}-{month:02d}"
         
         # Delete the cached expenses
         result = r.delete(cache_key)
         if result:
-            logger.info("User expenses cache invalidated", extra={"user_id": str(user_id), "month": month, "year": year})
+            logger.info("User expenses cache invalidated", extra={"email": str(email), "month": month, "year": year})
         else:
-            logger.info("No cache found to invalidate", extra={"user_id": str(user_id), "month": month, "year": year})
+            logger.info("No cache found to invalidate", extra={"email": str(email), "month": month, "year": year})
     except Exception as e:
-        logger.error("Error invalidating user expenses cache", extra={"user_id": str(user_id), "month": month, "year": year, "error": str(e)})
+        logger.error("Error invalidating user expenses cache", extra={"email": str(email), "month": month, "year": year, "error": str(e)})
 
 
 def get_user_expenses_cache_key_prefix():

@@ -275,6 +275,14 @@ function AllExpenses() {
 
   // Apply category change and notify server
   const applyCategoryChange = async (expense, newCategory) => {
+    // In demo mode, ignore update requests client-side
+    if (localStorage.getItem('is_demo_user') === 'true') {
+      setCategoryPickerFor(null);
+      setActiveMenu(null);
+      setCategoryModalOpen(false);
+      setCategoryModalExpense(null);
+      return;
+    }
     // Prevent multiple simultaneous updates
     if (isUpdatingCategory) {
       return;
@@ -326,6 +334,11 @@ function AllExpenses() {
 
   // Deletes an expense directly
   const handleDeleteExpense = async (expense) => {
+    // In demo mode, ignore delete requests client-side
+    if (localStorage.getItem('is_demo_user') === 'true') {
+      setActiveMenu(null);
+      return;
+    }
     try {
       const sessionId = localStorage.getItem('session_id');
       const res = await fetch(`${import.meta.env.VITE_API_URL}/delete_expense`, {
