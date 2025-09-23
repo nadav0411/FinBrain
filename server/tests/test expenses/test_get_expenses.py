@@ -9,6 +9,8 @@ import logicconnection as lc
 from datetime import timedelta
 import time
 from unittest.mock import patch
+import cache
+from password_hashing import hash_password
 
 
 # Clean the users collection before each test
@@ -35,6 +37,8 @@ def clean_sessions():
     keys = lc.r.keys("session:*")
     if keys:
         lc.r.delete(*keys)
+    # Also clear any test cache keys to avoid cross-test contamination
+    cache.clear_test_cache()
 
 
 def insert_test_user():
@@ -52,6 +56,28 @@ def insert_test_user():
 
     # Create session ID and email and store it in Redis
     session_id = "s1"
+    session_timestamp = lc.get_now_utc() - timedelta(seconds=lc.SESSION_TTL_SECONDS - 1)
+    lc.r.hset(f"session:{session_id}", "email", email)
+    lc.r.hset(f"session:{session_id}", "last_seen", session_timestamp.isoformat())
+    lc.r.expire(f"session:{session_id}", lc.SESSION_TTL_SECONDS)
+    return session_id
+
+
+def insert_demo_user_and_session():
+    """
+    Insert a demo user into the database and create a valid session
+    """
+    # Insert a demo user into the database
+    email = "demo"
+    users_collection.insert_one({
+        "firstName": "Guest",
+        "lastName": "Demo",
+        "email": email,
+        "password": hash_password("")
+    })
+    
+    # Create session ID and email and store it in Redis
+    session_id = "demo-session"
     session_timestamp = lc.get_now_utc() - timedelta(seconds=lc.SESSION_TTL_SECONDS - 1)
     lc.r.hset(f"session:{session_id}", "email", email)
     lc.r.hset(f"session:{session_id}", "last_seen", session_timestamp.isoformat())
@@ -115,6 +141,28 @@ def test_get_expenses():
     # Check if the expenses are in the response
     assert response.json['expenses'][0]['title'] == "Pizza"
     assert response.json['expenses'][1]['title'] == "Coffee"
+
+
+def test_get_expenses_demo_user_basic():
+    """
+    Demo user can fetch expenses list successfully.
+    """
+    # Insert a demo user and create a valid session
+    session_id = insert_demo_user_and_session()
+
+    # Create client
+    client = app.test_client()
+
+    # Send a GET request to the get_expenses route with required parameters
+    response = client.get('/get_expenses?month=1&year=2025', headers={'Session-ID': session_id})
+
+    # Check if the response is successful
+    assert response.status_code == 200
+    body = response.get_json()
+    assert 'expenses' in body
+
+    # Check if the expenses are in the response
+    assert isinstance(body['expenses'], list)
 
 
 def test_get_expenses_missing_month():

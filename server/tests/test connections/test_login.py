@@ -28,6 +28,18 @@ def insert_test_user():
     })
 
 
+def insert_demo_user():
+    """
+    Insert the demo user into the database with empty password
+    """
+    users_collection.insert_one({
+        "firstName": "Guest",
+        "lastName": "Demo",
+        "email": "demo",
+        "password": hash_password(""),
+    })
+
+
 def test_login_success():
     """
     Test the login function
@@ -56,6 +68,32 @@ def test_login_success():
     assert data['message'] == 'Login successful'
     assert data['session_id'] is not None
     assert data['name'] == 'User'
+
+
+def test_demo_login_success():
+    """
+    Demo login should work with email='demo' and empty password when demo flag is set
+    """
+    # Create a test client and insert a demo user into the database
+    client = app.test_client()
+    insert_demo_user()
+
+    # Create login data for the test
+    login_data = {
+        "email": "demo",
+        "password": "",
+        "demo": True
+    }
+
+    # Send a POST request to the login route and get the response
+    response = client.post('/login', json=login_data)
+    data = response.get_json()
+
+    # Check if the response is successful
+    assert response.status_code == 200
+    assert data['message'] == 'Login successful'
+    assert data['session_id'] is not None
+    assert data['name'] == 'Guest'
 
 
 def test_login_fails_with_missing_fields():
