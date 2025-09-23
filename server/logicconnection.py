@@ -120,7 +120,10 @@ def handle_login(data):
     password = data.get('password') or ''
     demo = data.get('demo')
 
-    if not demo:
+    # Treat demo user specially: allow email=="demo" and password is empty and demo flag is True
+    is_demo_user = email == 'demo' and password == '' and demo is True
+
+    if not is_demo_user:
         # Validate required fields
         if not email or not password:
             logger.warning("Login missing fields", extra={"email": email, "password_provided": bool(password)})
@@ -139,10 +142,26 @@ def handle_login(data):
         logger.exception("Login DB error", extra={"email": email})
         return jsonify({'message': 'Login failed'}), 500
 
+    # For demo user, auto-provision if missing and bypass email format
+    if is_demo_user and not user:
+        try:
+            users_collection.insert_one({
+                'firstName': 'Guest',
+                'lastName': 'Demo',
+                'email': 'demo',
+                'password': hash_password('')
+            })
+            user = users_collection.find_one({'email': 'demo'})
+        except Exception:
+            logger.exception("Demo user auto-provision failed", extra={"email": email})
+            return jsonify({'message': 'Login failed'}), 500
+
+    # Check password
     stored_password = (user or {}).get('password')
-    if not stored_password or not verify_password(password, stored_password):
-        logger.warning("Invalid login credentials", extra={"email": email})
-        return jsonify({'message': 'Invalid credentials'}), 401
+    if not is_demo_user:
+        if not stored_password or not verify_password(password, stored_password):
+            logger.warning("Invalid login credentials", extra={"email": email})
+            return jsonify({'message': 'Invalid credentials'}), 401
     
     # Create session
     session_id = str(uuid.uuid4())

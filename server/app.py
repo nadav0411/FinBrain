@@ -6,6 +6,8 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import logicconnection as logic_connection
 import logicexpenses as logic_expenses
+from db import db as mongo_db
+import os
 
 
 
@@ -23,6 +25,13 @@ logger = logging.getLogger(__name__)
 
 # Creates a Flask app - my web server and allows other applications to connect to it (such as my React client)
 app = Flask(__name__)
+
+# Print environment and DB info for diagnostics
+env_val = os.getenv('ENV')
+mongo_name = getattr(mongo_db, 'name', 'unknown')
+print(f"[INFO] ENV={env_val} MongoDB Database={mongo_name}")
+
+# Allow CORS for all origins
 CORS(app, resources={r"/*": {"origins": "*"}})
 
 
@@ -181,5 +190,11 @@ def delete_expense():
 
 
 if __name__ == '__main__':
-    # Start the server
-    app.run(host='0.0.0.0', port=5000, debug=True, use_reloader=False)
+    # Get the environment from the environment variable (if not set, default to development)
+    env = os.getenv('ENV', 'development')
+    if env == 'development':
+        # host = 0.0.0.0 means the server will be accessible from any IP address
+        # port = 5000 means the server will run on port 5000
+        # In development, we want to use debug mode to see errors and changes
+        # But we set use_reloader=False to avoid the app running twice
+        app.run(host='0.0.0.0', port=5000, debug=True, use_reloader=False)

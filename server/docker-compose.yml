@@ -31,6 +31,7 @@ services:
 # docker compose down (stop and remove all containers)
 # docker compose up --build (build from scratch and running the containers)
 # docker compose down -v (stop and remove all containers, network and data)
+# docker compose build (build the containers)
 
 # --- Running Frequently ---
 # docker compose up (start the containers)
