@@ -33,9 +33,9 @@ def train_and_save_model():
     # Each row is one example the model will learn from.
     try:
         df = pd.read_csv('finbrain_model/training_data.csv')
-        logger.info("Training data loaded", extra={"rows": len(df), "columns": list(df.columns)})
+        logger.info(f"Training data loaded | rows={len(df)} | columns={list(df.columns)}")
     except Exception as e:
-        logger.error("Failed to load training data", extra={"error": str(e)})
+        logger.error(f"Failed to load training data | error={str(e)}")
         raise
 
     # Create a TF-IDF vectorizer. This will learn which words are important.
@@ -51,7 +51,7 @@ def train_and_save_model():
 
     # These are the correct answers (labels). The model will try to predict these.
     y = df['category']
-    logger.info("Training data prepared", extra={"features": X.shape[1], "samples": X.shape[0]})
+    logger.info(f"Training data prepared | features={X.shape[1]} | samples={X.shape[0]}")
 
     # Create the Logistic Regression model. This is a simple model that works for text classification.
     # max_iter=1000 means "try up to 1000 times to learn" (just in case it's slow to learn).
@@ -66,17 +66,17 @@ def train_and_save_model():
     # Save the trained model to a file called model.pkl (to load it later to use it)
     try:
         joblib.dump(model, "finbrain_model/model.pkl")
-        logger.info("Model saved successfully", extra={"model_path": "finbrain_model/model.pkl"})
+        logger.info("Model saved successfully | model_path=finbrain_model/model.pkl")
     except Exception as e:
-        logger.error("Failed to save model", extra={"error": str(e)})
+        logger.error(f"Failed to save model | error={str(e)}")
         raise
 
     # Save the TF-IDF vectorizer to a file too. I MUST use the same vectorizer later for predictions.
     try:
         joblib.dump(vectorizer, "finbrain_model/vectorizer.pkl")
-        logger.info("Vectorizer saved successfully", extra={"vectorizer_path": "finbrain_model/vectorizer.pkl"})
+        logger.info("Vectorizer saved successfully | vectorizer_path=finbrain_model/vectorizer.pkl")
     except Exception as e:
-        logger.error("Failed to save vectorizer", extra={"error": str(e)})
+        logger.error(f"Failed to save vectorizer | error={str(e)}")
         raise
 
     # Print a message to show that everything worked

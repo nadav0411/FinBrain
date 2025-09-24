@@ -23,15 +23,15 @@ if os.path.exists(model_path) and os.path.exists(vectorizer_path):
     try:
         # Load the trained model from file (this is the AI brain).
         model = joblib.load(model_path)
-        logger.info("Model loaded successfully", extra={"model_path": model_path})
+        logger.info(f"Model loaded successfully | model_path={model_path}")
 
         # Load the TF-IDF vectorizer from file (this turns text into numbers).
         vectorizer = joblib.load(vectorizer_path)
-        logger.info("Vectorizer loaded successfully", extra={"vectorizer_path": vectorizer_path})
+        logger.info(f"Vectorizer loaded successfully | vectorizer_path={vectorizer_path}")
     except Exception as e:
-        logger.error("Failed to load model files", extra={"model_path": model_path, "vectorizer_path": vectorizer_path, "error": str(e)})
+        logger.error(f"Failed to load model files | model_path={model_path} | vectorizer_path={vectorizer_path} | error={str(e)}")
         raise
 else:
     # If the files don't exist, stop and show an error
-    logger.error("Model files not found", extra={"model_path": model_path, "vectorizer_path": vectorizer_path})
+    logger.error(f"Model files not found | model_path={model_path} | vectorizer_path={vectorizer_path}")
     raise FileNotFoundError("Model files not found. You need to run trainer.py first to train the model.")

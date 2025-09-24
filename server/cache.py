@@ -31,9 +31,9 @@ try:
     r = redis.from_url(REDIS_URL, decode_responses=True)
     # Test the connection
     r.ping()
-    logger.info("Connected to Redis", extra={"redis_url": REDIS_URL})
+    logger.info(f"Connected to Redis | redis_url={REDIS_URL}")
 except Exception as e:
-    logger.error("Failed to connect to Redis", extra={"redis_url": REDIS_URL, "error": str(e)})
+    logger.error(f"Failed to connect to Redis | redis_url={REDIS_URL} | error={str(e)}")
     raise
 
 
@@ -49,11 +49,11 @@ def get_cached_currency_rate(date_str):
         # Get the cached rate if it exists (None if not found)
         cached_rate = r.get(cache_key)
         if cached_rate:
-            logger.info("Currency rate found in cache", extra={"date": date_str, "rate": cached_rate})
+            logger.info(f"Currency rate found in cache | date={date_str} | rate={cached_rate}")
             return float(cached_rate)
         return None
     except Exception as e:
-        logger.error("Error getting cached currency rate", extra={"date": date_str, "error": str(e)})
+        logger.error(f"Error getting cached currency rate | date={date_str} | error={str(e)}")
         return None
 
 
@@ -66,9 +66,9 @@ def add_to_cache_currency_rate(date_str, rate):
         cache_key = f"{get_cache_key_prefix()}{date_str}"
         # Add the rate to the cache
         r.set(cache_key, str(rate))
-        logger.info("Currency rate added to cache", extra={"date": date_str, "rate": rate})
+        logger.info(f"Currency rate added to cache | date={date_str} | rate={rate}")
     except Exception as e:
-        logger.error("Error adding currency rate to cache", extra={"date": date_str, "rate": rate, "error": str(e)})
+        logger.error(f"Error adding currency rate to cache | date={date_str} | rate={rate} | error={str(e)}")
 
 
 def get_cached_user_expenses(email, month, year):
@@ -83,11 +83,11 @@ def get_cached_user_expenses(email, month, year):
         # Get the cached expenses if they exist (None if not found)
         cached_expenses = r.get(cache_key)
         if cached_expenses:
-            logger.info("User expenses found in cache", extra={"email": str(email), "month": month, "year": year})
+            logger.info(f"User expenses found in cache | email={str(email)} | month={month} | year={year}")
             return json.loads(cached_expenses)
         return None
     except Exception as e:
-        logger.error("Error getting cached user expenses", extra={"email": str(email), "month": month, "year": year, "error": str(e)})
+        logger.error(f"Error getting cached user expenses | email={str(email)} | month={month} | year={year} | error={str(e)}")
         return None
 
 
@@ -102,9 +102,9 @@ def add_to_cache_user_expenses(email, month, year, expenses):
         
         # Add the expenses to the cache with TTL of 1 week (604800 seconds)
         r.setex(cache_key, 604800, json.dumps(expenses))
-        logger.info("User expenses added to cache", extra={"email": str(email), "month": month, "year": year, "expense_count": len(expenses)})
+        logger.info(f"User expenses added to cache | email={str(email)} | month={month} | year={year} | expense_count={len(expenses)}")
     except Exception as e:
-        logger.error("Error adding user expenses to cache", extra={"email": str(email), "month": month, "year": year, "error": str(e)})
+        logger.error(f"Error adding user expenses to cache | email={str(email)} | month={month} | year={year} | error={str(e)}")
 
 
 def delete_user_expenses_cache(email, month, year):
@@ -118,11 +118,11 @@ def delete_user_expenses_cache(email, month, year):
         # Delete the cached expenses
         result = r.delete(cache_key)
         if result:
-            logger.info("User expenses cache invalidated", extra={"email": str(email), "month": month, "year": year})
+            logger.info(f"User expenses cache invalidated | email={str(email)} | month={month} | year={year}")
         else:
-            logger.info("No cache found to invalidate", extra={"email": str(email), "month": month, "year": year})
+            logger.info(f"No cache found to invalidate | email={str(email)} | month={month} | year={year}")
     except Exception as e:
-        logger.error("Error invalidating user expenses cache", extra={"email": str(email), "month": month, "year": year, "error": str(e)})
+        logger.error(f"Error invalidating user expenses cache | email={str(email)} | month={month} | year={year} | error={str(e)}")
 
 
 def get_user_expenses_cache_key_prefix():
@@ -150,6 +150,6 @@ def clear_test_cache():
         
         if all_keys:
             r.delete(*all_keys)
-            logger.info("Test cache cleared", extra={"keys_cleared": len(all_keys)})
+            logger.info(f"Test cache cleared | keys_cleared={len(all_keys)}")
     except Exception as e:
-        logger.error("Error clearing test cache", extra={"error": str(e)})
+        logger.error(f"Error clearing test cache | error={str(e)}")

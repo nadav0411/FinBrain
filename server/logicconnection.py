@@ -43,7 +43,7 @@ def is_session_expired(session_id):
         session_data = r.hgetall(f"session:{session_id}")
         return not session_data
     except Exception:
-        logger.exception("Redis error in is_session_expired", extra={"session_id": session_id})
+        logger.exception(f"Redis error in is_session_expired | session_id={session_id}")
         return True 
 
 
@@ -105,10 +105,10 @@ def handle_signup(data):
     except DuplicateKeyError:
         return jsonify({'message': 'Email already in use'}), 409
     except Exception:
-        logger.exception("Signup failed unexpectedly", extra={"email": email})
+        logger.exception(f"Signup failed unexpectedly | email={email}")
         return jsonify({'message': 'Signup failed'}), 500
 
-    logger.info("Signup successful", extra={"email": email})
+    logger.info(f"Signup successful | email={email}")
     return jsonify({'message': 'Signup successful'}), 201
 
 
@@ -126,20 +126,20 @@ def handle_login(data):
     if not is_demo_user:
         # Validate required fields
         if not email or not password:
-            logger.warning("Login missing fields", extra={"email": email, "password_provided": bool(password)})
+            logger.warning(f"Login missing fields | email={email} | password_provided={bool(password)}")
             return jsonify({'message': 'Email and password are required'}), 400
         
         # Validate email format
         email_regex = re.compile(r'^[^@\s]+@[^@\s]+\.[^@\s]+$')
         if len(email) > 254 or not email_regex.match(email):
-            logger.warning("Invalid login credentials", extra={"email": email})
+            logger.warning(f"Invalid login credentials | email={email}")
             return jsonify({'message': 'Invalid credentials'}), 401
     
     # Authenticate user
     try:
         user = users_collection.find_one({'email': email})
     except Exception:
-        logger.exception("Login DB error", extra={"email": email})
+        logger.exception(f"Login DB error | email={email}")
         return jsonify({'message': 'Login failed'}), 500
 
     # For demo user, auto-provision if missing and bypass email format
@@ -153,14 +153,14 @@ def handle_login(data):
             })
             user = users_collection.find_one({'email': 'demo'})
         except Exception:
-            logger.exception("Demo user auto-provision failed", extra={"email": email})
+            logger.exception(f"Demo user auto-provision failed | email={email}")
             return jsonify({'message': 'Login failed'}), 500
 
     # Check password
     stored_password = (user or {}).get('password')
     if not is_demo_user:
         if not stored_password or not verify_password(password, stored_password):
-            logger.warning("Invalid login credentials", extra={"email": email})
+            logger.warning(f"Invalid login credentials | email={email}")
             return jsonify({'message': 'Invalid credentials'}), 401
     
     # Create session
@@ -170,13 +170,13 @@ def handle_login(data):
         "last_seen": get_now_utc().isoformat()})
         r.expire(f"session:{session_id}", SESSION_TTL_SECONDS)
     except Exception:
-        logger.exception("Redis error during login", extra={"email": email, "session_id": session_id})
+        logger.exception(f"Redis error during login | email={email} | session_id={session_id}")
         return jsonify({'message': 'Login failed'}), 500
 
     # Extract user name for response
     first_name = (user or {}).get('firstName') or ''
 
-    logger.info("Login successful", extra={"email": email, "session_id": session_id, "first_name": first_name})
+    logger.info(f"Login successful | email={email} | session_id={session_id} | first_name={first_name}")
     return jsonify({'message': 'Login successful', 'session_id': session_id, 'name': first_name}), 200
 
 
@@ -186,7 +186,7 @@ def get_email_from_session_id(session_id):
     """
     validated_session_id = validate_session_id(session_id)
     if not validated_session_id:
-        logger.debug("Session ID not found", extra={"session_id": session_id})
+        logger.debug(f"Session ID not found | session_id={session_id}")
         return None
     
     try:
@@ -205,7 +205,7 @@ def get_email_from_session_id(session_id):
         r.expire(f"session:{validated_session_id}", SESSION_TTL_SECONDS)
         return email
     except Exception:
-        logger.exception("Redis error in get_email_from_session_id", extra={"session_id": validated_session_id})
+        logger.exception(f"Redis error in get_email_from_session_id | session_id={validated_session_id}")
         return None
 
 
@@ -221,9 +221,9 @@ def handle_logout(session_id):
     try:
         r.delete(f"session:{validated_session_id}")
     except Exception:
-        logger.exception("Redis error during logout", extra={"session_id": validated_session_id})
+        logger.exception(f"Redis error during logout | session_id={validated_session_id}")
 
-    logger.info("Logout", extra={"session_id": validated_session_id})
+    logger.info(f"Logout | session_id={validated_session_id}")
     return jsonify({'message': 'Logout successful'}), 200
 
 
@@ -233,22 +233,22 @@ def handle_heartbeat(session_id):
     """
     validated_session_id = validate_session_id(session_id)
     if not validated_session_id:
-        logger.info("Heartbeat for unknown session", extra={"session_id": session_id})
+        logger.info(f"Heartbeat for unknown session | session_id={session_id}")
         return jsonify({'message': 'Missing session_id'}), 400
     
     # Get session data from Redis
     try:
         session_data = r.hgetall(f"session:{validated_session_id}")
         if not session_data:
-            logger.info("Heartbeat for non-existent session", extra={"session_id": validated_session_id})
+            logger.info(f"Heartbeat for non-existent session | session_id={validated_session_id}")
             return jsonify({'message': 'No such session', 'active': False}), 200
 
         # Update session timestamp
         r.hset(f"session:{validated_session_id}", "last_seen", get_now_utc().isoformat())
         r.expire(f"session:{validated_session_id}", SESSION_TTL_SECONDS)
 
-        logger.debug("Heartbeat ok", extra={"session_id": validated_session_id})
+        logger.debug(f"Heartbeat ok | session_id={validated_session_id}")
         return jsonify({'message': 'Heartbeat ok', 'active': True, 'ttl_seconds': SESSION_TTL_SECONDS}), 200
     except Exception:
-        logger.exception("Redis error during heartbeat", extra={"session_id": validated_session_id})
+        logger.exception(f"Redis error during heartbeat | session_id={validated_session_id}")
         return jsonify({'message': 'Heartbeat failed', 'active': False}), 500

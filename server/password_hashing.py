@@ -31,7 +31,7 @@ def hash_password(password):
         # Return the scrambled password
         return hashed
     except Exception as e:
-        logger.error("Failed to hash password", extra={"error": str(e)})
+        logger.error(f"Failed to hash password | error={str(e)}")
         # Stop the program and show the error
         raise
 
@@ -52,5 +52,5 @@ def verify_password(password, hashed_password):
         return False
     # Something else went wrong
     except Exception as e:
-        logger.error("Password verification failed with error", extra={"error": str(e)})
+        logger.error(f"Password verification failed with error | error={str(e)}")
         return False
