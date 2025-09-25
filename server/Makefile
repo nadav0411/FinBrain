@@ -43,6 +43,17 @@ clean-all:
 	@echo "Removing all containers, volumes and images..."
 	docker compose down --volumes --remove-orphans
 
+# Rebuild Docker Compose
+rebuild:
+	@echo "Rebuilding Docker Compose..."
+	docker compose build --no-cache
+
+
+# Only start the containers
+only-up:
+	@echo "Starting Docker Compose..."
+	docker compose up
+
 
 
 # Help
@@ -56,3 +67,9 @@ help:
 	@echo "  make clean          - Remove all Docker resources"
 	@echo "  make clean-all      - Remove all containers, volumes and images"
 	@echo "  make all-containers - Show running containers"
+	@echo "  make rebuild        - Rebuild Docker Compose"
+	@echo "  make only-up        - Only start the containers"
+
+
+# Copy all files from the source directory to the destination directory -> linux terminal
+# rsync -av --progress /mnt/c/Users/DELL/OneDrive/Documents/FinBrain/ ~/FinBrain/ 

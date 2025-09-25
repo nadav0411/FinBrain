@@ -2,7 +2,7 @@
 
 
 import logging
-from db import users_collection
+from db import users_collection, expenses_collection
 from flask import jsonify
 from datetime import datetime, timezone
 import re
@@ -144,16 +144,13 @@ def handle_login(data):
 
     # For demo user, auto-provision if missing and bypass email format
     if is_demo_user and not user:
+
         try:
-            users_collection.insert_one({
-                'firstName': 'Guest',
-                'lastName': 'Demo',
-                'email': 'demo',
-                'password': hash_password('')
-            })
             user = users_collection.find_one({'email': 'demo'})
+            if not user:
+                user = create_demo_user()
         except Exception:
-            logger.exception(f"Demo user auto-provision failed | email={email}")
+            logger.exception(f"Demo user failed | email={email}")
             return jsonify({'message': 'Login failed'}), 500
 
     # Check password
@@ -178,6 +175,73 @@ def handle_login(data):
 
     logger.info(f"Login successful | email={email} | session_id={session_id} | first_name={first_name}")
     return jsonify({'message': 'Login successful', 'session_id': session_id, 'name': first_name}), 200
+
+
+def create_demo_user():
+    """
+    Create a demo user in the database
+    """
+    users_collection.insert_one({
+        'firstName': 'Guest',
+        'lastName': 'Demo',
+        'email': 'demo',
+        'password': hash_password('')
+    })
+    logger.info(f"Demo user created | email=demo")
+
+    # Get the user
+    user = users_collection.find_one({'email': 'demo'})
+    if not user:
+        logger.warning(f"Demo user not found | email=demo")
+        return None
+
+    # Create details for the demo expenses
+    try:
+        demo_expenses = [
+            # September 2025
+            {"title": "Rent and Bills", "date": "2025-09-02", "amount_usd": 885.01, "amount_ils": 3000.00, "category": "Housing & Bills"},
+            {"title": "Golf", "date": "2025-09-03", "amount_usd": 89.07, "amount_ils": 300.00, "category": "Leisure & Gifts"},
+            {"title": "Rav Kav", "date": "2025-09-05", "amount_usd": 59.94, "amount_ils": 200.00, "category": "Transportation"},
+            {"title": "Online course", "date": "2025-09-12", "amount_usd": 72.00, "amount_ils": 239.88, "category": "Education & Personal Growth"},
+            {"title": "Super Pharm", "date": "2025-09-24", "amount_usd": 36.43, "amount_ils": 122.00, "category": "Health & Essentials"},
+            {"title": "Birthday gift", "date": "2025-09-19", "amount_usd": 50.00,  "amount_ils": 166.99, "category": "Leisure & Gifts"},
+            {"title": "Xbox one", "date": "2025-09-19", "amount_usd": 780.38,  "amount_ils": 2600.00, "category": "Leisure & Gifts"},
+            {"title": "Groceries", "date": "2025-09-03", "amount_usd": 188.24,  "amount_ils": 634.00, "category": "Food & Drinks"},
+            # August 2025
+            {"title": "Rent and Bills", "date": "2025-08-02", "amount_usd": 814.72, "amount_ils": 2790.00, "category": "Housing & Bills"},
+            {"title": "Dinner", "date": "2025-08-13", "amount_usd": 100.89, "amount_ils": 342.00, "category": "Food & Drinks"},
+            {"title": "Hotel one night", "date": "2025-08-26", "amount_usd": 148.56, "amount_ils": 500.00, "category": "Leisure & Gifts"},
+            {"title": "Fruits and more", "date": "2025-08-04", "amount_usd": 131.99, "amount_ils": 450.00, "category": "Food & Drinks"},
+            {"title": "Kitchen Table", "date": "2025-08-04", "amount_usd":299.18, "amount_ils": 1020.00, "category": "Housing & Bills"},
+            {"title": "Cinema", "date": "2025-08-12", "amount_usd": 34.96,  "amount_ils": 120.00, "category": "Leisure & Gifts"},
+            {"title": "University Courses", "date": "2025-08-08", "amount_usd": 382.35,  "amount_ils": 1314.00, "category": "Education & Personal Growth"},
+            {"title": "Doctor ", "date": "2025-08-10", "amount_usd": 174.59,  "amount_ils": 600.00, "category": "Health & Essentials"}
+            # July 2025
+        ]
+
+        # Create the demo expenses
+        serial_number = 1
+        docs = []
+        for exp in demo_expenses:
+            docs.append({
+                "user_id": user["_id"],
+                "title": exp["title"],
+                "date": exp["date"],
+                "amount_usd": exp["amount_usd"],
+                "amount_ils": exp["amount_ils"],
+                "category": exp["category"],
+                "serial_number": serial_number
+            })
+            serial_number += 1
+
+        # Insert the demo expenses into the database
+        if docs:
+            expenses_collection.insert_many(docs)
+            logger.info(f"Seeded demo expenses | count={len(docs)}")
+    except Exception as e:
+        logger.warning(f"Failed to seed demo expenses | error={str(e)}")
+
+    return user
 
 
 def get_email_from_session_id(session_id):
