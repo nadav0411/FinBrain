@@ -117,7 +117,7 @@ function MainScreen() {
       <main className="content">
         {localStorage.getItem('is_demo_user') === 'true' && (
           <div className="demo-banner" role="status" aria-live="polite">
-            You are in Demo Mode — adding, changing, and deleting are disabled. To upgrade to the full version, please sign up and login.
+            You are in Demo Mode — adding, changing, and deleting are disabled. To upgrade to the full version, please sign up and login (FOR NOW TAKE A LOOK ONLY ON Sep - Jul 2025).
           </div>
         )}
         <div className="page-header">

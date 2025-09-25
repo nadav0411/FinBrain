@@ -1,6 +1,6 @@
 /* AllExpenses.jsx */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './AllExpenses.css';
 import AddExpenseModal from './AddExpenseModal';
 import CalendarModal from './CalendarModal';
@@ -31,6 +31,9 @@ function AllExpenses() {
   const [categoryModalExpense, setCategoryModalExpense] = useState(null); // Expense currently being edited
   const [isUpdatingCategory, setIsUpdatingCategory] = useState(false); // Prevents multiple category updates
 
+  // Ref to track if component is still mounted
+  const isMountedRef = useRef(true);
+
   // Year range constraints for navigation
   const MIN_YEAR = 2015;
   const MAX_YEAR = 2027;
@@ -39,9 +42,13 @@ function AllExpenses() {
 
   // Fetches expenses from the server for the current month/year
   const fetchExpenses = async () => {
+    // Capture the month/year when the request is made
+    const requestMonth = month;
+    const requestYear = year;
+    
     try {
       const sessionId = localStorage.getItem('session_id');
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/get_expenses?month=${month}&year=${year}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/get_expenses?month=${requestMonth}&year=${requestYear}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -54,7 +61,20 @@ function AllExpenses() {
       }
 
       const data = await res.json();
-      setExpenses(data.expenses || []);
+      
+      // Check if the component is still mounted and the client is still viewing the same month/year
+      if (!isMountedRef.current) {
+        console.log('AllExpenses component unmounted, ignoring response');
+        return;
+      }
+      
+      if (month === requestMonth && year === requestYear) {
+        console.log('Client still on same month/year, updating expenses');
+        setExpenses(data.expenses || []);
+      } else {
+        console.log('Client navigated away from requested month/year, ignoring response');
+        console.log(`Requested: ${requestMonth}/${requestYear}, Current: ${month}/${year}`);
+      }
     } catch (err) {
       console.error('Error fetching expenses:', err);
     }
@@ -64,6 +84,13 @@ function AllExpenses() {
   useEffect(() => {
     fetchExpenses();
   }, [month, year, refreshKey]);
+
+  // Cleanup effect to mark component as unmounted
+  useEffect(() => {
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
 
   // Close dropdown menu when clicking outside of it
   useEffect(() => {
@@ -246,10 +273,64 @@ function AllExpenses() {
     }
   };
 
-  // Closes add expense modal and refreshes the expenses list
+  // Closes add expense modal without refreshing (when user cancels)
   const handleAddExpenseClose = () => {
     setShowPopup(false);
-    setRefreshKey(prev => prev + 1);
+  };
+
+  // Handles successful expense addition and refreshes the expenses list only if the expense is in the current month
+  const handleExpenseAdded = (expenseDate) => {
+    // Check if component is still mounted
+    if (!isMountedRef.current) {
+      console.log('AllExpenses component unmounted, ignoring expense addition');
+      return;
+    }
+    
+    console.log('Expense added with date:', expenseDate);
+    console.log('Current view month:', month, 'year:', year);
+    
+    // Parse the expense date - handle YYYY-MM-DD format from HTML date input
+    let expenseMonth, expenseYear;
+    
+    try {
+      if (expenseDate && expenseDate.includes('-')) {
+        // Date is in YYYY-MM-DD format
+        const [yearStr, monthStr] = expenseDate.split('-');
+        expenseYear = parseInt(yearStr, 10);
+        expenseMonth = parseInt(monthStr, 10);
+        
+        // Validate parsed values
+        if (isNaN(expenseYear) || isNaN(expenseMonth) || expenseMonth < 1 || expenseMonth > 12) {
+          console.error('Invalid date format, falling back to refresh');
+          setRefreshKey(prev => prev + 1);
+          return;
+        }
+      } else {
+        // Fallback to Date parsing
+        const expenseDateObj = new Date(expenseDate);
+        if (isNaN(expenseDateObj.getTime())) {
+          console.error('Invalid date, falling back to refresh');
+          setRefreshKey(prev => prev + 1);
+          return;
+        }
+        expenseMonth = expenseDateObj.getMonth() + 1; // getMonth() returns 0-11, we need 1-12
+        expenseYear = expenseDateObj.getFullYear();
+      }
+      
+      console.log('Parsed expense month:', expenseMonth, 'year:', expenseYear);
+      
+      // Only refresh if the added expense is in the same month and year as currently displayed
+      if (expenseMonth === month && expenseYear === year) {
+        console.log('Dates match, refreshing expenses');
+        setRefreshKey(prev => prev + 1);
+      } else {
+        console.log('Dates do not match, not refreshing');
+      }
+    } catch (error) {
+      console.error('Error parsing expense date:', error);
+      // Fallback: refresh expenses if date parsing fails
+      setRefreshKey(prev => prev + 1);
+    }
   };
 
   // Converts category names to valid CSS class names
@@ -572,7 +653,7 @@ function AllExpenses() {
       </div>
 
       {/* Add expense modal */}
-      {showPopup && <AddExpenseModal onClose={handleAddExpenseClose} />}
+      {showPopup && <AddExpenseModal onClose={handleAddExpenseClose} onExpenseAdded={handleExpenseAdded} />}
 
       {/* Centered Category Selection Modal */}
       {categoryModalOpen && categoryModalExpense && (

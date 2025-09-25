@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import './AddExpenseModal.css';
 
 // Modal component for adding new expense entries
-function AddExpenseModal({ onClose }) {
+function AddExpenseModal({ onClose, onExpenseAdded }) {
   // State management for form inputs and UI feedback
   const [title, setTitle] = useState('');
   const [date, setDate] = useState('');
@@ -45,6 +45,8 @@ function AddExpenseModal({ onClose }) {
       });
 
       if (response.ok) {
+        console.log('Expense added successfully, calling onExpenseAdded with date:', date);
+        onExpenseAdded(date); // Notify that expense was added successfully, pass the date
         onClose(); // Close modal on successful submission
       } else {
         const err = await response.text();

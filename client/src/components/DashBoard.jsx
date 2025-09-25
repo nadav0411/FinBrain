@@ -21,6 +21,7 @@ const Dashboard = () => {
   const [previousCompareCategories, setPreviousCompareCategories] = useState(() => new Set()); // Track previous selection
   const barButtonRef = useRef(null);
   const compareButtonRef = useRef(null);
+  const isMountedRef = useRef(true); // Track if component is still mounted
   const [activePrimaryButton, setActivePrimaryButton] = useState('bar'); // 'bar' | 'compare'
   const [monthlyComparisonData, setMonthlyComparisonData] = useState(null); // Server response for comparison
   // Predefined expense categories - these match what the backend expects
@@ -50,6 +51,10 @@ const Dashboard = () => {
 
   // Generic fetch for dashboard-like data; chartName controls server behavior
   const fetchChartData = async ({ chartName, categoriesList }, onData) => {
+    // Capture the current state when the request is made
+    const requestCurrency = selectedCurrency;
+    const requestSelectedMonths = JSON.parse(JSON.stringify(selectedMonths)); // Deep copy
+    
     try {
       // Get user's session ID from browser storage to authenticate the request
       const sessionId = localStorage.getItem('session_id');
@@ -58,9 +63,9 @@ const Dashboard = () => {
       // Build query parameters for the API request
       const params = new URLSearchParams();
       params.append("chart", chartName);
-      params.append("currency", selectedCurrency);
+      params.append("currency", requestCurrency);
       // Convert selected months to YYYY-MM format for the API
-      selectedMonths.forEach(({ year, monthIndex }) => {
+      requestSelectedMonths.forEach(({ year, monthIndex }) => {
         const paddedMonth = String(monthIndex + 1).padStart(2, "0"); // Add leading zero if needed
         params.append("months", `${year}-${paddedMonth}`);
       });
@@ -87,7 +92,25 @@ const Dashboard = () => {
       if (!res.ok) throw new Error("Failed to fetch expenses");
 
       const data = await res.json();
-      if (onData) onData(data);
+      
+      // Check if the client is still using the same currency and months that the request was made for
+      const currencyMatches = selectedCurrency === requestCurrency;
+      const monthsMatch = JSON.stringify(selectedMonths) === JSON.stringify(requestSelectedMonths);
+      
+      // Check if component is still mounted
+      if (!isMountedRef.current) {
+        console.log('Dashboard component unmounted, ignoring response');
+        return;
+      }
+      
+      if (currencyMatches && monthsMatch) {
+        console.log('Dashboard: Client still on same currency/months, updating data');
+        if (onData) onData(data);
+      } else {
+        console.log('Dashboard: Client changed currency/months, ignoring response');
+        console.log(`Requested currency: ${requestCurrency}, Current: ${selectedCurrency}`);
+        console.log(`Requested months:`, requestSelectedMonths, 'Current:', selectedMonths);
+      }
     } catch (err) {
       console.error("Error fetching expenses:", err);
     }
@@ -131,6 +154,13 @@ const Dashboard = () => {
       }
     }
   }, [selectedCurrency, selectedMonths]); // This effect runs when these values change
+
+  // Cleanup effect to mark component as unmounted
+  useEffect(() => {
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
 
   // Function to toggle between currencies (ILS ↔ USD)
   const handleCurrencyToggle = () => {

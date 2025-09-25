@@ -198,7 +198,6 @@ def create_demo_user():
     # Create details for the demo expenses
     try:
         demo_expenses = [
-            # September 2025
             {"title": "Rent and Bills", "date": "2025-09-02", "amount_usd": 885.01, "amount_ils": 3000.00, "category": "Housing & Bills"},
             {"title": "Golf", "date": "2025-09-03", "amount_usd": 89.07, "amount_ils": 300.00, "category": "Leisure & Gifts"},
             {"title": "Rav Kav", "date": "2025-09-05", "amount_usd": 59.94, "amount_ils": 200.00, "category": "Transportation"},
@@ -207,7 +206,6 @@ def create_demo_user():
             {"title": "Birthday gift", "date": "2025-09-19", "amount_usd": 50.00,  "amount_ils": 166.99, "category": "Leisure & Gifts"},
             {"title": "Xbox one", "date": "2025-09-19", "amount_usd": 780.38,  "amount_ils": 2600.00, "category": "Leisure & Gifts"},
             {"title": "Groceries", "date": "2025-09-03", "amount_usd": 188.24,  "amount_ils": 634.00, "category": "Food & Drinks"},
-            # August 2025
             {"title": "Rent and Bills", "date": "2025-08-02", "amount_usd": 814.72, "amount_ils": 2790.00, "category": "Housing & Bills"},
             {"title": "Dinner", "date": "2025-08-13", "amount_usd": 100.89, "amount_ils": 342.00, "category": "Food & Drinks"},
             {"title": "Hotel one night", "date": "2025-08-26", "amount_usd": 148.56, "amount_ils": 500.00, "category": "Leisure & Gifts"},
@@ -215,8 +213,15 @@ def create_demo_user():
             {"title": "Kitchen Table", "date": "2025-08-04", "amount_usd":299.18, "amount_ils": 1020.00, "category": "Housing & Bills"},
             {"title": "Cinema", "date": "2025-08-12", "amount_usd": 34.96,  "amount_ils": 120.00, "category": "Leisure & Gifts"},
             {"title": "University Courses", "date": "2025-08-08", "amount_usd": 382.35,  "amount_ils": 1314.00, "category": "Education & Personal Growth"},
-            {"title": "Doctor ", "date": "2025-08-10", "amount_usd": 174.59,  "amount_ils": 600.00, "category": "Health & Essentials"}
-            # July 2025
+            {"title": "Doctor ", "date": "2025-08-10", "amount_usd": 174.59,  "amount_ils": 600.00, "category": "Health & Essentials"},
+            {"title": "Rent and Bills", "date": "2025-07-03", "amount_usd": 926.80, "amount_ils": 3112.00, "category": "Housing & Bills"},
+            {"title": "Macdonald", "date": "2025-07-24", "amount_usd": 24.56, "amount_ils": 82.00, "category": "Food & Drinks"},
+            {"title": "Taxi", "date": "2025-07-10", "amount_usd": 99.81, "amount_ils": 330.00, "category": "Transportation"},
+            {"title": "Spotify membership", "date": "2025-07-20", "amount_usd": 64.00, "amount_ils": 214.91, "category": "Leisure & Gifts"},
+            {"title": "Football Match", "date": "2025-07-17", "amount_usd":74.41, "amount_ils": 250.00, "category": "Leisure & Gifts"},
+            {"title": "Parking Report", "date": "2025-07-02", "amount_usd": 34.96,  "amount_ils": 120.00, "category": "Transportation"},
+            {"title": "Clothes", "date": "2025-07-08", "amount_usd": 128.18,  "amount_ils": 430.00, "category": "Health & Essentials"},
+            {"title": "Medicine", "date": "2025-07-20", "amount_usd": 44.67,  "amount_ils": 150.00, "category": "Health & Essentials"}
         ]
 
         # Create the demo expenses
