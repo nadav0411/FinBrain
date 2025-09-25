@@ -3,7 +3,7 @@
 # Default ENV
 ENV ?= development
 
-# Run Flask app locally (for dev use only)
+# Run Flask app locally (for development use only)
 run:
 	@echo "Running Flask app locally in $(ENV) mode..."
 	ENV=$(ENV) python app.py
@@ -25,24 +25,34 @@ down:
 
 # View logs from the backend container
 logs:
+	@echo "Showing logs from the backend container..."
 	docker compose logs -f backend
 
-# Remove all Docker containers, volumes, and images (⚠️ dangerous)
+# Remove all Docker containers, volumes, and images
 clean:
 	@echo "Removing all containers, volumes and images..."
 	docker system prune -af --volumes
 
-# Lint the code using flake8 (optional)
-lint:
-	flake8 . --exclude=venv,.venv,__pycache__
+# Show running containers
+all-containers:
+	@echo "Listing all containers..."
+	docker compose ps 
+
+# Remove all containers, volumes and images
+clean-all:
+	@echo "Removing all containers, volumes and images..."
+	docker compose down --volumes --remove-orphans
+
+
 
 # Help
 help:
 	@echo "Available commands:"
-	@echo "  make run       - Run Flask app (locally)"
-	@echo "  make test      - Run unit tests"
-	@echo "  make up        - Start Docker Compose (build included)"
-	@echo "  make down      - Stop Docker Compose"
-	@echo "  make logs      - Tail logs from backend"
-	@echo "  make clean     - Remove all Docker resources (danger!)"
-	@echo "  make lint      - Run flake8 linter"
+	@echo "  make run            - Run Flask app (locally)"
+	@echo "  make test           - Run unit tests"
+	@echo "  make up             - Start Docker Compose (build included)"
+	@echo "  make down           - Stop Docker Compose"
+	@echo "  make logs           - Tail logs from backend"
+	@echo "  make clean          - Remove all Docker resources"
+	@echo "  make clean-all      - Remove all containers, volumes and images"
+	@echo "  make all-containers - Show running containers"
