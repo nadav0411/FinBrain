@@ -7,6 +7,17 @@ from services.logicconnection import get_email_from_session_id
 from datetime import datetime
 import requests
 import re
+# Import model and vectorizer with proper path handling
+import os
+import sys
+from pathlib import Path
+
+# Add the src directory to Python path if not already there
+current_file_dir = Path(__file__).parent
+src_dir = current_file_dir.parent
+if str(src_dir) not in sys.path:
+    sys.path.insert(0, str(src_dir))
+
 from models.predictmodelloader import model, vectorizer
 import pandas as pd
 import logging
