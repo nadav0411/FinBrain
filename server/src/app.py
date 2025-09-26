@@ -1,14 +1,28 @@
 # FinBrain Project - app.py - MIT License (c) 2025 Nadav Eshed
 
 
+import os
+from dotenv import load_dotenv
+
+
+# Auto-load environment file based on ENV variable (defaults to development)
+env = os.getenv('ENV', 'development')
+if env == 'test':
+    load_dotenv('configs/.env.test')
+elif env == 'development':
+    load_dotenv('configs/.env.development')
+elif env == 'production':
+    load_dotenv('configs/.env.docker')
+else:
+    load_dotenv('configs/.env.development') 
+
+
 import logging
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from services import logicconnection as logic_connection
 from services import logicexpenses as logic_expenses
 from db import db as mongo_db
-import os
-
 
 
 # Configure logging at the main entry point

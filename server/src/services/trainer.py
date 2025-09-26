@@ -34,8 +34,11 @@ def train_and_save_model():
     # The file contains two columns: 'description' and 'category'.
     # Each row is one example the model will learn from.
     try:
-        # Use current working directory for training data path
-        training_data_path = os.path.join("finbrain_model", "training_data.csv")
+        # Get the directory where this script is located
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        # Navigate to the models directory and find the training data
+        training_data_path = os.path.join(script_dir, "..", "models", "finbrain_model", "training_data.csv")
+        training_data_path = os.path.normpath(training_data_path)
         
         # Check if file exists first
         if not os.path.exists(training_data_path):

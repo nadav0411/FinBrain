@@ -16,17 +16,20 @@ WORKDIR /app
 # 3. Copy everything from my local folder (current project) into the /app folder inside the container
 COPY . /app
 
-# 4. Install all the Python packages from requirements.txt
+# 4. Add the src directory to Python path so imports work correctly
+ENV PYTHONPATH=/app/src
+
+# 5. Install all the Python packages from requirements.txt
 # --no-cache-dir means: "Don't save installation files we don't need"
 RUN pip install --no-cache-dir -r requirements.txt
 
-# 5. Set the environment variable to production
+# 6. Set the environment variable to production
 ENV ENV=production
 
-# 6. Tell Docker that we plan to use port 5000 (Flask runs on this port by default)
+# 7. Tell Docker that we plan to use port 5000 (Flask runs on this port by default)
 EXPOSE 5000
 
-#7. Run the app with Gunicorn – a production WSGI HTTP server for Python web applications.
+# 8. Run the app with Gunicorn – a production WSGI HTTP server for Python web applications.
 # "Gunicorn" stands for Green Unicorn – a lightweight, multi-worker web server for WSGI apps.
 # WSGI (Web Server Gateway Interface) is a standard interface between Python web frameworks (like Flask) and web servers.
 #
