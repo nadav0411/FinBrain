@@ -1,4 +1,4 @@
-/* AllExpenses.jsx Nadav */
+/* FinBrain Project - AllExpenses.jsx - MIT License (c) 2025 Nadav Eshed */
 
 // Import React hooks and components we need
 import React, { useState, useEffect, useRef } from 'react';

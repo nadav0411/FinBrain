@@ -1,4 +1,5 @@
-# Makefile for FinBrain
+# FinBrain Project - Makefile - MIT License (c) 2025 Nadav Eshed
+
 
 # Default ENV
 ENV ?= development

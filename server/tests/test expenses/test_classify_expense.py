@@ -1,4 +1,4 @@
-# test_classify_expense.py
+# FinBrain Project - test_classify_expense.py - MIT License (c) 2025 Nadav Eshed
 
 
 # type: ignore

@@ -1,4 +1,5 @@
-// AuthSwitcher.jsx - Controls what the user sees based on their login status
+// FinBrain Project - AuthSwitcher.jsx - MIT License (c) 2025 Nadav Eshed
+
 
 import React, { useEffect, useState } from 'react';
 import LoginModal from './LoginModal';

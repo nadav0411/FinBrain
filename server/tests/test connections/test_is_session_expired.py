@@ -1,4 +1,4 @@
-# test_is_session_expired.py
+# FinBrain Project - test_is_session_expired.py - MIT License (c) 2025 Nadav Eshed
 
 
 # type: ignore

@@ -1,4 +1,4 @@
-# test_get_expenses.py
+# FinBrain Project - test_get_expenses.py - MIT License (c) 2025 Nadav Eshed
 
 
 # type: ignore

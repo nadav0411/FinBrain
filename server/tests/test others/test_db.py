@@ -1,4 +1,4 @@
-# test_db.py
+# FinBrain Project - test_db.py - MIT License (c) 2025 Nadav Eshed
 
 
 import db

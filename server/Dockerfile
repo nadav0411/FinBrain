@@ -1,3 +1,6 @@
+# FinBrain Project - Dockerfile - MIT License (c) 2025 Nadav Eshed
+
+
 # The Dockerfile (used by the backend service) is like a recipe for building the backend image
 
 

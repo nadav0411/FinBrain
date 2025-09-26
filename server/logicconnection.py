@@ -1,4 +1,4 @@
-# logicconnection.py
+# FinBrain Project - logicconnection.py - MIT License (c) 2025 Nadav Eshed
 
 
 import logging

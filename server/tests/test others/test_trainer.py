@@ -1,4 +1,4 @@
-# test_trainer.py
+# FinBrain Project - test_trainer.py - MIT License (c) 2025 Nadav Eshed
 
 
 # type: ignore

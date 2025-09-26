@@ -1,4 +1,4 @@
-# db.py
+# FinBrain Project - db.py - MIT License (c) 2025 Nadav Eshed
 
 
 from pymongo import MongoClient

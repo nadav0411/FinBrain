@@ -1,4 +1,4 @@
-# test_expenses_for_dashboard.py
+# FinBrain Project - test_expenses_for_dashboard.py - MIT License (c) 2025 Nadav Eshed
 
 
 # type: ignore

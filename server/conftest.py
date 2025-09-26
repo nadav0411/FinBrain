@@ -1,4 +1,4 @@
-# conftest.py
+# FinBrain Project - conftest.py - MIT License (c) 2025 Nadav Eshed
 
 
 import os

@@ -1,4 +1,4 @@
-# password_hashing.py
+# FinBrain Project - password_hashing.py - MIT License (c) 2025 Nadav Eshed
 
 
 # type: ignore

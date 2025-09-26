@@ -1,3 +1,6 @@
+// FinBrain Project - main.jsx - MIT License (c) 2025 Nadav Eshed
+
+
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.jsx'

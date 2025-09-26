@@ -1,4 +1,4 @@
-# test_app_endpoints.py
+# FinBrain Project - test_app_endpoints.py - MIT License (c) 2025 Nadav Eshed
 
 
 from flask import jsonify

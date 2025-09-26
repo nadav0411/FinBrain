@@ -1,4 +1,4 @@
-# logicexpenses.py
+# FinBrain Project - logicexpenses.py - MIT License (c) 2025 Nadav Eshed
 
 
 from flask import jsonify

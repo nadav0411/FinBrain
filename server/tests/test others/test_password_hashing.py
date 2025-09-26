@@ -1,4 +1,4 @@
-# test_password_hashing.py
+# FinBrain Project - test_password_hashing.py - MIT License (c) 2025 Nadav Eshed
 
 
 from password_hashing import hash_password, verify_password

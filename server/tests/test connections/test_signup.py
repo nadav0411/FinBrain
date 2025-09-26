@@ -1,4 +1,4 @@
-# test_signup.py
+# FinBrain Project - test_signup.py - MIT License (c) 2025 Nadav Eshed
 
 
 # type: ignore

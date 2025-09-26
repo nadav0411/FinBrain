@@ -1,4 +1,5 @@
-/* AddExpenseModal.jsx - Nadav */
+/* FinBrain Project - AddExpenseModal.jsx - MIT License (c) 2025 Nadav Eshed */
+
 
 import React, { useState } from 'react';
 import './AddExpenseModal.css';

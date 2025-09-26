@@ -1,4 +1,4 @@
-# test_expenses_cache.py
+# FinBrain Project - test_expenses_cache.py - MIT License (c) 2025 Nadav Eshed
 
 
 # type: ignore

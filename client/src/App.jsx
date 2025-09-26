@@ -1,4 +1,4 @@
-// App.jsx - The main component that controls the entire application
+// FinBrain Project - App.jsx - MIT License (c) 2025 Nadav Eshed
 
 
 import React, { useEffect, useRef, useState } from 'react';

@@ -1,4 +1,4 @@
-# test_usd_ils_rate.py
+# FinBrain Project - test_usd_ils_rate.py - MIT License (c) 2025 Nadav Eshed
 
 
 # type: ignore

@@ -1,4 +1,4 @@
-# test_heartbeat.py
+# FinBrain Project - test_heartbeat.py - MIT License (c) 2025 Nadav Eshed
 
 
 # type: ignore

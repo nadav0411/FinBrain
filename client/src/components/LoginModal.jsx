@@ -1,4 +1,5 @@
-/* LoginModal.jsx  */
+/* FinBrain Project - LoginModal.jsx - MIT License (c) 2025 Nadav Eshed */
+
 
 import React, { useState } from 'react';
 import logo from '../assets/logo.png';

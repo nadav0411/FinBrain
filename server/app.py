@@ -1,4 +1,4 @@
-# app.py
+# FinBrain Project - app.py - MIT License (c) 2025 Nadav Eshed
 
 
 import logging

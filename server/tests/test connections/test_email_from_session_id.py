@@ -1,4 +1,4 @@
-# test_email_from_session_id.py
+# FinBrain Project - test_email_from_session_id.py - MIT License (c) 2025 Nadav Eshed
 
 
 # type: ignore

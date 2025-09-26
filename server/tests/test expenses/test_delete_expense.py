@@ -1,4 +1,4 @@
-# test_delete_expense.py
+# FinBrain Project - test_delete_expense.py - MIT License (c) 2025 Nadav Eshed
 
 
 # type: ignore

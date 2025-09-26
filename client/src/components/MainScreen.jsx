@@ -1,4 +1,5 @@
-/* MainScreen.jsx */
+/* FinBrain Project - MainScreen.jsx - MIT License (c) 2025 Nadav Eshed */
+
 
 import React, { useState } from 'react';
 import './MainScreen.css';

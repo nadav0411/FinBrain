@@ -1,4 +1,4 @@
-# test_logout.py
+# FinBrain Project - test_logout.py - MIT License (c) 2025 Nadav Eshed
 
 
 # type: ignore

@@ -1,3 +1,6 @@
+/* FinBrain Project - Settings.jsx - MIT License (c) 2025 Nadav Eshed */
+
+
 // Import React library (needed for all React components)
 import React from 'react';
 // Import CSS styles for this component

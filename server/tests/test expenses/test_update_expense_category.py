@@ -1,4 +1,4 @@
-# test_update_expense_category.py
+# FinBrain Project - test_update_expense_category.py - MIT License (c) 2025 Nadav Eshed
 
 
 # type: ignore

@@ -1,4 +1,4 @@
-# test_get_now_utc.py
+# FinBrain Project - test_get_now_utc.py - MIT License (c) 2025 Nadav Eshed
 
 
 # type: ignore

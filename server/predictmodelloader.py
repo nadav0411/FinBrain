@@ -1,4 +1,5 @@
-# predictmodelloader.py
+# FinBrain Project - predictmodelloader.py - MIT License (c) 2025 Nadav Eshed
+
 
 # NOTE: This code has very detailed comments because it's my first time
 # learning how to load a trained model.

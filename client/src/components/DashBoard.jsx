@@ -1,3 +1,6 @@
+/* FinBrain Project - DashBoard.jsx - MIT License (c) 2025 Nadav Eshed */
+
+
 import React, { useState, useEffect, useRef } from 'react';
 import './Dashboard.css';
 import MonthPickerModal from './MonthPickerModal';

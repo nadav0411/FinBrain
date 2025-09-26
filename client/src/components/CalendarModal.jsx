@@ -1,3 +1,6 @@
+/* FinBrain Project - CalendarModal.jsx - MIT License (c) 2025 Nadav Eshed */
+
+
 import React, { useState } from 'react';
 import './CalendarModal.css';
 
