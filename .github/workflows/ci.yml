@@ -52,8 +52,6 @@ jobs:
           echo "REDIS_URL=redis://localhost:6379/0" >> $GITHUB_ENV
 
       - name: Run all tests
-        env:
-          PYTHONPATH: ${{ github.workspace }}/server:${{ github.workspace }}/server/src
         run: |
           cd server
-          python -m pytest -v
+          PYTHONPATH=$PWD/src:$PWD python -m pytest -v
