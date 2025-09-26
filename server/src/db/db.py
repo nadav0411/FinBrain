@@ -20,13 +20,13 @@ env = os.getenv('ENV', 'development')
 if is_ci:
     logger.info("Detected CI environment (GitHub Actions) - skipping .env loading")
 elif env == 'test':
-    logger.info("Detected test environment - loading .env.test")
+    logger.info("Detected test environment - loading configs/.env.test")
     # Load the .env.test file
-    load_dotenv('.env.test')
+    load_dotenv('configs/.env.test')
 else:
-    logger.info("Detected dev/prod environment - loading default .env")
+    logger.info("Detected dev/prod environment - loading configs/.env.development")
     # Load the default .env file
-    load_dotenv()
+    load_dotenv('configs/.env.development')
 
 # Re-fetch the environment variables after loading .env
 env = os.getenv('ENV', 'development')

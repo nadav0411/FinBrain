@@ -2,11 +2,15 @@
 
 
 # type: ignore
+import sys
+import os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', 'src'))
+
 import pytest
-import logicexpenses as le
+import services.logicexpenses as le
 import requests
 from unittest.mock import patch, MagicMock
-import cache
+from db import cache
 
 
 @pytest.fixture(autouse=True)
@@ -35,7 +39,7 @@ def test_get_usd_to_ils_rate():
     }
 
     # Patch the requests.get function to return the mock response
-    with patch('logicexpenses.requests.get', return_value=mock_response):
+    with patch('services.logicexpenses.requests.get', return_value=mock_response):
         rate = le.get_usd_to_ils_rate(test_date)
         assert rate == 3.7
 
@@ -52,7 +56,7 @@ def test_get_usd_to_ils_rate_non_200_status_code():
     mock_response.status_code = 500
 
     # Patch the requests.get function to return the mock response
-    with patch('logicexpenses.requests.get', return_value=mock_response):
+    with patch('services.logicexpenses.requests.get', return_value=mock_response):
         rate = le.get_usd_to_ils_rate(test_date)
         assert rate == None
 
@@ -65,7 +69,7 @@ def test_get_usd_to_ils_rate_exception():
     test_date = '2025-09-20'
     
     # Patch the requests.get function to return an exception
-    with patch('logicexpenses.requests.get', side_effect=Exception("Network error")):
+    with patch('services.logicexpenses.requests.get', side_effect=Exception("Network error")):
         rate = le.get_usd_to_ils_rate(test_date)
         assert rate == None
 
@@ -88,7 +92,7 @@ def test_get_usd_to_ils_rate_future_date():
     mock_response.status_code = 404  # API returns 404 for future dates
 
     # Patch the requests.get function to return the mock response
-    with patch('logicexpenses.requests.get', return_value=mock_response):
+    with patch('services.logicexpenses.requests.get', return_value=mock_response):
         rate = le.get_usd_to_ils_rate('2030-01-01')
         assert rate == None
 
@@ -106,7 +110,7 @@ def test_get_usd_to_ils_rate_malformed_json():
     mock_response.json.side_effect = ValueError("Invalid JSON")
 
     # Patch the requests.get function to return the mock response
-    with patch('logicexpenses.requests.get', return_value=mock_response):
+    with patch('services.logicexpenses.requests.get', return_value=mock_response):
         rate = le.get_usd_to_ils_rate(test_date)
         assert rate == None
 
@@ -129,7 +133,7 @@ def test_get_usd_to_ils_rate_missing_ils_key():
     }
 
     # Patch the requests.get function to return the mock response
-    with patch('logicexpenses.requests.get', return_value=mock_response):
+    with patch('services.logicexpenses.requests.get', return_value=mock_response):
         rate = le.get_usd_to_ils_rate(test_date)
         assert rate == None
 
@@ -150,7 +154,7 @@ def test_get_usd_to_ils_rate_missing_rates_key():
     }
 
     # Patch the requests.get function to return the mock response
-    with patch('logicexpenses.requests.get', return_value=mock_response):
+    with patch('services.logicexpenses.requests.get', return_value=mock_response):
         rate = le.get_usd_to_ils_rate(test_date)
         assert rate == None
 
@@ -163,7 +167,7 @@ def test_get_usd_to_ils_rate_timeout():
     test_date = '2025-09-20'
     
     # Patch the requests.get function to raise a timeout exception
-    with patch('logicexpenses.requests.get', side_effect=requests.exceptions.Timeout("Request timed out")):
+    with patch('services.logicexpenses.requests.get', side_effect=requests.exceptions.Timeout("Request timed out")):
         rate = le.get_usd_to_ils_rate(test_date)
         assert rate == None
 
@@ -176,7 +180,7 @@ def test_get_usd_to_ils_rate_connection_error():
     test_date = '2025-09-20'
     
     # Patch the requests.get function to raise a connection error
-    with patch('logicexpenses.requests.get', side_effect=requests.exceptions.ConnectionError("Connection failed")):
+    with patch('services.logicexpenses.requests.get', side_effect=requests.exceptions.ConnectionError("Connection failed")):
         rate = le.get_usd_to_ils_rate(test_date)
         assert rate == None
 
@@ -209,7 +213,7 @@ def test_get_usd_to_ils_rate_cache_hit():
     cache.add_to_cache_currency_rate(test_date, test_rate)
     
     # Now call the function - it should return the cached rate without hitting API
-    with patch('logicexpenses.requests.get') as mock_get:
+    with patch('services.logicexpenses.requests.get') as mock_get:
         rate = le.get_usd_to_ils_rate(test_date)
         
         # Should return cached rate
@@ -235,7 +239,7 @@ def test_get_usd_to_ils_rate_cache_miss_then_cache():
         }
     }
     
-    with patch('logicexpenses.requests.get', return_value=mock_response):
+    with patch('services.logicexpenses.requests.get', return_value=mock_response):
         # First call should hit API and cache result
         rate = le.get_usd_to_ils_rate(test_date)
         assert rate == 3.8
@@ -253,7 +257,7 @@ def test_get_usd_to_ils_rate_cache_miss_api_failure():
     test_date = '2025-09-22'
     
     # Mock API failure
-    with patch('logicexpenses.requests.get', side_effect=Exception("API Error")):
+    with patch('services.logicexpenses.requests.get', side_effect=Exception("API Error")):
         rate = le.get_usd_to_ils_rate(test_date)
         assert rate is None
         
@@ -270,7 +274,7 @@ def test_get_usd_to_ils_rate_cache_error_fallback():
     test_date = '2025-09-23'
     
     # Mock cache error by patching the cache function to return None (simulating cache error)
-    with patch('cache.get_cached_currency_rate', return_value=None):
+    with patch('db.cache.get_cached_currency_rate', return_value=None):
         # Mock successful API response
         mock_response = MagicMock()
         mock_response.status_code = 200
@@ -281,7 +285,7 @@ def test_get_usd_to_ils_rate_cache_error_fallback():
         }
         
         # Patch the requests.get function to return the mock response
-        with patch('logicexpenses.requests.get', return_value=mock_response):
+        with patch('services.logicexpenses.requests.get', return_value=mock_response):
             rate = le.get_usd_to_ils_rate(test_date)
             assert rate == 3.9
 
@@ -303,9 +307,9 @@ def test_get_usd_to_ils_rate_cache_store_error():
     }
     
     # Mock cache store error
-    with patch('cache.add_to_cache_currency_rate', side_effect=Exception("Cache Store Error")):
+    with patch('db.cache.add_to_cache_currency_rate', side_effect=Exception("Cache Store Error")):
         # Patch the requests.get function to return the mock response
-        with patch('logicexpenses.requests.get', return_value=mock_response):
+        with patch('services.logicexpenses.requests.get', return_value=mock_response):
             rate = le.get_usd_to_ils_rate(test_date)
             # Should still return the rate even if caching failed
             assert rate == 4.0
@@ -385,7 +389,7 @@ def test_cache_roundtrip():
     }
     
     # First call - should hit API and cache
-    with patch('logicexpenses.requests.get', return_value=mock_response):
+    with patch('services.logicexpenses.requests.get', return_value=mock_response):
         rate1 = le.get_usd_to_ils_rate(test_date)
         assert rate1 == 3.95
         
@@ -394,7 +398,7 @@ def test_cache_roundtrip():
         assert cached_rate == 3.95
     
     # Second call with same date - should hit cache (no API call)
-    with patch('logicexpenses.requests.get') as mock_get_second:
+    with patch('services.logicexpenses.requests.get') as mock_get_second:
         rate2 = le.get_usd_to_ils_rate(test_date)
         assert rate2 == 3.95
         

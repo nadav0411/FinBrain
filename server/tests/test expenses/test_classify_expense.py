@@ -2,7 +2,11 @@
 
 
 # type: ignore
-import logicexpenses as le
+import sys
+import os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', 'src'))
+
+import services.logicexpenses as le
 
 
 def test_classify_expense():

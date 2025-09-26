@@ -1,7 +1,12 @@
 # FinBrain Project - test_password_hashing.py - MIT License (c) 2025 Nadav Eshed
 
 
-from password_hashing import hash_password, verify_password
+# type: ignore
+import sys
+import os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', 'src'))
+
+from utils.password_hashing import hash_password, verify_password
 
 
 def test_verify_ok():

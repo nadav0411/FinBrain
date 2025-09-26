@@ -29,6 +29,10 @@ def test_import_succeeds_with_files(tmp_path, monkeypatch):
     # Make predictmodelloader.py use this temporary directory
     monkeypatch.chdir(workdir)
 
+    # Add the src directory to the path so we can import the module
+    src_path = os.path.join(os.path.dirname(__file__), '..', '..', 'src', 'models')
+    sys.path.insert(0, src_path)
+    
     # Remove the module from the sys.modules dictionary (because we dont want to use the existing one)
     sys.modules.pop("predictmodelloader", None)
     # Run the import
@@ -46,8 +50,20 @@ def test_import_fails_without_files(tmp_path, monkeypatch):
     # Make predictmodelloader.py use this temporary directory
     monkeypatch.chdir(workdir)
 
+    # Add the src directory to the path so we can import the module
+    src_path = os.path.join(os.path.dirname(__file__), '..', '..', 'src', 'models')
+    sys.path.insert(0, src_path)
+
     # Remove the module from the sys.modules dictionary (because we dont want to use the existing one)
     sys.modules.pop("predictmodelloader", None)
+
+    # Mock os.path.exists to return False for model files
+    def mock_exists(path):
+        if "model.pkl" in path or "vectorizer.pkl" in path:
+            return False
+        return os.path.exists(path)
+    
+    monkeypatch.setattr(os.path, "exists", mock_exists)
 
     # Run the import and expect a FileNotFoundError
     with pytest.raises(FileNotFoundError):

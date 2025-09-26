@@ -39,7 +39,7 @@ EXPOSE 5000
 # -w 4             = run with 4 worker processes (parallel request handling)
 # -b 0.0.0.0:5000  = bind to all network interfaces inside the Docker container on port 5000
 # app:app          = run the "app" instance from "app.py" (format: filename:Flask_instance)
-CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:5000", "app:app"]
+CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:5000", "src.app:app"]
 
 
 

@@ -2,10 +2,14 @@
 
 
 # type: ignore
+import sys
+import os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', 'src'))
+
 from app import app
 from db import users_collection, db
 import pytest
-from password_hashing import hash_password
+from utils.password_hashing import hash_password
 
 
 # Clean the users collection before each test

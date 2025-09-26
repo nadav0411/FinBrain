@@ -4,8 +4,8 @@
 import logging
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import logicconnection as logic_connection
-import logicexpenses as logic_expenses
+from services import logicconnection as logic_connection
+from services import logicexpenses as logic_expenses
 from db import db as mongo_db
 import os
 

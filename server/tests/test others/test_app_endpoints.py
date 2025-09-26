@@ -1,6 +1,11 @@
 # FinBrain Project - test_app_endpoints.py - MIT License (c) 2025 Nadav Eshed
 
 
+# type: ignore
+import sys
+import os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', 'src'))
+
 from flask import jsonify
 import app as flask_app
 

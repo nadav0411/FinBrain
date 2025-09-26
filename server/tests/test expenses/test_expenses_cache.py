@@ -2,15 +2,17 @@
 
 
 # type: ignore
+import sys
+import os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', 'src'))
+
 import pytest
-import json
 from unittest.mock import patch
 from datetime import datetime
-import os
 from app import app
 from db import users_collection, expenses_collection, db
-import cache
-import logicconnection as lc
+from db import cache
+import services.logicconnection as lc
 
 
 # Clean the users collection before each test
@@ -142,7 +144,7 @@ def test_cache_error_handling_get():
     year = 2025
     
     # Test get cache error handling
-    with patch('cache.r.get', side_effect=Exception("Redis error")):
+    with patch('db.cache.r.get', side_effect=Exception("Redis error")):
         result = cache.get_cached_user_expenses(user_id, month, year)
         assert result is None
 
@@ -158,7 +160,7 @@ def test_cache_error_handling_add():
     test_expenses = [{'title': 'Error Test', 'amount': 30, 'category': 'Other'}]
     
     # Test add cache error handling
-    with patch('cache.r.setex', side_effect=Exception("Redis error")):
+    with patch('db.cache.r.setex', side_effect=Exception("Redis error")):
         # Should not raise exception
         cache.add_to_cache_user_expenses(user_id, month, year, test_expenses)
 
@@ -173,7 +175,7 @@ def test_cache_error_handling_delete():
     year = 2025
     
     # Test delete cache error handling
-    with patch('cache.r.delete', side_effect=Exception("Redis error")):
+    with patch('db.cache.r.delete', side_effect=Exception("Redis error")):
         # Should not raise exception
         cache.delete_user_expenses_cache(user_id, month, year)
 

@@ -12,8 +12,12 @@ import json
 # Create a logger for this module
 logger = logging.getLogger(__name__)
 
-# Load environment variables from .env file
-load_dotenv()
+# Load environment variables from config file
+env = os.getenv('ENV', 'development')
+if env == 'test':
+    load_dotenv('configs/.env.test')
+else:
+    load_dotenv('configs/.env.development')
 
 # Get the Redis URL from environment or default to localhost
 REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")

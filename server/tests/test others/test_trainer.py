@@ -2,12 +2,15 @@
 
 
 # type: ignore
+import sys
 import os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', 'src'))
+
 import csv
 import joblib
 from pathlib import Path
 import pytest
-from trainer import train_and_save_model
+from services.trainer import train_and_save_model
 
 
 def write_training_data_csv(file_path, headers, rows):

@@ -2,10 +2,14 @@
 
 
 # type: ignore
+import sys
+import os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', 'src'))
+
 from db import users_collection, expenses_collection, db
 import pytest
 from app import app
-import logicconnection as lc
+import services.logicconnection as lc
 from datetime import timedelta
 import time
 from unittest.mock import patch

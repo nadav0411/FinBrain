@@ -2,11 +2,15 @@
 
 
 # type: ignore
+import sys
+import os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', 'src'))
+
 from db import users_collection, expenses_collection, db
 import pytest
-import logicexpenses as le
+import services.logicexpenses as le
 from app import app
-import logicconnection as lc
+import services.logicconnection as lc
 from datetime import timedelta
 from unittest.mock import patch
 
@@ -59,8 +63,8 @@ def insert_test_user():
     return session_id
 
 
-@patch('logicexpenses.get_usd_to_ils_rate')
-@patch('logicexpenses.classify_expense')
+@patch('services.logicexpenses.get_usd_to_ils_rate')
+@patch('services.logicexpenses.classify_expense')
 def test_add_expense(mock_classify_expense, mock_get_usd_to_ils_rate):
     """
     Test that the add_expense function adds an expense to the database
@@ -101,8 +105,8 @@ def test_add_expense(mock_classify_expense, mock_get_usd_to_ils_rate):
     assert expense['serial_number'] == 1
 
 
-@patch('logicexpenses.get_usd_to_ils_rate')
-@patch('logicexpenses.classify_expense')
+@patch('services.logicexpenses.get_usd_to_ils_rate')
+@patch('services.logicexpenses.classify_expense')
 def test_add_expense_invalid_date(mock_classify_expense, mock_get_usd_to_ils_rate):
     """
     Test that the add_expense function returns an error if the date is invalid
@@ -137,8 +141,8 @@ def test_add_expense_invalid_date(mock_classify_expense, mock_get_usd_to_ils_rat
     assert expense is None
 
 
-@patch('logicexpenses.get_usd_to_ils_rate')
-@patch('logicexpenses.classify_expense')
+@patch('services.logicexpenses.get_usd_to_ils_rate')
+@patch('services.logicexpenses.classify_expense')
 def test_add_expense_invalid_currency(mock_classify_expense, mock_get_usd_to_ils_rate):
     """
     Test that the add_expense function returns an error if the currency is invalid
@@ -173,8 +177,8 @@ def test_add_expense_invalid_currency(mock_classify_expense, mock_get_usd_to_ils
     assert expense is None
 
 
-@patch('logicexpenses.get_usd_to_ils_rate')
-@patch('logicexpenses.classify_expense')
+@patch('services.logicexpenses.get_usd_to_ils_rate')
+@patch('services.logicexpenses.classify_expense')
 def test_add_expense_invalid_amount(mock_classify_expense, mock_get_usd_to_ils_rate):
     """
     Test that the add_expense function returns an error if the amount is invalid
@@ -209,8 +213,8 @@ def test_add_expense_invalid_amount(mock_classify_expense, mock_get_usd_to_ils_r
     assert expense is None
 
 
-@patch('logicexpenses.get_usd_to_ils_rate')
-@patch('logicexpenses.classify_expense')
+@patch('services.logicexpenses.get_usd_to_ils_rate')
+@patch('services.logicexpenses.classify_expense')
 def test_add_expense_invalid_title(mock_classify_expense, mock_get_usd_to_ils_rate):
     """
     Test that the add_expense function returns an error if the title is invalid
@@ -299,8 +303,8 @@ def test_add_expense_with_invalid_session_id():
     assert expense is None
 
 
-@patch('logicexpenses.get_usd_to_ils_rate')
-@patch('logicexpenses.classify_expense')
+@patch('services.logicexpenses.get_usd_to_ils_rate')
+@patch('services.logicexpenses.classify_expense')
 def test_add_expense_negative_amount(mock_classify_expense, mock_get_usd_to_ils_rate):
     """
     Test that the add_expense function returns an error if the amount is negative
@@ -335,8 +339,8 @@ def test_add_expense_negative_amount(mock_classify_expense, mock_get_usd_to_ils_
     assert expense is None
 
 
-@patch('logicexpenses.get_usd_to_ils_rate')
-@patch('logicexpenses.classify_expense')
+@patch('services.logicexpenses.get_usd_to_ils_rate')
+@patch('services.logicexpenses.classify_expense')
 def test_add_expense_api_failure(mock_classify_expense, mock_get_usd_to_ils_rate):
     """
     Test that the add_expense function returns an error if the API fails
@@ -371,8 +375,8 @@ def test_add_expense_api_failure(mock_classify_expense, mock_get_usd_to_ils_rate
     assert expense is None
 
 
-@patch('logicexpenses.get_usd_to_ils_rate')
-@patch('logicexpenses.classify_expense')
+@patch('services.logicexpenses.get_usd_to_ils_rate')
+@patch('services.logicexpenses.classify_expense')
 def test_expense_serial_number_increment(mock_classify_expense, mock_get_usd_to_ils_rate):
     """
     Test that the add_expense function increments the serial number correctly
@@ -414,8 +418,8 @@ def test_expense_serial_number_increment(mock_classify_expense, mock_get_usd_to_
         assert expense['serial_number'] == i + 1
 
 
-@patch('logicexpenses.get_usd_to_ils_rate')
-@patch('logicexpenses.classify_expense')
+@patch('services.logicexpenses.get_usd_to_ils_rate')
+@patch('services.logicexpenses.classify_expense')
 def test_add_expense_title_too_long(mock_classify_expense, mock_get_usd_to_ils_rate):
     """
     Test that the add_expense function returns an error if the title is too long
@@ -450,8 +454,8 @@ def test_add_expense_title_too_long(mock_classify_expense, mock_get_usd_to_ils_r
     assert expense is None
 
 
-@patch('logicexpenses.get_usd_to_ils_rate')
-@patch('logicexpenses.classify_expense')
+@patch('services.logicexpenses.get_usd_to_ils_rate')
+@patch('services.logicexpenses.classify_expense')
 def test_add_expense_amount_too_many_digits(mock_classify_expense, mock_get_usd_to_ils_rate):
     """
     Test that the add_expense function returns an error if the amount has too many digits
@@ -486,8 +490,8 @@ def test_add_expense_amount_too_many_digits(mock_classify_expense, mock_get_usd_
     assert expense is None
 
 
-@patch('logicexpenses.get_usd_to_ils_rate')
-@patch('logicexpenses.classify_expense')
+@patch('services.logicexpenses.get_usd_to_ils_rate')
+@patch('services.logicexpenses.classify_expense')
 def test_add_expense_date_in_future(mock_classify_expense, mock_get_usd_to_ils_rate):
     """
     Test that the add_expense function returns an error if the date is in the future
@@ -522,8 +526,8 @@ def test_add_expense_date_in_future(mock_classify_expense, mock_get_usd_to_ils_r
     assert expense is None
 
 
-@patch('logicexpenses.get_usd_to_ils_rate')
-@patch('logicexpenses.classify_expense')
+@patch('services.logicexpenses.get_usd_to_ils_rate')
+@patch('services.logicexpenses.classify_expense')
 def test_add_expense_date_before_2015(mock_classify_expense, mock_get_usd_to_ils_rate):
     """
     Test that the add_expense function returns an error if the date is before 2015
@@ -558,8 +562,8 @@ def test_add_expense_date_before_2015(mock_classify_expense, mock_get_usd_to_ils
     assert expense is None
 
 
-@patch('logicexpenses.get_usd_to_ils_rate')
-@patch('logicexpenses.classify_expense')
+@patch('services.logicexpenses.get_usd_to_ils_rate')
+@patch('services.logicexpenses.classify_expense')
 def test_add_expense_ils_currency(mock_classify_expense, mock_get_usd_to_ils_rate):
     """
     Test that the add_expense function works correctly with ILS currency
@@ -600,8 +604,8 @@ def test_add_expense_ils_currency(mock_classify_expense, mock_get_usd_to_ils_rat
     assert expense['serial_number'] == 1
 
 
-@patch('logicexpenses.get_usd_to_ils_rate')
-@patch('logicexpenses.classify_expense')
+@patch('services.logicexpenses.get_usd_to_ils_rate')
+@patch('services.logicexpenses.classify_expense')
 def test_add_expense_missing_required_fields(mock_classify_expense, mock_get_usd_to_ils_rate):
     """
     Test that the add_expense function returns an error if required fields are missing

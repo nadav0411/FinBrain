@@ -7,7 +7,7 @@ ENV ?= development
 # Run Flask app locally (for development use only)
 run:
 	@echo "Running Flask app locally in $(ENV) mode..."
-	ENV=$(ENV) python app.py
+	ENV=$(ENV) python src/app.py
 
 # Run tests with pytest
 test:
@@ -17,7 +17,7 @@ test:
 # Build and run Docker containers
 up:
 	@echo "Starting Docker Compose in $(ENV) mode..."
-	docker compose --env-file .env.docker up --build
+	docker compose --env-file configs/.env.docker up --build
 
 # Stop and remove all containers
 down:

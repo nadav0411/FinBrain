@@ -1,108 +1,126 @@
-# ============================================
-# Python artifacts and compiled files
-# ============================================
+# FinBrain Project - .dockerignore - MIT License (c) 2025 Nadav Eshed
+
+
+# Python cache files
 __pycache__/
-*.pyc
-*.pyo
-*.pyd
 *.py[cod]
 *$py.class
+*.so
 
-# ============================================
-# Virtual environments
-# ============================================
-.venv/
-venv/
-ENV/
-env/
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
 
-# ============================================
-# Environment variables
-# ============================================
-.env
-.env.*
-!.env.example
+# PyInstaller
+*.manifest
+*.spec
 
-# ============================================
-# Data & model files
-# ============================================
-*.csv
-*.json
-*.pkl
-*.joblib
-*.h5
-*.hdf5
-*.model
-*.bin
-*.sav
-*.parquet
-*.feather
-*.db
-*.sqlite
-*.sqlite3
-data/
-datasets/
-models/
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
 
-# ============================================
-# Logs
-# ============================================
-*.log
-logs/
-
-# ============================================
-# Test and coverage
-# ============================================
-tests/
-test_*.py
-.pytest_cache/
-coverage/
+# Unit test / coverage reports
 htmlcov/
 .tox/
-.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
 
-# ============================================
-# Jupyter
-# ============================================
-*.ipynb
-.ipynb_checkpoints/
+# Translations
+*.mo
+*.pot
 
-# ============================================
-# Docker and compose overrides
-# ============================================
-docker-compose.override.yml
-*.tar
+# Django stuff:
+*.log
+local_settings.py
+db.sqlite3
 
-# ============================================
-# Node.js (if applicable)
-# ============================================
-node_modules/
+# Flask stuff:
+instance/
+.webassets-cache
 
-# ============================================
+# Scrapy stuff:
+.scrapy
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+target/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# pyenv
+.python-version
+
+# celery beat schedule file
+celerybeat-schedule
+
+# SageMath parsed files
+*.sage.py
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
 # Git
-# ============================================
 .git/
 .gitignore
 
-# ============================================
-# IDEs
-# ============================================
-.vscode/
-.idea/
+# Node modules (if any)
+node_modules/
 
-# ============================================
-# OS/system
-# ============================================
-.DS_Store
-.DS_Store?
-Thumbs.db
-ehthumbs.db
-.Spotlight-V100
-.Trashes
-
-# ============================================
-# Temporary files
-# ============================================
-*.tmp
-*.temp
-*~
+# Logs
+*.log
+logs/

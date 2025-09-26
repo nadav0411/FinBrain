@@ -8,8 +8,8 @@ from datetime import datetime, timezone
 import re
 import uuid
 from pymongo.errors import DuplicateKeyError
-from cache import r
-from password_hashing import hash_password, verify_password
+from db.cache import r
+from utils.password_hashing import hash_password, verify_password
 
 
 # Session expiry in seconds (1.5 minutes of inactivity)

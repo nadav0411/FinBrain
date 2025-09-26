@@ -11,6 +11,7 @@ import pandas as pd
 # joblib can save and load machine learning models to files.
 import joblib
 import logging
+import os
 
 # scikit-learn -> a library for machine learning.
 # TF-IDF turns words into numbers. It gives more importance to unique words in a sentence.
@@ -33,8 +34,22 @@ def train_and_save_model():
     # The file contains two columns: 'description' and 'category'.
     # Each row is one example the model will learn from.
     try:
-        df = pd.read_csv('finbrain_model/training_data.csv')
+        # Use current working directory for training data path
+        training_data_path = os.path.join("finbrain_model", "training_data.csv")
+        
+        # Check if file exists first
+        if not os.path.exists(training_data_path):
+            raise FileNotFoundError(f"Training data file not found: {training_data_path}")
+            
+        df = pd.read_csv(training_data_path)
         logger.info(f"Training data loaded | rows={len(df)} | columns={list(df.columns)}")
+        
+        # Validate required columns exist
+        required_columns = ['description', 'category']
+        missing_columns = [col for col in required_columns if col not in df.columns]
+        if missing_columns:
+            raise KeyError(f"Missing required columns: {missing_columns}")
+            
     except Exception as e:
         logger.error(f"Failed to load training data | error={str(e)}")
         raise
@@ -66,16 +81,22 @@ def train_and_save_model():
 
     # Save the trained model to a file called model.pkl (to load it later to use it)
     try:
-        joblib.dump(model, "finbrain_model/model.pkl")
-        logger.info("Model saved successfully | model_path=finbrain_model/model.pkl")
+        model_path = os.path.join("finbrain_model", "model.pkl")
+        # Ensure the directory exists
+        os.makedirs(os.path.dirname(model_path), exist_ok=True)
+        joblib.dump(model, model_path)
+        logger.info(f"Model saved successfully | model_path={model_path}")
     except Exception as e:
         logger.error(f"Failed to save model | error={str(e)}")
         raise
 
     # Save the TF-IDF vectorizer to a file too. I MUST use the same vectorizer later for predictions.
     try:
-        joblib.dump(vectorizer, "finbrain_model/vectorizer.pkl")
-        logger.info("Vectorizer saved successfully | vectorizer_path=finbrain_model/vectorizer.pkl")
+        vectorizer_path = os.path.join("finbrain_model", "vectorizer.pkl")
+        # Ensure the directory exists
+        os.makedirs(os.path.dirname(vectorizer_path), exist_ok=True)
+        joblib.dump(vectorizer, vectorizer_path)
+        logger.info(f"Vectorizer saved successfully | vectorizer_path={vectorizer_path}")
     except Exception as e:
         logger.error(f"Failed to save vectorizer | error={str(e)}")
         raise
