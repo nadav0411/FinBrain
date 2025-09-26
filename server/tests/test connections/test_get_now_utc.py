@@ -2,10 +2,6 @@
 
 
 # type: ignore
-import sys
-import os
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', 'src'))
-
 import pytest
 import services.logicconnection as lc
 from datetime import datetime, timezone

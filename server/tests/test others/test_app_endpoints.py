@@ -2,10 +2,6 @@
 
 
 # type: ignore
-import sys
-import os
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', 'src'))
-
 from flask import jsonify
 import app as flask_app
 

@@ -2,10 +2,7 @@
 
 
 # type: ignore
-import sys
 import os
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', 'src'))
-
 import csv
 import joblib
 from pathlib import Path

@@ -2,10 +2,6 @@
 
 
 # type: ignore
-import sys
-import os
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', 'src'))
-
 from utils.password_hashing import hash_password, verify_password
 
 
