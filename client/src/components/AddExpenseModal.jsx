@@ -1,55 +1,64 @@
-/* AddExpenseModal.jsx */
+/* AddExpenseModal.jsx - Nadav */
 
 import React, { useState } from 'react';
 import './AddExpenseModal.css';
 
-// Modal component for adding new expense entries
+/**
+ * AddExpenseModal Component
+ * 
+ * This component shows a popup (modal) where the user can add an expense.
+ * It checks input, shows errors, and sends data to the server.
+ */
 function AddExpenseModal({ onClose, onExpenseAdded }) {
-  // State management for form inputs and UI feedback
-  const [title, setTitle] = useState('');
-  const [date, setDate] = useState('');
-  const [amount, setAmount] = useState('');
-  const [currency, setCurrency] = useState('USD');
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+  // React state variables (data that can change and re-render UI)
+  const [title, setTitle] = useState('');          // Expense name
+  const [date, setDate] = useState('');            // Expense date
+  const [amount, setAmount] = useState('');        // Expense amount
+  const [currency, setCurrency] = useState('USD'); // Currency (USD/ILS)
+  const [error, setError] = useState('');          // Error message for user
+  const [loading, setLoading] = useState(false);   // True when saving data
 
-  // Date constraints for validation
-  const today = new Date().toISOString().split("T")[0];        
-  const minDate = "2015-01-01";                                 
+  // Limit dates in the date input
+  const today = new Date().toISOString().split("T")[0]; // today = max
+  const minDate = "2015-01-01"; // do not allow very old dates
 
-  // Handles form submission and API communication
+  /**
+   * handleSubmit - runs when clicking "Add"
+   * - Validates input
+   * - Sends data to server
+   * - Shows loading animation
+   */
   const handleSubmit = async () => {
-    // In demo mode, ignore Add action entirely
+    // Demo mode → do not save, just close
     if (localStorage.getItem('is_demo_user') === 'true') {
       onClose();
       return;
     }
-    // Client-side validation before sending to server
+
+    // Make sure all fields are filled
     if (!title || !date || !amount || !currency) {
       setError("Please fill in all fields.");
       return;
     }
 
+    // Data object to send
     const expenseData = { title, date, amount, currency };
     setLoading(true);
 
     try {
-      // Send expense data to backend with session authentication
       const response = await fetch(`${import.meta.env.VITE_API_URL}/add_expense`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Session-ID': localStorage.getItem('session_id')
+          'Session-ID': localStorage.getItem('session_id'),
         },
         body: JSON.stringify(expenseData),
       });
 
       if (response.ok) {
-        console.log('Expense added successfully, calling onExpenseAdded with date:', date);
-        onExpenseAdded(date); // Notify that expense was added successfully, pass the date
-        onClose(); // Close modal on successful submission
+        onExpenseAdded(date); // notify parent
+        onClose();            // close modal
       } else {
-        const err = await response.text();
         setError("Server error. Try again.");
       }
     } catch (err) {
@@ -59,31 +68,64 @@ function AddExpenseModal({ onClose, onExpenseAdded }) {
     }
   };
 
-  // Input validation for title field - only allows alphanumeric characters and spaces
+  /**
+   * handleTitleChange - runs every time user types in title field
+   * Only allows letters, numbers and spaces
+   */
   const handleTitleChange = (e) => {
-    const regex = /^[A-Za-z0-9\s]*$/;
     const value = e.target.value;
+    const regex = /^[A-Za-z0-9\s]*$/; 
     
-    // Limit to 60 characters and validate format
     if (value.length <= 60 && regex.test(value)) {
       setTitle(value);
       setError('');
     }
   };
 
+  /**
+   * handleAmountChange - only numbers and decimal point allowed
+   * Limit: 10 digits (ignores decimal point)
+   */
+  const handleAmountChange = (e) => {
+    const value = e.target.value;
+    const cleanValue = value.replace(/[^0-9.]/g, '');
+    const digitsOnly = cleanValue.replace(/\./g, '');
+    if (digitsOnly.length <= 10) {
+      setAmount(cleanValue);
+      setError('');
+    }
+  };
+
+  /**
+   * handleAmountKeyDown - block invalid keys
+   * Allows: numbers, ".", and navigation keys
+   */
+  const handleAmountKeyDown = (e) => {
+    const allowedKeys = ["Backspace", "Tab", "ArrowLeft", "ArrowRight", "Delete"];
+    if (!/[0-9.]/.test(e.key) && !allowedKeys.includes(e.key)) {
+      e.preventDefault();
+    }
+  };
+
   return (
+    // Overlay = dark background
     <div className="modal-overlay" onClick={onClose}>
+      {/* Main white box. stopPropagation() = clicking inside does NOT close modal */}
       <div className="modal" onClick={(e) => e.stopPropagation()}>
+
+        {/* Header = title + X button */}
         <div className="modal-header">
           <h2>Add Expense Item</h2>
           <button className="close-button" onClick={onClose}>&times;</button>
         </div>
 
+        {/* Body = form fields */}
         <div className="modal-body">
-          {/* Error display for user feedback */}
+          
+          {/* Show error if needed */}
           {error && <div className="error-message">{error}</div>}
 
-          {/* Title input with character validation */}
+          {/* Title input */}
           <div className="row">
             <div className="field">
               <label>Title</label>
@@ -100,17 +142,16 @@ function AddExpenseModal({ onClose, onExpenseAdded }) {
             </div>
           </div>
 
-          {/* Date input with range restrictions */}
+          {/* Date input */}
           <div className="row">
             <div className="field">
               <label>Date</label>
               <input
                 type="date"
-                className="date-input"
                 value={date}
                 min={minDate}
                 max={today}
-                onKeyDown={(e) => e.preventDefault()}
+                onKeyDown={(e) => e.preventDefault()} // block typing
                 onChange={(e) => {
                   setDate(e.target.value);
                   setError('');
@@ -119,8 +160,10 @@ function AddExpenseModal({ onClose, onExpenseAdded }) {
             </div>
           </div>
 
-          {/* Amount and currency inputs */}
+          {/* Amount + Currency in same row */}
           <div className="row">
+            
+            {/* Amount */}
             <div className="field">
               <label>Amount</label>
               <input
@@ -128,33 +171,15 @@ function AddExpenseModal({ onClose, onExpenseAdded }) {
                 placeholder="60.00"
                 min={0}
                 value={amount}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  // Clean input to only allow numbers and decimal point
-                  const cleanValue = value.replace(/[^0-9.]/g, '');
-                  
-                  // Limit to 10 digits total for reasonable expense amounts
-                  const digitsOnly = cleanValue.replace(/\./g, '');
-                  if (digitsOnly.length <= 10) {
-                    setAmount(cleanValue);
-                    setError('');
-                  }
-                }}
-                onKeyDown={(e) => {
-                  // Prevent non-numeric input except navigation keys
-                  if (
-                    !/[0-9.]/.test(e.key) &&
-                    !["Backspace", "Tab", "ArrowLeft", "ArrowRight", "Delete"].includes(e.key)
-                  ) {
-                    e.preventDefault();
-                  }
-                }}
+                onChange={handleAmountChange}
+                onKeyDown={handleAmountKeyDown}
               />
               <div className="char-counter">
                 {amount.replace(/\./g, '').length}/10 digits
               </div>
             </div>
 
+            {/* Currency dropdown */}
             <div className="field">
               <label>Currency</label>
               <select
@@ -170,9 +195,13 @@ function AddExpenseModal({ onClose, onExpenseAdded }) {
             </div>
           </div>
 
-          {/* Submit button with loading state */}
+          {/* Submit button */}
           <div className="button-container">
-            <button className="add-button" onClick={handleSubmit} disabled={loading}>
+            <button 
+              className="add-button" 
+              onClick={handleSubmit} 
+              disabled={loading}
+            >
               {loading ? (
                 <div className="loading-dots">
                   <span>.</span>

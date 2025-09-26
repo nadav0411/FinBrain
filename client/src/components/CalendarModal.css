@@ -1,93 +1,103 @@
-/* CalendarModal.css */
+/* ==================================================
+   CALENDAR MODAL STYLES – Clean & Beginner-Friendly
+   ================================================== */
 
-/* Main modal container - sets fixed width and spacing for the calendar popup */
-.calendar-modal {
-  width: 480px;
-  padding: 32px;
-  font-family: 'Segoe UI', sans-serif;
-  color: #1e1e1e;
-}
-
-/* Content wrapper - uses flexbox to stack elements vertically with consistent spacing */
-.calendar-content {
-  display: flex;
-  flex-direction: column;
-  gap: 20px; /* This gap handles spacing between all child elements automatically */
-}
-
-/* Month buttons grid - 4 columns for 12 months (3 rows) */
-.months-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr); /* 4 equal columns */
-  gap: 12px;
-}
-
-/* Year buttons grid - 5 columns for better layout of years */
-.years-grid {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr); /* 5 equal columns */
-  gap: 10px;
-}
-
-/* Shared button styles for both month and year buttons- keeps code DRY */
-.month-btn,
-.year-btn {
-  background-color: #eef5ff;
-  border: none;
-  border-radius: 8px;
-  padding: 10px;
-  font-weight: 500;
-  font-size: 15px;
-  color: #2d4c74;
-  cursor: pointer;
-  transition: background-color 0.2s; 
-}
-
-/* Hover effect for both button types - darker blue on mouse over */
-.month-btn:hover,
-.year-btn:hover {
-  background-color: #cce2ff;
-}
-
-/* Selected state - applied when user clicks a month/year button */
-.selected {
-  background-color: #1676d6;
-  color: white;
-}
-
-/* Footer layout - puts selected info on left, button on right */
-.calendar-footer {
-  display: flex;
-  justify-content: space-between; /* Spreads content to opposite ends */
-  align-items: center; /* Vertically centers items */
-
-}
-
-/* Text showing which month/year is currently selected */
-.selected-info {
-  font-size: 15px;
-  color: #2c3e50;
-}
-
-/* Main action button - "Select" button */
-.add-button {
-  background-color: #4da3ff;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  font-size: 14px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-/* Button hover state - darker blue */
-.add-button:hover {
-  background-color: #1676d6;
-}
-
-/* Disabled state - when no month/year is selected */
-.add-button:disabled {
-  background-color: #b7d9fb; /* Light gray when disabled */
-  cursor: not-allowed; /* Shows disabled cursor */
-}
+/* MAIN CONTAINER
+   This is the outer box for the whole popup */
+   .calendar-modal {
+    width: 480px; /* Fixed width keeps the size consistent */
+    padding: 32px; /* Inner spacing */
+    font-family: 'Segoe UI', sans-serif;
+    color: #1e1e1e; /* Text color */
+  }
+  
+  /* CONTENT WRAPPER
+     Vertically stacks all child elements */
+  .calendar-content {
+    display: flex;
+    flex-direction: column; /* Stack items top to bottom */
+    gap: 20px; /* Adds space between each item */
+  }
+  
+  /* MONTHS GRID
+     Shows 12 months in a 4x3 grid */
+  .months-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4 equal columns */
+    gap: 12px;
+  }
+  
+  /* YEARS GRID
+     Shows years in a 5-column grid */
+  .years-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px; /* Slightly smaller spacing than months */
+  }
+  
+  /* SHARED STYLES FOR MONTH + YEAR BUTTONS
+     DRY: Use one block for both types of buttons */
+  .month-btn,
+  .year-btn {
+    background-color: #eef5ff;
+    border: none;
+    border-radius: 8px;
+    padding: 10px;
+    font-weight: 500;
+    font-size: 15px;
+    color: #2d4c74;
+    cursor: pointer;
+    transition: background-color 0.2s ease;  /* Smooth color change on hover */
+  }
+  
+  /* HOVER STATE – Month/Year buttons */
+  .month-btn:hover,
+  .year-btn:hover {
+    background-color: #cce2ff;
+  }
+  
+  /* SELECTED BUTTON
+     Blue background when user selects a button */
+  .selected {
+    background-color: #1676d6;
+    color: white;
+  }
+  
+  /* FOOTER BAR – Contains info + select button */
+  .calendar-footer {
+    display: flex;
+    justify-content: space-between; /* Push content to edges */
+    align-items: center; /* Vertically center items */
+  }
+  
+  /* SELECTED INFO TEXT
+     Shows the selected month/year */
+  .selected-info {
+    font-size: 15px;
+    color: #2c3e50;
+  }
+  
+  /* MAIN ACTION BUTTON
+     The "Select" button */
+  .add-button {
+    background-color: #4da3ff;
+    color: white;
+    border: none;
+    padding: 8px 16px; /* Padding: vertical, horizontal */
+    font-size: 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  /* HOVER STATE – Select button */
+  .add-button:hover {
+    background-color: #1676d6;
+  }
+  
+  /* DISABLED STATE
+     When no month/year is selected */
+  .add-button:disabled {
+    background-color: #b7d9fb;
+    cursor: not-allowed;
+  }

@@ -1,5 +1,8 @@
-/* Settings.css */
+/* ========================================
+   SETTINGS COMPONENT STYLES
+   ======================================== */
 
+/* Wrapper - centers the card in the page */
 .settings-wrapper {
   display: flex;
   align-items: center;
@@ -9,12 +12,13 @@
   position: relative;
 }
 
+/* Decorative background with gradient blobs */
 .settings-decor::before,
 .settings-decor::after {
   content: '';
   position: absolute;
   inset: 0;
-  pointer-events: none;
+  pointer-events: none; /* Prevents clicks */
 }
 
 .settings-decor::before {
@@ -28,27 +32,74 @@
   mix-blend-mode: multiply;
 }
 
+/* ========================================
+   CARD
+   ======================================== */
+
 .settings-card {
   position: relative;
-  background: #ffffff;
+  background: #fff;
   border-radius: 16px;
   padding: 28px;
   width: 100%;
   max-width: 720px;
-  box-shadow: 0 12px 28px rgba(2, 8, 20, 0.06), 0 2px 6px rgba(2, 8, 20, 0.05);
+  box-shadow: 0 12px 28px rgba(2, 8, 20, 0.06),
+              0 2px 6px rgba(2, 8, 20, 0.05);
 }
 
+/* ========================================
+   ICON
+   ======================================== */
+
+/* Static gear icon */
 .settings-icon {
   font-size: 40px;
   display: inline-flex;
-  width: 64px;
-  height: 64px;
   align-items: center;
   justify-content: center;
+  width: 64px;
+  height: 64px;
   border-radius: 12px;
   background: #f1f5f9;
   margin-bottom: 12px;
 }
+
+/* Icon container with floating animation */
+.icon-container {
+  margin: 12px 0 8px 0;
+  width: 80px;
+  height: 80px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  position: relative;
+}
+
+/* Animated gear inside the container */
+.icon-container .settings-icon {
+  border-radius: 999px;
+  background: radial-gradient(circle at 50% 35%, #ffffff 0%, #f8fafc 68%, #f1f5f9 100%);
+  font-size: 36px;
+  animation: floatY 3.6s ease-in-out infinite, spin 8s linear infinite;
+  box-shadow: 0 4px 12px rgba(2, 8, 20, 0.08),
+              inset 0 1px 2px rgba(2, 8, 20, 0.06);
+}
+
+/* Float animation (up and down) */
+@keyframes floatY {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+/* Spin animation (full rotation) */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* ========================================
+   TEXT
+   ======================================== */
 
 .settings-title {
   margin: 0 0 6px 0;
@@ -74,37 +125,7 @@
   border: none;
 }
 
-.icon-container {
-  margin: 12px 0 8px 0;
-  width: 80px;
-  height: 80px;
-  border-radius: 999px;
-  display: grid;
-  place-items: center;
-  position: relative;
-}
-
-.icon-container .settings-icon {
-  width: 64px;
-  height: 64px;
-  border-radius: 999px;
-  display: grid;
-  place-items: center;
-  background: radial-gradient(circle at 50% 35%, #ffffff 0%, #f8fafc 68%, #f1f5f9 100%);
-  font-size: 36px;
-  animation: floatY 3.6s ease-in-out infinite, spin 8s linear infinite;
-  box-shadow: 0 4px 12px rgba(2, 8, 20, 0.08), inset 0 1px 2px rgba(2, 8, 20, 0.06);
-}
-
-@keyframes floatY {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-3px); }
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
+/* Divider line with shimmer effect */
 .shine-divider {
   height: 1px;
   width: 100%;
@@ -118,7 +139,7 @@
   content: '';
   position: absolute;
   top: -8px;
-  left: -20%;
+  left: -30%;
   width: 20%;
   height: 18px;
   background: linear-gradient(90deg, transparent, rgba(255,255,255,0.9), transparent);
@@ -127,18 +148,24 @@
 }
 
 @keyframes shimmer {
-  0% { left: -30%; opacity: 0.0; }
+  0% { left: -30%; opacity: 0; }
   20% { opacity: 0.5; }
   50% { left: 55%; opacity: 1; }
   80% { opacity: 0.5; }
-  100% { left: 120%; opacity: 0.0; }
+  100% { left: 120%; opacity: 0; }
 }
 
+/* Small info text */
 .gentle-note {
   margin-top: 10px;
   font-size: 12px;
   color: #64748b;
+  cursor: default; /* Makes it clear it's not clickable */
 }
+
+/* ========================================
+   RESPONSIVE (MOBILE)
+   ======================================== */
 
 @media (max-width: 640px) {
   .settings-card {
@@ -156,5 +183,3 @@
     font-size: 32px;
   }
 }
-
-

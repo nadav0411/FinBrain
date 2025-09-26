@@ -97,7 +97,7 @@ function MainScreen() {
                   });
                 }
               } catch (e) {
-                // ignore
+                // Ignore logout API errors - proceed with local logout regardless
               } finally {
                 localStorage.removeItem('session_id');
                 localStorage.removeItem('user_name');

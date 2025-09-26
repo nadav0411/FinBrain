@@ -1,4 +1,4 @@
-/* AuthSwitcher.jsx */
+// AuthSwitcher.jsx - Controls what the user sees based on their login status
 
 import React, { useEffect, useState } from 'react';
 import LoginModal from './LoginModal';
@@ -6,122 +6,185 @@ import SignupModal from './SignupModal';
 import MainScreen from './MainScreen';
 
 /**
- * AuthSwitcher - Main authentication component that manages the flow between
- * login, signup, and the main application screen
+ * AuthSwitcher Component - The main router for authentication
+ * 
+ * This component decides what to show the user:
+ * - If not logged in → show login or signup forms
+ * - If logged in → show the main application screen
+ * 
+ * It also handles:
+ * - Heartbeat requests to keep the session alive
+ * - Cleanup when the user closes the browser tab
  */
 function AuthSwitcher() {
-  // State to track which authentication mode we're in (login vs signup)
+  // State to control which form is shown (login vs signup)
   const [isSignupMode, setIsSignupMode] = useState(false);
-  // State to track if user is successfully authenticated
-  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('session_id'));
 
-  // On mount, set up a beforeunload handler to notify backend and clear local storage on surprise exit
+  // State to track if user is logged in
+  // We check localStorage for a session_id to determine login status
+  const [isLoggedIn, setIsLoggedIn] = useState(
+    !!localStorage.getItem('session_id') // !! converts to boolean (true if session exists)
+  );
+
+  /**
+   * useEffect - Sets up session management when component loads
+   * 
+   * This effect handles:
+   * 1. Heartbeat requests to keep the session alive
+   * 2. Logout cleanup when user closes browser tab
+   * 3. Listening for logout events from other components
+   */
   useEffect(() => {
-    let heartbeatInterval;
+    let heartbeatInterval; // Store the interval timer reference
 
+    /**
+     * startHeartbeat - Begins sending heartbeat requests to the server
+     * 
+     * Heartbeat requests tell the server "I'm still here" to prevent
+     * the session from expiring due to inactivity
+     */
     const startHeartbeat = () => {
-      const send = async () => {
+      const sendHeartbeat = async () => {
         const sessionId = localStorage.getItem('session_id');
-        if (!sessionId) return;
+        if (!sessionId) return; // No session to keep alive
+
         try {
+          // Send heartbeat request to server
           await fetch(`${import.meta.env.VITE_API_URL}/heartbeat`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              'Session-ID': sessionId
-            }
+              'Session-ID': sessionId,
+            },
           });
-        } catch (e) {
-          // ignore transient errors
+        } catch (error) {
+          // Ignore network errors - they don't affect the user experience
+          // The session will be handled by the server's own timeout logic
         }
       };
-      // fire immediately, then every 0.5 minutes
-      send();
-      heartbeatInterval = setInterval(send, 0.5 * 60 * 1000);
+
+      sendHeartbeat(); // Send heartbeat immediately
+      heartbeatInterval = setInterval(sendHeartbeat, 30 * 1000); // Then every 30 seconds
     };
 
+    /**
+     * stopHeartbeat - Stops sending heartbeat requests
+     * 
+     * This is called when the user logs out or the component is removed
+     */
     const stopHeartbeat = () => {
-      if (heartbeatInterval) clearInterval(heartbeatInterval);
-      heartbeatInterval = undefined;
+      if (heartbeatInterval) {
+        clearInterval(heartbeatInterval);
+        heartbeatInterval = undefined;
+      }
     };
 
-    // Combined logout handler for both state change and heartbeat cleanup
+    /**
+     * handleLogout - Called when user logs out from another component
+     * 
+     * This stops heartbeat requests and updates the login state
+     */
     const handleLogout = () => {
       stopHeartbeat();
       setIsLoggedIn(false);
     };
-    window.addEventListener('userLoggedOut', handleLogout);
 
-    if (localStorage.getItem('session_id')) {
-      startHeartbeat();
-    }
-
-    const handleBeforeUnload = (event) => {
+    /**
+     * handleBeforeUnload - Called when user closes browser tab or refreshes
+     * 
+     * This ensures the server knows the user is logging out, even if the
+     * browser tab is closing quickly
+     */
+    const handleBeforeUnload = () => {
       const sessionId = localStorage.getItem('session_id');
-      if (!sessionId) return;
+      if (!sessionId) return; // No session to logout
 
       try {
-        // Use sendBeacon when available for reliability during unload
         const url = `${import.meta.env.VITE_API_URL}/logout`;
-        const headers = { 'Session-ID': sessionId };
-        const body = JSON.stringify({});
 
+        // Use sendBeacon if available - it works even when tab is closing
         if (navigator.sendBeacon) {
-          const blob = new Blob([body], { type: 'application/json' });
-          // Note: sendBeacon doesn't allow custom headers; include session in query as fallback
-          navigator.sendBeacon(`${url}?session_id=${encodeURIComponent(sessionId)}`, blob);
+          const blob = new Blob([JSON.stringify({})], {
+            type: 'application/json',
+          });
+          navigator.sendBeacon(
+            `${url}?session_id=${encodeURIComponent(sessionId)}`,
+            blob
+          );
         } else {
-          navigator.fetch(url, {
+          // Fallback: use fetch with keepalive flag
+          fetch(url, {
             method: 'POST',
-            keepalive: true,
+            keepalive: true, // This ensures the request completes even if tab closes
             headers: {
               'Content-Type': 'application/json',
-              'Session-ID': sessionId
+              'Session-ID': sessionId,
             },
-            body
+            body: JSON.stringify({}),
           });
         }
-      } catch (e) {
-        // ignore errors on unload
+      } catch (error) {
+        // It's okay if logout fails - the tab is closing anyway
       }
 
-      // Clear storage promptly
+      // Clean up local storage
       localStorage.removeItem('session_id');
       localStorage.removeItem('user_name');
       stopHeartbeat();
     };
 
+    // Set up event listeners
+    window.addEventListener('userLoggedOut', handleLogout);
     window.addEventListener('beforeunload', handleBeforeUnload);
+
+    // Start heartbeat if user is already logged in
+    if (localStorage.getItem('session_id')) {
+      startHeartbeat();
+    }
+
+    // Cleanup function - runs when component is removed
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
       window.removeEventListener('userLoggedOut', handleLogout);
       stopHeartbeat();
     };
-  }, [isLoggedIn]);
-  
-  // Helper functions to switch between login and signup modes
+  }, [isLoggedIn]); // Re-run this effect when login state changes
+
+  // ====== HELPER FUNCTIONS ======
+
+  /**
+   * goToSignup - Switches to signup mode
+   * 
+   * This shows the signup form instead of the login form
+   */
   const goToSignup = () => setIsSignupMode(true);
+
+  /**
+   * goToLogin - Switches to login mode
+   * 
+   * This shows the login form instead of the signup form
+   */
   const goToLogin = () => setIsSignupMode(false);
 
+  // ====== RENDER ======
   return (
     <>
-      {/* Conditional rendering based on authentication state */}
       {isLoggedIn ? (
-        // If user is logged in, show the main application
+        // User is logged in - show the main application
         <MainScreen />
+      ) : isSignupMode ? (
+        // User is not logged in and wants to sign up
+        <SignupModal onBackToLogin={goToLogin} />
       ) : (
-        // If not logged in, show either signup or login modal
-        isSignupMode ? (
-          <SignupModal onBackToLogin={goToLogin} />
-        ) : (
-          <LoginModal 
-            onGoToSignup={goToSignup} 
-            onLoginSuccess={() => {
-              setIsLoggedIn(true);
-              window.dispatchEvent(new CustomEvent('userLoggedIn'));
-            }} 
-          />
-        )
+        // User is not logged in and wants to log in (default)
+        <LoginModal
+          onGoToSignup={goToSignup}
+          onLoginSuccess={() => {
+            setIsLoggedIn(true);
+            // Tell other components that user logged in
+            window.dispatchEvent(new CustomEvent('userLoggedIn'));
+          }}
+        />
       )}
     </>
   );

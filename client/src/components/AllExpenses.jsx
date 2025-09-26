@@ -1,474 +1,383 @@
-/* AllExpenses.jsx */
+/* AllExpenses.jsx Nadav */
 
+// Import React hooks and components we need
 import React, { useState, useEffect, useRef } from 'react';
 import './AllExpenses.css';
 import AddExpenseModal from './AddExpenseModal';
 import CalendarModal from './CalendarModal';
 
-const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+// Array of month names for display (used in navigation)
+const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 function AllExpenses() {
+  // Get today's date to set initial month/year
   const today = new Date();
 
-  // State management for UI controls and data
-  const [showPopup, setShowPopup] = useState(false);           // Controls AddExpenseModal visibility
-  const [calendarOpen, setCalendarOpen] = useState(false);     // Controls CalendarModal visibility
-  const [month, setMonth] = useState(today.getMonth() + 1);    // Current selected month (1-12)
-  const [year, setYear] = useState(today.getFullYear());       // Current selected year
-  const [expenses, setExpenses] = useState([]);                // Array of expenses for current month/year
-  const [refreshKey, setRefreshKey] = useState(0);             // Used to trigger data refresh
-  const [activeMenu, setActiveMenu] = useState(null);          // Tracks which expense menu is open
-  const [sortMenuOpen, setSortMenuOpen] = useState(false);     // Controls Sort menu visibility
-  const [sortBy, setSortBy] = useState('date');                // Sort field: 'title' | 'amount' | 'category' | 'date'
-  const [sortOrder, setSortOrder] = useState('desc');          // Sort order: 'asc' | 'desc'
-  const [filterMenuOpen, setFilterMenuOpen] = useState(false); // Controls Filters menu visibility
-  const [selectedCategories, setSelectedCategories] = useState(new Set()); // Active category filters
-  const [amountRange, setAmountRange] = useState({ min: '', max: '' });    // Active amount range filters (USD)
-  const [amountRangeIls, setAmountRangeIls] = useState({ min: '', max: '' }); // Active amount range filters (ILS)
-  const [categoryPickerFor, setCategoryPickerFor] = useState(null); // Serial number currently showing category picker (inline)
-  const [categoryModalOpen, setCategoryModalOpen] = useState(false); // Controls centered category modal visibility
-  const [categoryModalExpense, setCategoryModalExpense] = useState(null); // Expense currently being edited
-  const [isUpdatingCategory, setIsUpdatingCategory] = useState(false); // Prevents multiple category updates
+  /* ===== STATE ===== */
+  // useState is a React hook that lets us store data that can change
+  // When this data changes, React automatically re-renders the component
+  
+  // Modal states - control which popup windows are open
+  const [showPopup, setShowPopup] = useState(false);           // Add expense modal
+  const [calendarOpen, setCalendarOpen] = useState(false);     // Calendar picker modal
+  const [categoryModalOpen, setCategoryModalOpen] = useState(false); // Category change modal
+  
+  // Date navigation states - track which month/year user is viewing
+  const [month, setMonth] = useState(today.getMonth() + 1);    // Current month (1-12)
+  const [year, setYear] = useState(today.getFullYear());       // Current year
+  const [refreshKey, setRefreshKey] = useState(0);             // Force data refresh when changed
+  
+  // Data state - holds the actual expense data from server
+  const [expenses, setExpenses] = useState([]);                // List of expenses for current month
+  
+  // Menu states - control which dropdown menus are open
+  const [activeMenu, setActiveMenu] = useState(null);          // Which expense's menu is open
+  const [sortMenuOpen, setSortMenuOpen] = useState(false);     // Sort dropdown
+  const [filterMenuOpen, setFilterMenuOpen] = useState(false); // Filter dropdown
+  
+  // Sort states - control how expenses are sorted
+  const [sortBy, setSortBy] = useState('date');                // What to sort by (date/title/amount/category)
+  const [sortOrder, setSortOrder] = useState('desc');          // Sort direction (asc/desc)
+  
+  // Filter states - control which expenses are shown
+  const [selectedCategories, setSelectedCategories] = useState(new Set()); // Selected categories
+  const [amountRange, setAmountRange] = useState({ min: '', max: '' });    // USD amount range
+  const [amountRangeIls, setAmountRangeIls] = useState({ min: '', max: '' }); // ILS amount range
+  
+  // Category modal states - handle changing expense categories
+  const [categoryModalExpense, setCategoryModalExpense] = useState(null); // Expense being edited
+  const [isUpdatingCategory, setIsUpdatingCategory] = useState(false); // Prevents double-clicks
 
-  // Ref to track if component is still mounted
-  const isMountedRef = useRef(true);
+  // useRef creates a reference that persists between renders (doesn't cause re-render when changed)
+  const isMountedRef = useRef(true); // Helps us know if component is still mounted
+  
+  // Constants - values that don't change
+  const MIN_YEAR = 2015; // Earliest year user can navigate to
+  const MAX_YEAR = 2027; // Latest year user can navigate to
 
-  // Year range constraints for navigation
-  const MIN_YEAR = 2015;
-  const MAX_YEAR = 2027;
-
-  // No local optimistic updates; rely on server confirmation and re-fetch
-
-  // Fetches expenses from the server for the current month/year
+  /* ===== FETCH DATA ===== */
+  // This function gets expenses from the server
   const fetchExpenses = async () => {
-    // Capture the month/year when the request is made
+    // Save current month/year when we start the request
+    // This prevents race conditions if user changes month while request is in flight
     const requestMonth = month;
     const requestYear = year;
     
     try {
+      // Get user's session ID from browser storage
       const sessionId = localStorage.getItem('session_id');
+      
+      // Make API request to get expenses for specific month/year
       const res = await fetch(`${import.meta.env.VITE_API_URL}/get_expenses?month=${requestMonth}&year=${requestYear}`, {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Session-ID': sessionId
-        }
+        headers: { 'Content-Type': 'application/json', 'Session-ID': sessionId }
       });
-
-      if (!res.ok) {
-        throw new Error('Failed to fetch expenses');
-      }
-
+      
+      // Check if request was successful
+      if (!res.ok) throw new Error('Failed to fetch');
+      
+      // Convert response to JavaScript object
       const data = await res.json();
       
-      // Check if the component is still mounted and the client is still viewing the same month/year
-      if (!isMountedRef.current) {
-        console.log('AllExpenses component unmounted, ignoring response');
-        return;
-      }
-      
-      if (month === requestMonth && year === requestYear) {
-        console.log('Client still on same month/year, updating expenses');
-        setExpenses(data.expenses || []);
-      } else {
-        console.log('Client navigated away from requested month/year, ignoring response');
-        console.log(`Requested: ${requestMonth}/${requestYear}, Current: ${month}/${year}`);
+      // Only update if component is still mounted AND user is still viewing same month/year
+      if (isMountedRef.current && month === requestMonth && year === requestYear) {
+        setExpenses(data.expenses || []); // Update the expenses list
       }
     } catch (err) {
       console.error('Error fetching expenses:', err);
     }
   };
 
-  // Automatically fetch expenses when month, year, or refreshKey changes
-  useEffect(() => {
-    fetchExpenses();
-  }, [month, year, refreshKey]);
-
-  // Cleanup effect to mark component as unmounted
-  useEffect(() => {
-    return () => {
-      isMountedRef.current = false;
-    };
-  }, []);
-
-  // Close dropdown menu when clicking outside of it
+  /* ===== EFFECTS ===== */
+  // useEffect is a React hook that runs code when component mounts or when dependencies change
+  
+  // Effect 1: Fetch expenses when month, year, or refreshKey changes
+  // This automatically loads new data when user navigates to different months
+  useEffect(() => { fetchExpenses(); }, [month, year, refreshKey]);
+  
+  // Effect 2: Cleanup when component unmounts
+  // This prevents memory leaks by marking the component as unmounted
+  useEffect(() => () => { isMountedRef.current = false; }, []);
+  
+  // Effect 3: Close dropdowns when clicking outside
+  // This provides good user experience by closing menus when user clicks elsewhere
   useEffect(() => {
     const handleClickOutside = (event) => {
-      // Close per-row action menu
-      if (activeMenu && !event.target.closest('.menu-container')) {
-        setActiveMenu(null);
-      }
-      // Close sort dropdown
-      if (sortMenuOpen && !event.target.closest('.sort-menu-container')) {
-        setSortMenuOpen(false);
-      }
-      // Close filter dropdown
-      if (filterMenuOpen && !event.target.closest('.filter-menu-container')) {
-        setFilterMenuOpen(false);
-      }
+      // Close expense action menu if clicking outside
+      if (activeMenu && !event.target.closest('.menu-container')) setActiveMenu(null);
+      // Close sort dropdown if clicking outside
+      if (sortMenuOpen && !event.target.closest('.sort-menu-container')) setSortMenuOpen(false);
+      // Close filter dropdown if clicking outside
+      if (filterMenuOpen && !event.target.closest('.filter-menu-container')) setFilterMenuOpen(false);
     };
-
+    
+    // Add event listener to document
     document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
+    
+    // Cleanup: Remove event listener when component unmounts
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [activeMenu, sortMenuOpen, filterMenuOpen]);
 
-  // Unique category options derived from the current expenses
+  /* ===== CATEGORIES ===== */
+  // useMemo prevents recalculating this every time the component renders
+  // It only recalculates when 'expenses' changes
   const categoryOptions = React.useMemo(() => {
-    const unique = new Set();
-    expenses.forEach(e => { if (e && e.category) unique.add(e.category); });
-    return Array.from(unique).sort((a, b) => a.localeCompare(b));
+    const unique = new Set(); // Set automatically removes duplicates
+    expenses.forEach(e => { if (e?.category) unique.add(e.category); });
+    return Array.from(unique).sort((a, b) => a.localeCompare(b)); // Sort alphabetically
   }, [expenses]);
 
-  // Canonical list of categories used across the app
-  const allCategories = [
-    'Food & Drinks',
-    'Housing & Bills',
-    'Transportation',
-    'Education & Personal Growth',
-    'Health & Essentials',
-    'Leisure & Gifts',
-    'Other'
-  ];
+  // Standard list of all possible expense categories
+  const allCategories = ['Food & Drinks', 'Housing & Bills', 'Transportation', 'Education & Personal Growth', 'Health & Essentials', 'Leisure & Gifts', 'Other'];
 
-  // Returns a sorted copy of the expenses based on current sort settings
+  /* ===== SORT ===== */
+  // This function sorts expenses based on current sort settings
   const getSortedExpenses = (list = expenses) => {
-    const data = [...list];
-    const direction = sortOrder === 'asc' ? 1 : -1;
-
+    const data = [...list]; // Create a copy to avoid modifying original array
+    const direction = sortOrder === 'asc' ? 1 : -1; // 1 for ascending, -1 for descending
+    
     data.sort((a, b) => {
-      let left;
-      let right;
-
+      let left, right; // Values to compare
+      
+      // Get the values to compare based on sort field
       if (sortBy === 'title') {
-        left = (a.title || '').toLowerCase();
+        left = (a.title || '').toLowerCase(); // Convert to lowercase for case-insensitive sorting
         right = (b.title || '').toLowerCase();
       } else if (sortBy === 'amount') {
-        left = Number(a.amount_usd) || 0; // Sort by USD amount
+        left = Number(a.amount_usd) || 0; // Convert to number, default to 0 if invalid
         right = Number(b.amount_usd) || 0;
       } else if (sortBy === 'category') {
         left = (a.category || '').toLowerCase();
         right = (b.category || '').toLowerCase();
       } else {
         // Default: sort by date (newest first by default)
-        // Expecting YYYY-MM-DD or similar; fallback to 0 if invalid
-        left = new Date(a.date).getTime() || 0;
+        left = new Date(a.date).getTime() || 0; // Convert date to timestamp
         right = new Date(b.date).getTime() || 0;
       }
-
+      
+      // Compare the values
       if (left < right) return -1 * direction;
       if (left > right) return 1 * direction;
-      // Tie-breaker on date (newer first when desc)
+      
+      // If values are equal, use date as tie-breaker
       const aTime = new Date(a.date).getTime() || 0;
       const bTime = new Date(b.date).getTime() || 0;
       return (bTime - aTime) * (direction === 1 ? -1 : 1);
     });
-
     return data;
   };
 
-  // Returns a filtered copy of the expenses based on filter settings
+  /* ===== FILTER ===== */
+  // This function filters expenses based on current filter settings
   const getFilteredExpenses = () => {
-    let data = [...expenses];
-
-    // Filter by selected categories (if any)
+    let data = [...expenses]; // Start with a copy of all expenses
+    
+    // Filter by selected categories (if any categories are selected)
     if (selectedCategories.size > 0) {
-      data = data.filter((e) => selectedCategories.has(e.category));
+      data = data.filter(exp => selectedCategories.has(exp.category));
     }
-
-    // Filter by amount range (USD)
-    const min = amountRange.min !== '' ? parseFloat(amountRange.min) : null;
-    const max = amountRange.max !== '' ? parseFloat(amountRange.max) : null;
-    if (min !== null) {
-      data = data.filter((e) => (Number(e.amount_usd) || 0) >= min);
-    }
-    if (max !== null) {
-      data = data.filter((e) => (Number(e.amount_usd) || 0) <= max);
-    }
-
-    // Filter by amount range (ILS)
+    
+    // Filter by USD amount range
+    const minUsd = amountRange.min !== '' ? parseFloat(amountRange.min) : null;
+    const maxUsd = amountRange.max !== '' ? parseFloat(amountRange.max) : null;
+    if (minUsd !== null) data = data.filter(exp => (Number(exp.amount_usd) || 0) >= minUsd);
+    if (maxUsd !== null) data = data.filter(exp => (Number(exp.amount_usd) || 0) <= maxUsd);
+    
+    // Filter by ILS amount range
     const minIls = amountRangeIls.min !== '' ? parseFloat(amountRangeIls.min) : null;
     const maxIls = amountRangeIls.max !== '' ? parseFloat(amountRangeIls.max) : null;
-    if (minIls !== null) {
-      data = data.filter((e) => (Number(e.amount_ils) || 0) >= minIls);
-    }
-    if (maxIls !== null) {
-      data = data.filter((e) => (Number(e.amount_ils) || 0) <= maxIls);
-    }
-
+    if (minIls !== null) data = data.filter(exp => (Number(exp.amount_ils) || 0) >= minIls);
+    if (maxIls !== null) data = data.filter(exp => (Number(exp.amount_ils) || 0) <= maxIls);
+    
     return data;
   };
 
-  // Toggle a category in the selected set
+  // Toggle a category in the filter selection (add if not selected, remove if selected)
   const toggleCategory = (category) => {
     setSelectedCategories(prev => {
-      const next = new Set(prev);
-      if (next.has(category)) next.delete(category); else next.add(category);
+      const next = new Set(prev); // Create a copy of the Set
+      next.has(category) ? next.delete(category) : next.add(category); // Toggle the category
       return next;
     });
   };
 
-  // Clear all filters
+  // Clear all active filters
   const clearFilters = () => {
-    setSelectedCategories(new Set());
-    setAmountRange({ min: '', max: '' });
-    setAmountRangeIls({ min: '', max: '' });
+    setSelectedCategories(new Set()); // Clear selected categories
+    setAmountRange({ min: '', max: '' }); // Clear USD range
+    setAmountRangeIls({ min: '', max: '' }); // Clear ILS range
   };
 
-  // Count of active filters for badge display
-  const activeFilterCount = (() => {
-    let count = 0;
-    count += selectedCategories.size;
-    if (amountRange.min !== '') count += 1;
-    if (amountRange.max !== '') count += 1;
-    if (amountRangeIls.min !== '') count += 1;
-    if (amountRangeIls.max !== '') count += 1;
-    return count;
-  })();
+  // Count how many filters are currently active (for badge display)
+  const activeFilterCount = selectedCategories.size + (amountRange.min !== '' ? 1 : 0) + (amountRange.max !== '' ? 1 : 0) + (amountRangeIls.min !== '' ? 1 : 0) + (amountRangeIls.max !== '' ? 1 : 0);
 
-  // Helpers to change sort settings and close the dropdown
+  // Apply new sort settings and close the sort menu
   const applySort = (field, order) => {
-    setSortBy(field);
-    setSortOrder(order);
-    setSortMenuOpen(false);
+    setSortBy(field); // Set what to sort by
+    setSortOrder(order); // Set sort direction
+    setSortMenuOpen(false); // Close the dropdown
   };
 
-  // Navigation functions for month/year selection
+  /* ===== NAVIGATION ===== */
+  // Navigate to the previous month
   const handlePrevMonth = () => {
-    if (month === 1) {
-      if (year > MIN_YEAR) {
-        setMonth(12);
-        setYear(year - 1);
-      }
-    } else {
-      setMonth(month - 1);
+    if (month === 1 && year > MIN_YEAR) { 
+      setMonth(12); setYear(year - 1); // Go to December of previous year
+    } else if (month > 1) {
+      setMonth(month - 1); // Go to previous month
     }
   };
 
+  // Navigate to the next month
   const handleNextMonth = () => {
-    if (month === 12) {
-      if (year < MAX_YEAR) {
-        setMonth(1);
-        setYear(year + 1);
-      }
-    } else {
-      setMonth(month + 1);
+    if (month === 12 && year < MAX_YEAR) { 
+      setMonth(1); setYear(year + 1); // Go to January of next year
+    } else if (month < 12) {
+      setMonth(month + 1); // Go to next month
     }
   };
 
-  // Returns formatted month and year string for display
-  const getMonthName = () => {
-    return `${monthNames[month - 1]} ${year}`;
-  };
+  // Get formatted month and year string for display
+  const getMonthName = () => `${monthNames[month - 1]} ${year}`;
 
-  // Handles date selection from calendar modal
+  // Handle date selection from calendar modal
   const handleDatePick = (pickedMonth, pickedYear) => {
     if (pickedYear === year && pickedMonth === month) {
       setRefreshKey(prev => prev + 1); // Refresh data if same month/year selected
     } else if (pickedYear >= MIN_YEAR && pickedYear <= MAX_YEAR) {
-      setMonth(pickedMonth);
-      setYear(pickedYear);
+      setMonth(pickedMonth); setYear(pickedYear); // Navigate to selected month/year
     }
   };
 
-  // Closes add expense modal without refreshing (when user cancels)
-  const handleAddExpenseClose = () => {
-    setShowPopup(false);
-  };
+  /* ===== EXPENSE HANDLING ===== */
+  // Close the add expense modal
+  const handleAddExpenseClose = () => setShowPopup(false);
 
-  // Handles successful expense addition and refreshes the expenses list only if the expense is in the current month
+  // Handle successful expense addition
   const handleExpenseAdded = (expenseDate) => {
-    // Check if component is still mounted
-    if (!isMountedRef.current) {
-      console.log('AllExpenses component unmounted, ignoring expense addition');
-      return;
-    }
-    
-    console.log('Expense added with date:', expenseDate);
-    console.log('Current view month:', month, 'year:', year);
-    
-    // Parse the expense date - handle YYYY-MM-DD format from HTML date input
-    let expenseMonth, expenseYear;
-    
+    if (!isMountedRef.current) return; // Don't update if component is unmounted
     try {
-      if (expenseDate && expenseDate.includes('-')) {
-        // Date is in YYYY-MM-DD format
+      if (expenseDate.includes('-')) {
+        // Parse date in YYYY-MM-DD format
         const [yearStr, monthStr] = expenseDate.split('-');
-        expenseYear = parseInt(yearStr, 10);
-        expenseMonth = parseInt(monthStr, 10);
-        
-        // Validate parsed values
-        if (isNaN(expenseYear) || isNaN(expenseMonth) || expenseMonth < 1 || expenseMonth > 12) {
-          console.error('Invalid date format, falling back to refresh');
+        const expenseYear = parseInt(yearStr, 10);
+        const expenseMonth = parseInt(monthStr, 10);
+        // Only refresh if the new expense is in the currently viewed month/year
+        if (expenseMonth === month && expenseYear === year) {
           setRefreshKey(prev => prev + 1);
-          return;
         }
       } else {
-        // Fallback to Date parsing
-        const expenseDateObj = new Date(expenseDate);
-        if (isNaN(expenseDateObj.getTime())) {
-          console.error('Invalid date, falling back to refresh');
-          setRefreshKey(prev => prev + 1);
-          return;
-        }
-        expenseMonth = expenseDateObj.getMonth() + 1; // getMonth() returns 0-11, we need 1-12
-        expenseYear = expenseDateObj.getFullYear();
+        setRefreshKey(prev => prev + 1); // Fallback: refresh data
       }
-      
-      console.log('Parsed expense month:', expenseMonth, 'year:', expenseYear);
-      
-      // Only refresh if the added expense is in the same month and year as currently displayed
-      if (expenseMonth === month && expenseYear === year) {
-        console.log('Dates match, refreshing expenses');
-        setRefreshKey(prev => prev + 1);
-      } else {
-        console.log('Dates do not match, not refreshing');
-      }
-    } catch (error) {
-      console.error('Error parsing expense date:', error);
-      // Fallback: refresh expenses if date parsing fails
-      setRefreshKey(prev => prev + 1);
-    }
+    } catch { setRefreshKey(prev => prev + 1); } // Fallback: refresh data
   };
 
-  // Converts category names to valid CSS class names
-  const cleanCategoryClassName = (category) => {
-    return category
-      .toLowerCase()
-      .replace(/&/g, 'and')
-      .replace(/\s+/g, '-')
-      .replace(/[^a-z0-9\-]/g, '');
-  };
+  // Convert category names to valid CSS class names (remove special characters)
+  const cleanCategoryClassName = (category) => category.toLowerCase().replace(/&/g, 'and').replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
 
-  // Toggles the dropdown menu for a specific expense
-  const handleMenuToggle = (expenseId) => {
-    setActiveMenu(activeMenu === expenseId ? null : expenseId);
-  };
+  // Toggle the dropdown menu for a specific expense
+  const handleMenuToggle = (id) => setActiveMenu(activeMenu === id ? null : id);
 
-  // Change category: open inline picker within the row menu
+  // Open the category change modal for a specific expense
   const handleChangeCategory = (expense) => {
-    // Open centered modal for category selection
-    setCategoryModalExpense(expense);
-    setCategoryModalOpen(true);
+    setCategoryModalExpense(expense); // Set which expense to edit
+    setCategoryModalOpen(true); // Open the modal
   };
 
-  // Apply category change and notify server
+  // Close the category modal and reset related state
+  const closeCategoryModal = () => {
+    setActiveMenu(null); // Close any open menus
+    setCategoryModalOpen(false); // Close the modal
+    setCategoryModalExpense(null); // Clear the expense being edited
+  };
+
+  // Update an expense's category on the server
   const applyCategoryChange = async (expense, newCategory) => {
-    // In demo mode, ignore update requests client-side
+    // Skip update in demo mode
     if (localStorage.getItem('is_demo_user') === 'true') {
-      setCategoryPickerFor(null);
-      setActiveMenu(null);
-      setCategoryModalOpen(false);
-      setCategoryModalExpense(null);
+      closeCategoryModal();
       return;
     }
-    // Prevent multiple simultaneous updates
-    if (isUpdatingCategory) {
+    
+    // Don't update if already updating, no category selected, or same category
+    if (isUpdatingCategory || !newCategory || newCategory === expense.category) {
+      closeCategoryModal();
       return;
     }
-
-    if (!newCategory || newCategory === expense.category) {
-      setCategoryPickerFor(null);
-      setActiveMenu(null);
-      setCategoryModalOpen(false);
-      setCategoryModalExpense(null);
-      return;
-    }
-
-    setIsUpdatingCategory(true);
+    
+    setIsUpdatingCategory(true); // Prevent multiple simultaneous updates
     try {
       const sessionId = localStorage.getItem('session_id');
       const res = await fetch(`${import.meta.env.VITE_API_URL}/update_expense_category`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Session-ID': sessionId
-        },
-        body: JSON.stringify({ 
-          serial_number: expense.serial_number, 
-          current_category: expense.category,
-          new_category: newCategory 
-        })
+        headers: { 'Content-Type': 'application/json', 'Session-ID': sessionId },
+        body: JSON.stringify({ serial_number: expense.serial_number, current_category: expense.category, new_category: newCategory })
       });
-      if (!res.ok) {
-        alert('Failed to update category');
-      } else {
-        // Only when server confirms, trigger re-fetch so filters/sorting apply
+      
+      if (res.ok) {
         const body = await res.json().catch(() => ({}));
-        if (body && (body.message || body.success)) {
-          setRefreshKey(prev => prev + 1);
-        }
+        if (body?.message || body?.success) setRefreshKey(prev => prev + 1); // Refresh data
+      } else {
+        alert('Failed to update category');
       }
     } catch (err) {
       console.error('Error updating category:', err);
       alert('Error updating category');
     } finally {
-      setIsUpdatingCategory(false);
-      setCategoryPickerFor(null);
-      setActiveMenu(null);
-      setCategoryModalOpen(false);
-      setCategoryModalExpense(null);
+      setIsUpdatingCategory(false); // Reset updating flag
+      closeCategoryModal(); // Close the modal
     }
   };
 
-  // Deletes an expense directly
+  // Delete an expense from the server
   const handleDeleteExpense = async (expense) => {
-    // In demo mode, ignore delete requests client-side
+    // Skip delete in demo mode
     if (localStorage.getItem('is_demo_user') === 'true') {
       setActiveMenu(null);
       return;
     }
+    
     try {
       const sessionId = localStorage.getItem('session_id');
       const res = await fetch(`${import.meta.env.VITE_API_URL}/delete_expense`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Session-ID': sessionId
-        },
+        headers: { 'Content-Type': 'application/json', 'Session-ID': sessionId },
         body: JSON.stringify({ serial_number: expense.serial_number })
       });
-
+      
       if (res.ok) {
         const body = await res.json().catch(() => ({}));
-        if (body && body.message === 'Expense deleted') {
-          setRefreshKey(prev => prev + 1); // Re-fetch from server
+        if (body?.message === 'Expense deleted') {
+          setRefreshKey(prev => prev + 1); // Refresh the expenses list
         } else {
-          alert(body.message || 'Failed to delete expense');
+          alert(body?.message || 'Failed to delete expense');
         }
       } else {
         const body = await res.json().catch(() => ({}));
-        alert(body.message || 'Failed to delete expense');
+        alert(body?.message || 'Failed to delete expense');
       }
     } catch (err) {
       console.error('Error deleting expense:', err);
       alert('Error deleting expense');
+    } finally {
+      setActiveMenu(null); // Close the menu
     }
-    setActiveMenu(null);
   };
 
+  /* ===== RENDER ===== */
+  // This is what gets displayed on the screen
   return (
     <div className="expenses-container">
-      {/* Header with new expense button and filter controls */}
+      {/* Header section with new expense button and filter controls */}
       <div className="expenses-header">
         <button className="new-expense-button" onClick={() => setShowPopup(true)}>✨ New Expense</button>
         <div className="controls">
-          {/* Filters dropdown menu */}
           <div className="filter-menu-container" style={{ position: 'relative', display: 'inline-block' }}>
-            <button
-              className="filter-btn"
-              onClick={() => setFilterMenuOpen((v) => !v)}
-              title="Filter options"
-            >
+            <button className="filter-btn" onClick={() => setFilterMenuOpen(v => !v)} title="Filter options">
               🔍 Filters
-              {activeFilterCount > 0 && (
-                <span className="filter-badge" aria-label={`${activeFilterCount} active filters`}>{activeFilterCount}</span>
-              )}
+              {activeFilterCount > 0 && <span className="filter-badge" aria-label={`${activeFilterCount} active filters`}>{activeFilterCount}</span>}
             </button>
             <div className={`menu-dropdown ${filterMenuOpen ? 'open' : ''}`}>
-              {/* Categories */}
               <div className="filter-section">
                 <div className="filter-section-title">Categories</div>
                 {categoryOptions.length === 0 ? (
@@ -476,62 +385,25 @@ function AllExpenses() {
                 ) : (
                   categoryOptions.map((cat) => (
                     <label key={cat} className="filter-row">
-                      <input
-                        type="checkbox"
-                        checked={selectedCategories.has(cat)}
-                        onChange={() => toggleCategory(cat)}
-                      />
+                      <input type="checkbox" checked={selectedCategories.has(cat)} onChange={() => toggleCategory(cat)} />
                       <span className="filter-row-label">{cat}</span>
                     </label>
                   ))
                 )}
               </div>
               <hr />
-              {/* Amount range */}
               <div className="filter-section">
                 <div className="filter-section-title">Amount (USD)</div>
                 <div className="filter-row">
-                  <input
-                    className="filter-input filter-input--small"
-                    type="number"
-                    placeholder="Min"
-                    value={amountRange.min}
-                    onChange={(e) => setAmountRange(prev => ({ ...prev, min: e.target.value }))}
-                    step="0.01"
-                    min="0"
-                  />
-                  <input
-                    className="filter-input filter-input--small"
-                    type="number"
-                    placeholder="Max"
-                    value={amountRange.max}
-                    onChange={(e) => setAmountRange(prev => ({ ...prev, max: e.target.value }))}
-                    step="0.01"
-                    min="0"
-                  />
+                  <input className="filter-input filter-input--small" type="number" placeholder="Min" value={amountRange.min} onChange={(e) => setAmountRange(prev => ({ ...prev, min: e.target.value }))} />
+                  <input className="filter-input filter-input--small" type="number" placeholder="Max" value={amountRange.max} onChange={(e) => setAmountRange(prev => ({ ...prev, max: e.target.value }))} />
                 </div>
               </div>
               <div className="filter-section">
                 <div className="filter-section-title">Amount (ILS)</div>
                 <div className="filter-row">
-                  <input
-                    className="filter-input filter-input--small"
-                    type="number"
-                    placeholder="Min"
-                    value={amountRangeIls.min}
-                    onChange={(e) => setAmountRangeIls(prev => ({ ...prev, min: e.target.value }))}
-                    step="0.01"
-                    min="0"
-                  />
-                  <input
-                    className="filter-input filter-input--small"
-                    type="number"
-                    placeholder="Max"
-                    value={amountRangeIls.max}
-                    onChange={(e) => setAmountRangeIls(prev => ({ ...prev, max: e.target.value }))}
-                    step="0.01"
-                    min="0"
-                  />
+                  <input className="filter-input filter-input--small" type="number" placeholder="Min" value={amountRangeIls.min} onChange={(e) => setAmountRangeIls(prev => ({ ...prev, min: e.target.value }))} />
+                  <input className="filter-input filter-input--small" type="number" placeholder="Max" value={amountRangeIls.max} onChange={(e) => setAmountRangeIls(prev => ({ ...prev, max: e.target.value }))} />
                 </div>
               </div>
               <div className="filter-actions">
@@ -540,13 +412,8 @@ function AllExpenses() {
               </div>
             </div>
           </div>
-          {/* Sort dropdown menu */}
           <div className="sort-menu-container" style={{ position: 'relative', display: 'inline-block' }}>
-            <button
-              className="sort-btn"
-              onClick={() => setSortMenuOpen((v) => !v)}
-              title="Sort options"
-            >
+            <button className="sort-btn" onClick={() => setSortMenuOpen(v => !v)} title="Sort options">
               ↕ Sort
               {sortBy === 'title' && `: Title ${sortOrder === 'asc' ? 'A→Z' : 'Z→A'}`}
               {sortBy === 'amount' && `: Amount ${sortOrder === 'asc' ? 'Low→High' : 'High→Low'}`}
@@ -567,27 +434,17 @@ function AllExpenses() {
         </div>
       </div>
 
-      {/* Month/year navigation controls */}
       <div className="month-picker">
         <button className="arrow-button" onClick={handlePrevMonth}>◀</button>
-
         <div className="month-display" onClick={() => setCalendarOpen(true)}>
           <span>{getMonthName()}</span>
           <span className="calendar-icon" title="Pick a month">📅</span>
         </div>
-
         <button className="arrow-button" onClick={handleNextMonth}>▶</button>
       </div>
 
-      {/* Calendar modal for date selection */}
-      {calendarOpen && (
-        <CalendarModal
-          onClose={() => setCalendarOpen(false)}
-          onPickDate={handleDatePick}
-        />
-      )}
+      {calendarOpen && <CalendarModal onClose={() => setCalendarOpen(false)} onPickDate={handleDatePick} />}
 
-      {/* Scrollable table container */}
       <div className="expenses-table-wrapper">
         <table className="expenses-table">
           <thead>
@@ -605,37 +462,15 @@ function AllExpenses() {
                 <tr key={exp.serial_number}>
                   <td>{exp.title}</td>
                   <td>{exp.date}</td>
-                  <td className={`category-${cleanCategoryClassName(exp.category)}`}>
-                    {exp.category}
-                  </td>
+                  <td className={`category-${cleanCategoryClassName(exp.category)}`}>{exp.category}</td>
                   <td className="amount-cell">${exp.amount_usd.toFixed(2)}</td>
                   <td className="amount-cell">₪{exp.amount_ils.toFixed(2)}</td>
                   <td className="actions-cell">
-                    {/* Dropdown menu for each expense */}
                     <div className="menu-container">
-                      <button 
-                        className={`menu-button ${activeMenu === exp.serial_number ? 'active' : ''}`}
-                        onClick={() => handleMenuToggle(exp.serial_number)}
-                      >
-                        ⋯
-                      </button>
+                      <button className={`menu-button ${activeMenu === exp.serial_number ? 'active' : ''}`} onClick={() => handleMenuToggle(exp.serial_number)}>⋯</button>
                       <div className={`menu-dropdown ${activeMenu === exp.serial_number ? 'open' : ''}`}>
-                        {
-                          <>
-                            <button 
-                              className="menu-item" 
-                              onClick={() => handleChangeCategory(exp)}
-                            >
-                              🏷️ Change Category
-                            </button>
-                            <button 
-                              className="menu-item delete-item" 
-                              onClick={() => handleDeleteExpense(exp)}
-                            >
-                              🗑️ Delete
-                            </button>
-                          </>
-                        }
+                        <button className="menu-item" onClick={() => handleChangeCategory(exp)}>🏷️ Change Category</button>
+                        <button className="menu-item delete-item" onClick={() => handleDeleteExpense(exp)}>🗑️ Delete</button>
                       </div>
                     </div>
                   </td>
@@ -643,42 +478,33 @@ function AllExpenses() {
               ))
             ) : (
               <tr>
-                <td colSpan="6" style={{ textAlign: 'center', padding: '20px' }}>
-                  No expenses found for {getMonthName()}
-                </td>
+                <td colSpan="6" style={{ textAlign: 'center', padding: '20px' }}>No expenses found for {getMonthName()}</td>
               </tr>
             )}
           </tbody>
         </table>
       </div>
 
-      {/* Add expense modal */}
       {showPopup && <AddExpenseModal onClose={handleAddExpenseClose} onExpenseAdded={handleExpenseAdded} />}
 
-      {/* Centered Category Selection Modal */}
       {categoryModalOpen && categoryModalExpense && (
-        <div className="modal-overlay" onClick={() => { setCategoryModalOpen(false); setCategoryModalExpense(null); }}>
+        <div className="modal-overlay" onClick={closeCategoryModal}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
               <h3 className="modal-title">Change Category</h3>
-              <button className="modal-close" onClick={() => { setCategoryModalOpen(false); setCategoryModalExpense(null); }}>✕</button>
+              <button className="modal-close" onClick={closeCategoryModal}>✕</button>
             </div>
             <div className="modal-body">
               <div className="category-grid">
                 {allCategories.map((cat) => (
-                  <button
-                    key={cat}
-                    className={`category-tile ${cat === categoryModalExpense.category ? 'current' : ''}`}
-                    onClick={() => applyCategoryChange(categoryModalExpense, cat)}
-                    disabled={isUpdatingCategory}
-                  >
+                  <button key={cat} className={`category-tile ${cat === categoryModalExpense.category ? 'current' : ''}`} onClick={() => applyCategoryChange(categoryModalExpense, cat)} disabled={isUpdatingCategory}>
                     {cat}
                   </button>
                 ))}
               </div>
             </div>
             <div className="modal-footer">
-              <button className="modal-button" onClick={() => { setCategoryModalOpen(false); setCategoryModalExpense(null); }}>Cancel</button>
+              <button className="modal-button" onClick={closeCategoryModal}>Cancel</button>
             </div>
           </div>
         </div>

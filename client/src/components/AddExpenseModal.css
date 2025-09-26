@@ -1,6 +1,12 @@
-/* AddExpenseModal.css */
+/* AddExpenseModal.css - Nadav */
 
-/* Modal overlay - creates a full-screen backdrop with blur effect */
+
+/* 
+   OVERLAY - Dark background behind modal
+   - Covers full screen
+   - Blurry effect (modern style)
+   - Centers modal in middle
+*/
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -12,10 +18,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 999;
+  z-index: 999; /* Always on top */
 }
 
-/* Main modal container with modern styling and smooth entrance animation */
+
+/* 
+   MODAL BOX - Main white container
+   - Rounded corners + soft shadow
+   - Smooth fade-in animation
+*/
 .modal {
   background: #f9fcff;
   width: 720px;
@@ -27,7 +38,8 @@
   color: #1e1e1e;
 }
 
-/* Smooth fade-in animation for modal entrance */
+
+/* FADE-IN ANIMATION - slide from top */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -39,7 +51,8 @@
   }
 }
 
-/* Header section with title and close button */
+
+/* HEADER - Title + Close button on right */
 .modal-header {
   display: flex;
   justify-content: space-between;
@@ -47,6 +60,7 @@
   margin-bottom: 24px;
 }
 
+/* Title text */
 .modal-header h2 {
   font-size: 24px;
   font-weight: 600;
@@ -54,7 +68,8 @@
   margin: 0;
 }
 
-/* Close button with hover effect */
+
+/* CLOSE BUTTON - Small X button */
 .close-button {
   font-size: 26px;
   background: none;
@@ -63,25 +78,24 @@
   color: #6c757d;
   transition: color 0.2s ease;
 }
-
 .close-button:hover {
   color: #000;
 }
 
-/* Form layout - rows for organizing input fields */
+
+/* FORM LAYOUT - Rows of fields */
 .modal-body .row {
   display: flex;
   gap: 24px;
   margin-bottom: 20px;
 }
 
-/* Individual form field container */
+/* FIELD - Label + Input stacked vertically */
 .field {
   flex: 1;
   display: flex;
   flex-direction: column;
 }
-
 .field label {
   font-size: 14px;
   color: #4a6fa5;
@@ -89,25 +103,10 @@
   font-weight: 500;
 }
 
-/* Input and textarea styling with focus states */
+
+/* INPUTS & SELECT & TEXTAREA - Same style */
 .field input,
-.field textarea {
-  padding: 10px 12px;
-  border: 1.5px solid #cbdff5;
-  border-radius: 6px;
-  font-size: 15px;
-  background-color: white;
-  transition: border-color 0.2s;
-}
-
-.field input:focus,
-.field textarea:focus {
-  border-color: #4da3ff;
-  box-shadow: 0 0 0 3px rgba(77, 163, 255, 0.2);
-  outline: none;
-}
-
-/* Select dropdown styling with custom appearance */
+.field textarea,
 .field select {
   padding: 10px 12px;
   border: 1.5px solid #cbdff5;
@@ -115,41 +114,45 @@
   font-size: 15px;
   background-color: white;
   transition: border-color 0.2s;
-  appearance: none;
+  appearance: none; /* remove default styles */
   -webkit-appearance: none;
   -moz-appearance: none;
 }
 
+/* FOCUS EFFECT - Blue glow */
+.field input:focus,
+.field textarea:focus,
 .field select:focus {
   border-color: #4da3ff;
   box-shadow: 0 0 0 3px rgba(77, 163, 255, 0.2);
   outline: none;
 }
 
-/* Textarea specific styling */
+/* TEXTAREA - Allow resize only vertically */
 textarea {
   resize: vertical;
   min-height: 60px;
 }
 
-/* Character counter for input validation feedback */
+
+/* CHARACTER COUNTER - Small gray text */
 .char-counter {
   font-size: 12px;
   color: #6c757d;
   text-align: right;
   margin-top: 4px;
-  font-weight: 400;
 }
 
-/* Button container positioning */
+
+/* BUTTON CONTAINER - Align button right */
 .button-container {
   text-align: right;
   margin-top: 16px;
 }
 
-/* Primary action button with hover and disabled states */
+/* MAIN BUTTON */
 .add-button {
-  background-color: #5d6369;
+  background-color: #5d6369; /* gray button */
   color: white;
   border: none;
   padding: 10px 20px;
@@ -160,18 +163,17 @@ textarea {
   transition: background-color 0.3s ease, transform 0.2s ease;
   min-width: 90px;
 }
-
 .add-button:hover {
-  background-color: #1676d6;
+  background-color: #1676d6; /* blue on hover */
   transform: scale(1.05);
 }
-
 .add-button:disabled {
   opacity: 0.7;
   cursor: not-allowed;
 }
 
-/* Error message styling with fade-in animation */
+
+/* ERROR BOX */
 .error-message {
   background-color: #ffe5e5;
   border: 1px solid #ffcccc;
@@ -184,7 +186,8 @@ textarea {
   animation: fadeIn 0.3s ease-in-out;
 }
 
-/* Loading animation with bouncing dots */
+
+/* LOADING DOTS - Three bouncing dots */
 .loading-dots {
   display: flex;
   gap: 4px;
@@ -195,11 +198,9 @@ textarea {
   height: 20px;
   letter-spacing: 2px;
 }
-
 .loading-dots span {
   animation: bounce 1s infinite;
 }
-
 .loading-dots span:nth-child(2) {
   animation-delay: 0.2s;
 }
@@ -207,7 +208,7 @@ textarea {
   animation-delay: 0.4s;
 }
 
-/* Bouncing animation for loading indicator */
+/* BOUNCE ANIMATION */
 @keyframes bounce {
   0%, 80%, 100% {
     transform: translateY(0);

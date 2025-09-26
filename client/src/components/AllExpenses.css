@@ -1,57 +1,53 @@
 /* AllExpenses.css */
 
-/* Main wrapper for the entire expenses section with modern card design */
+
+/* ===== MAIN CONTAINER ===== */
+/* Wrapper for the whole page */
 .expenses-container {
-  background-color: #f5f8fe; /* Light blue background for modern look */
-  padding: 32px;              
-  border-radius: 12px; /* Rounded corners */
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03); /* Subtle shadow */
-  height: calc(100vh - 200px); /* Full height minus header space */
-  display: flex; /* Flexbox for vertical layout */
-  flex-direction: column; /* Stack children vertically */
-  position: relative; /* For absolute positioning of child elements */
+  background-color: #f5f8fe; 
+  padding: 32px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+  height: calc(100vh - 200px); 
+  display: flex;
+  flex-direction: column;
 }
 
-/* Top section containing the "New Expense" button and navigation controls */
+
+/* ===== HEADER ===== */
+/* Top bar with "New Expense" and filter/sort */
 .expenses-header {
   display: flex;
-  justify-content: space-between; /* Button on left, controls on right */
+  justify-content: space-between;
   align-items: center;
   margin-bottom: 24px;
 }
 
-/* Primary action button for adding new expenses */
+/* Main add expense button */
 .new-expense-button {
-  background-color: #4da3ff; /* Bright blue for primary action */
+  background-color: #4da3ff;
   color: white;
   border: none;
   padding: 10px 20px;
   font-weight: 600;
   border-radius: 8px;
   cursor: pointer;
-  transition: background 0.3s ease; /* Smooth color transition on hover */
+  transition: background 0.3s ease;
 }
-
 .new-expense-button:hover {
-  background-color: #1676d6; /* Darker blue on hover for feedback */
+  background-color: #1676d6;
 }
 
-/* Navigation controls */
+
+/* ===== FILTER & SORT BUTTONS ===== */
 .controls {
   display: flex;
-  gap: 24px; /* Space between control items */
-  color: #4a6fa5;        
-  font-weight: 500;
-  cursor: pointer;
+  gap: 40px;
+  align-items: center;
 }
 
-.controls span:hover {
-  color: #1676d6; /* Darker blue on hover */
-  text-decoration: underline; /* Underline for clear interaction */
-}
-
-/* Filter button styles to match sort */
-.filter-btn {
+.filter-btn,
+.sort-btn {
   background-color: #e6f0ff;
   color: #2d4c74;
   border: none;
@@ -64,38 +60,84 @@
   align-items: center;
   gap: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  transition: background-color 0.2s ease, transform 0.2s ease, color 0.2s ease;
+  transition: all 0.2s ease;
 }
-
-.filter-btn:hover {
+.filter-btn:hover,
+.sort-btn:hover {
   background-color: #d4e7ff;
   color: #1f3756;
   transform: translateY(-1px);
 }
 
-.filter-btn:active {
-  transform: translateY(0);
-}
-
-.filter-btn:focus-visible {
-  outline: 2px solid #4da3ff;
-  outline-offset: 2px;
-}
-
-/* Small numeric badge for active filter count */
+/* Small number badge for active filters */
 .filter-badge {
   background: #4da3ff;
   color: white;
-  border-radius: 9999px;
+  border-radius: 9999px; 
   font-size: 11px;
-  line-height: 1;
   padding: 3px 6px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
 }
 
-/* Inputs inside filter dropdown */
+
+/* ===== DROPDOWN MENUS ===== */
+.menu-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  box-shadow: 0 10px 24px rgba(17, 24, 39, 0.12);
+  z-index: 99999;
+  min-width: 220px;
+  padding: 6px;
+  transform: scale(0.8);
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+  transition: all 0.15s ease;
+}
+/* Open state */
+.menu-dropdown.open {
+  transform: scale(1);
+  opacity: 1;
+  pointer-events: auto;
+  visibility: visible;
+}
+
+/* Items inside dropdown */
+.menu-dropdown .menu-item {
+  display: flex;
+  width: 100%;
+  padding: 10px 12px;
+  background: white;
+  border: none;
+  color: #374151;
+  font-size: 13px;
+  cursor: pointer;
+  align-items: center;
+  gap: 8px;
+  border-radius: 6px;
+  min-height: 32px;
+  transition: background-color 0.15s ease;
+}
+.menu-dropdown .menu-item:hover {
+  background-color: #f3f6fb;
+}
+/* Red for delete */
+.menu-dropdown .menu-item.delete-item {
+  color: #dc2626;
+}
+.menu-dropdown .menu-item.delete-item:hover {
+  background-color: #fef2f2;
+  color: #b91c1c;
+}
+
+
+/* ===== FILTER INPUTS ===== */
 .filter-input {
   border: 1px solid #d1d5db;
   border-radius: 6px;
@@ -103,181 +145,191 @@
   font-size: 13px;
   outline: none;
 }
-
 .filter-input:focus {
   border-color: #4da3ff;
   box-shadow: 0 0 0 3px rgba(77, 163, 255, 0.2);
 }
-
-/* Ensure the filter menu aligns and uses the same dropdown base */
-.filter-menu-container {
-  position: relative;
-}
-
-.filter-menu-container .menu-dropdown {
-  right: 0;
-  min-width: 260px;
-}
-
-/* Filters dropdown sections */
-.filter-section {
-  padding: 6px 8px;
-}
-
-.filter-section-title {
-  font-size: 12px;
-  color: #6b7280;
-  padding: 4px 6px;
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
-}
-
-.filter-empty {
-  padding: 6px;
-  font-size: 13px;
-  color: #6b7280;
-}
-
-.filter-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 6px;
-  cursor: pointer;
-}
-
-.filter-row-label {
-  font-size: 13px;
-  color: #374151;
-}
-
 .filter-input--small {
   width: 90px;
 }
 
-.filter-actions {
-  display: flex;
-  justify-content: space-between;
-  gap: 8px;
-  padding: 8px;
-}
 
-/* Sort button styles aligned with the app's look */
-.sort-btn {
-  background-color: #e6f0ff; /* Match month pill */
-  color: #2d4c74;
-  border: none;
-  padding: 8px 14px;
+/* ===== MONTH PICKER ===== */
+.month-picker {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 24px;
+  gap: 12px;
+}
+/* Arrow buttons */
+.arrow-button {
+  width: 40px;
+  height: 40px;
+  background-color: white;
+  border-radius: 20%;
+  font-size: 18px;
+  font-weight: bold;
+  color: #111;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  transition: all 0.2s ease;
+}
+.arrow-button:hover {
+  background-color: #eef4ff;
+  transform: scale(1.05);
+}
+/* Current month */
+.month-display {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: #e6f0ff;
+  padding: 10px 20px;
   border-radius: 12px;
   font-weight: 600;
-  font-size: 14px;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
+  color: #2d4c74;
+  font-size: 16px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  transition: background-color 0.2s ease, transform 0.2s ease, color 0.2s ease;
-}
-
-.sort-btn:hover {
-  background-color: #d4e7ff;
-  color: #1f3756;
-  transform: translateY(-1px);
-}
-
-.sort-btn:active {
-  transform: translateY(0);
-}
-
-.sort-btn:focus-visible {
-  outline: 2px solid #4da3ff;
-  outline-offset: 2px;
-}
-
-/* Ensure the sort menu layers nicely and aligns to the right */
-.sort-menu-container {
-  position: relative;
-}
-
-.sort-menu-container .menu-dropdown {
-  right: 0;
-  min-width: 220px; /* Wider to fit labels */
-  padding: 4px; /* Light inner spacing */
-}
-
-.sort-menu-container .menu-dropdown .menu-item {
-  border-radius: 6px;
-}
-
-/* Divider styling inside dropdowns */
-.menu-dropdown hr {
-  border: none;
-  height: 1px;
-  background: #eceff4;
-  margin: 6px 4px; /* Consistent spacing inside dropdown */
-}
-
-/* Category picker styles inside row menu */
-.category-picker {
-  padding: 8px;
-  min-width: 220px;
-}
-
-.category-title {
-  font-size: 12px;
-  color: #6b7280;
-  padding: 2px 2px 8px 2px;
-}
-
-.category-options {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px;
-}
-
-.category-chip {
-  border: 1px solid #d1d5db;
-  background: #f8fafc;
-  color: #1f2937;
-  border-radius: 9999px;
-  padding: 6px 10px;
-  font-size: 12px;
   cursor: pointer;
+  transition: background 0.3s ease;
+}
+.month-display:hover {
+  background-color: #d4e7ff;
+}
+
+
+/* ===== EXPENSES TABLE ===== */
+.expenses-table-wrapper {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+  padding-right: 8px;
+  padding-bottom: 20px;
+}
+.expenses-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+  border-radius: 12px;
+}
+/* Sticky header */
+.expenses-table thead {
+  background-color: #eef5ff;
+  text-align: left;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+.expenses-table th,
+.expenses-table td {
+  padding: 16px 20px;
+  font-size: 15px;
+}
+.expenses-table td {
+  border-top: 1px solid #f0f0f0;
+  vertical-align: middle;
+}
+/* Column styling */
+.expenses-table th:nth-child(1),
+.expenses-table td:nth-child(1) {
+  text-align: left;
+  font-weight: 600;
+  color: #333;
+}
+.expenses-table th:nth-child(2),
+.expenses-table td:nth-child(2) {
   text-align: center;
-  transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+  color: #444;
+  font-weight: 500;
+}
+.expenses-table th:nth-child(3),
+.expenses-table td:nth-child(3) {
+  text-align: center;
+  font-weight: 700;
+}
+.expenses-table th:nth-child(4),
+.expenses-table td:nth-child(4),
+.expenses-table th:nth-child(5),
+.expenses-table td:nth-child(5) {
+  text-align: right;
+  font-family: monospace;
+  color: #000;
+  font-weight: 600;
+}
+/* Hover effect */
+.expenses-table tbody tr {
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+.expenses-table tbody tr:hover {
+  background-color: #f4f9ff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
-.category-chip:hover {
-  background: #eef4ff;
-  border-color: #c7d2fe;
-  transform: translateY(-1px);
-}
 
-.category-chip:focus-visible {
-  outline: 2px solid #4da3ff;
-  outline-offset: 2px;
+/* ===== CATEGORY BADGES ===== */
+td[class^="category-"] {
+  font-weight: bold;
+  padding: 6px 10px;
+  border-radius: 8px;
+  text-align: center;
+  white-space: nowrap;
 }
+/* Colors per category */
+.category-food-and-drinks { color: #60a5fa; }
+.category-housing-and-bills { color: #a3e635; }
+.category-transportation { color: #fde68a; }
+.category-education-and-personal-growth { color: #f472b6; }
+.category-health-and-essentials { color: #a78bfa; }
+.category-leisure-and-gifts { color: #fb923c; }
+.category-other { color: #14b8a6; }
 
-.category-actions {
-  margin-top: 10px;
-  display: flex;
-  justify-content: flex-end;
+
+/* ===== ACTIONS COLUMN ===== */
+.expenses-table th:nth-child(6),
+.expenses-table td:nth-child(6) {
+  text-align: center;
+  width: 60px;
+  padding: 8px !important;
 }
-
-.category-back {
+.actions-cell {
+  position: relative;
+  background-color: transparent !important;
+}
+.menu-container {
+  position: relative;
+  display: inline-block;
+}
+/* Three dots button */
+.menu-button {
   background: transparent;
   border: none;
-  color: #4a6fa5;
-  font-size: 13px;
+  font-size: 12px;
+  color: #9ca3af;
   cursor: pointer;
-  padding: 6px 8px;
+  padding: 4px;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+.menu-button:hover {
+  background-color: #f3f4f6;
+  color: #6b7280;
+}
+.menu-button.active {
+  background-color: #e5e7eb;
+  color: #374151;
 }
 
-.category-back:hover {
-  text-decoration: underline;
-}
 
-/* Centered modal base */
+/* ===== MODAL ===== */
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -287,15 +339,12 @@
   justify-content: center;
   z-index: 100000;
 }
-
 .modal-content {
-  background: #ffffff;
+  background: white;
   border-radius: 12px;
   width: min(520px, 92vw);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.18), 0 6px 18px rgba(0, 0, 0, 0.08);
-  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.18);
 }
-
 .modal-header {
   display: flex;
   align-items: center;
@@ -303,13 +352,11 @@
   padding: 14px 16px;
   border-bottom: 1px solid #eef2f7;
 }
-
 .modal-title {
   margin: 0;
   font-size: 16px;
   color: #1f2937;
 }
-
 .modal-close {
   background: transparent;
   border: none;
@@ -317,19 +364,19 @@
   color: #6b7280;
   cursor: pointer;
 }
-
-.modal-close:hover { color: #374151; }
-
-.modal-body { padding: 16px; }
-
+.modal-close:hover {
+  color: #374151;
+}
+.modal-body {
+  padding: 16px;
+}
 .modal-footer {
   padding: 12px 16px;
   border-top: 1px solid #eef2f7;
   display: flex;
   justify-content: flex-end;
-  gap: 10px; /* Add a little space between action buttons */
+  gap: 10px;
 }
-
 .modal-button {
   background: #e6f0ff;
   color: #2d4c74;
@@ -339,16 +386,17 @@
   font-weight: 600;
   cursor: pointer;
 }
+.modal-button:hover {
+  background: #d4e7ff;
+}
 
-.modal-button:hover { background: #d4e7ff; }
 
-/* Category tiles grid */
+/* ===== CATEGORY SELECTION ===== */
 .category-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
 }
-
 .category-tile {
   border: 1px solid #e5e7eb;
   border-radius: 10px;
@@ -357,313 +405,56 @@
   background: #f9fbff;
   color: #1f2937;
   cursor: pointer;
-  transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+  transition: all 0.15s ease;
 }
-
-.category-tile:hover { background: #cad7f0; border-color: #c7d2fe; transform: translateY(-5px); }
-.category-tile.current { background: #b8bcc2; border-color: #ffffff; font-weight: 600; }
-
-/* Interactive month navigation with arrows and current month display */
-.month-picker {
-  display: flex;
-  justify-content: center; /* Center the month picker horizontally */
-  align-items: center;
-  margin-bottom: 24px;
-  gap: 12px; /* Space between arrows and month display */
+.category-tile:hover {
+  background: #cad7f0;
+  border-color: #c7d2fe;
+  transform: translateY(-5px);
 }
-
-/* Navigation arrows for previous/next month */
-.arrow-button {
-  width: 40px;
-  height: 40px;
-  background-color: #ffffff;
-  border-radius: 20%; /* Slightly rounded square */
-  font-size: 18px;
-  font-weight: bold;
-  color: #111;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08); /* Subtle shadow for depth */
-  transition: background-color 0.2s, transform 0.2s; /* Smooth animations */
-}
-
-.arrow-button:hover {
-  background-color: #eef4ff; /* Light blue background on hover */
-  transform: scale(1.05); /* Slight scale up for interactive feedback */
-}
-
-/* Current month display with calendar icon */
-.month-display {
-  display: flex;
-  align-items: center;
-  gap: 10px; /* Space between text and calendar icon */
-  background-color: #e6f0ff; /* Light blue background */
-  padding: 10px 20px;
-  border-radius: 12px;
-  font-weight: 600;
-  color: #2d4c74; /* Dark blue text */
-  font-size: 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  cursor: pointer; /* Indicates it's clickable */
-  transition: background 0.3s ease;
-}
-
-.month-display:hover {
-  background-color: #d4e7ff; /* Slightly darker blue on hover */
-}
-
-/* Calendar icon styling */
-.calendar-icon {
-  font-size: 18px;
-  cursor: pointer;
-}
-
-/* Wrapper that makes the table scrollable and takes remaining space */
-.expenses-table-wrapper {
-  flex: 1; /* Take all remaining vertical space */
-  overflow-y: auto; /* Enable vertical scrolling when content overflows */
-  min-height: 0; /* Allow flex item to shrink below content size */
-  padding-right: 8px; /* Space for scrollbar */
-  padding-bottom: 20px; /* Bottom padding for visual breathing room */
-  box-sizing: border-box; /* Include padding in width calculation */
-}
-
-/* Main table styling with modern design and sticky header */
-.expenses-table {
-  width: 100%;
-  border-collapse: collapse; /* Remove gaps between table cells */
-  background-color: white;
-  border-radius: 12px; /* Rounded corners */
-  overflow: visible; /* Allow dropdowns to extend beyond table */
-}
-
-/* Sticky header that stays visible while scrolling */
-.expenses-table thead {
-  background-color: #eef5ff; /* Light blue header background */
-  text-align: left;
-  position: sticky; /* Stays at top when scrolling */
-  top: 0;
-  z-index: 1; /* Above table body content */
-}
-
-/* Base styling for all table cells */
-.expenses-table th,
-.expenses-table td {
-  padding: 16px 20px; /* Generous padding for readability */
-  font-size: 15px;
-}
-
-/* Table body cells with subtle borders */
-.expenses-table td {
-  border-top: 1px solid #f0f0f0; /* Light border between rows */
-  vertical-align: middle; /* Center content vertically */
-}
-
-/* Column 1: Description - Left aligned, bold text */
-.expenses-table th:nth-child(1),
-.expenses-table td:nth-child(1) {
-  text-align: left;
-  font-weight: 600;
-  color: #333;
-}
-
-/* Column 2: Category - Center aligned, medium weight */
-.expenses-table th:nth-child(2),
-.expenses-table td:nth-child(2) {
-  text-align: center;
-  color: #444;
-  font-weight: 500;
-}
-
-/* Column 3: Date - Center aligned, bold for emphasis */
-.expenses-table th:nth-child(3),
-.expenses-table td:nth-child(3) {
-  text-align: center;
-  font-weight: 700;
-}
-
-/* Columns 4 & 5: Amount and Actions - Right aligned, monospace for numbers */
-.expenses-table th:nth-child(4),
-.expenses-table td:nth-child(4),
-.expenses-table th:nth-child(5),
-.expenses-table td:nth-child(5) {
-  text-align: right;
-  font-family: monospace; /* Monospace font for consistent number alignment */
-  color: #000000;
+.category-tile.current {
+  background: #b8bcc2;
+  border-color: #fff;
   font-weight: 600;
 }
 
-/*Table Row Interactions: smooth transitions for row hover effects */
-.expenses-table tbody tr {
-  transition: background-color 0.2s ease, box-shadow 0.2s ease;
-}
 
-/* Hover effect for better user interaction feedback */
-.expenses-table tbody tr:hover {
-  background-color: #f4f9ff; /* Light blue background on hover */
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); /* Subtle shadow for depth */
-}
-
-/* Ensure actions cell doesn't interfere with row hover */
-.expenses-table tbody tr:hover .actions-cell {
-  background-color: transparent;
-}
-
-/* Base styling for all category badges */
-td[class^="category-"] {
-  font-weight: bold;
-  padding: 6px 10px; /* Compact padding for badge appearance */
-  border-radius: 8px; /* Rounded corners */
-  text-align: center;
-  white-space: nowrap; /* Prevent text wrapping */
-}
-
-/* Each category has a unique color for easy visual identification */
-.category-food-and-drinks {
-  color: #60a5fa;
-}
-
-.category-housing-and-bills {
-  color: #a3e635;
-}
-
-.category-transportation {
-  color: #fde68a;
-}
-
-.category-education-and-personal-growth {
-  color: #f472b6;
-}
-
-.category-health-and-essentials {
-  color: #a78bfa;
-}
-
-.category-leisure-and-gifts {
-  color: #fb923c;
-}
-
-.category-other {
-  color: #14b8a6;
-}
-
-/* Actions column styling for the three-dots menu */
-.expenses-table th:nth-child(6),
-.expenses-table td:nth-child(6) {
-  text-align: center;
-  width: 60px; /* Fixed width for actions column */
-  padding: 8px !important; /* Override default padding */
-}
-
-/* Container for the actions menu */
-.actions-cell {
-  position: relative;
-  background-color: transparent !important;
-  isolation: isolate; /* Create new stacking context for z-index */
-}
-
-/* Wrapper for the menu button and dropdown */
-.menu-container {
-  position: relative;
-  display: inline-block;
-  isolation: isolate; /* Prevent z-index conflicts */
-}
-
-/* Three-dots menu button */
-.menu-button {
-  background: transparent;
-  border: none;
+/* ===== UTILITIES ===== */
+.filter-section { padding: 6px 8px; }
+.filter-section-title {
   font-size: 12px;
-  color: #9ca3af;
-  cursor: pointer;
-  padding: 4px;
-  border-radius: 50%; /* Circle */
-  width: 24px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  line-height: 1;
-  position: relative;
-  z-index: 100; /* High z-index to stay above other elements */
-  transition: none; /* No transition for immediate response */
+  color: #6b7280;
+  padding: 4px 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
 }
-
-.menu-button:hover {
-  background-color: #f3f4f6; /* Light gray background on hover */
-  color: #6b7280; /* Darker gray text on hover */
-}
-
-.menu-button.active {
-  background-color: #e5e7eb; 
-  color: #374151; 
-}
-
-/* Dropdown menu that appears when clicking the three-dots button */
-.menu-dropdown {
-  position: absolute;
-  top: 100%; /* Position below the button */
-  right: 0; /* Align to the right edge */
-  background: rgb(255, 255, 255); 
-  border: 1px solid #e5e7eb; /* Softer border */
-  border-radius: 6px; /* Rounded corners */
-  box-shadow: 0 10px 24px rgba(17, 24, 39, 0.12), 0 2px 6px rgba(17, 24, 39, 0.06);
-  z-index: 99999; /* Very high z-index to appear above everything */
-  min-width: 120px; /* Minimum width for readability */
-  overflow: visible; /* Allow content to extend beyond bounds */
-  transform: scale(0.8); /* Start smaller for animation */
-  opacity: 0; /* Start invisible */
-  transition: all 0.15s ease; /* Smooth animation */
-  transform-origin: top right; /* Scale from top-right corner */
-  margin-top: 4px; /* Small gap from button */
-  backdrop-filter: blur(0px); /* No blur effect */
-  pointer-events: none; /* Prevent interaction when hidden */
-  visibility: hidden; /* Hide from a11y and pointer hit-testing */
-  padding: 6px; /* Inner padding for breathing room */
-}
-
-/* Open state of the dropdown */
-.menu-dropdown.open {
-  transform: scale(1); /* Full size when open */
-  opacity: 1; /* Fully visible when open */
-  pointer-events: auto; /* Enable interaction when open */
-  visibility: visible; /* Allow pointer hit-testing */
-}
-
-/* Individual menu items (Change Category, Delete) */
-.menu-dropdown .menu-item {
-  display: flex;
-  width: 100%;
-  padding: 10px 12px; /* Comfortable padding for clickability */
-  text-align: left;
-  background: white;
-  border: none;
-  color: #374151;
+.filter-empty {
+  padding: 6px;
   font-size: 13px;
-  cursor: pointer;
-  transition: background-color 0.15s ease; /* Smooth hover transition */
+  color: #6b7280;
+}
+.filter-row {
+  display: flex;
   align-items: center;
-  gap: 8px; /* Space between icon and text */
-  white-space: nowrap; /* Prevent text wrapping */
-  min-height: 32px; /* Minimum height for easy clicking */
-  position: relative;
-  z-index: 1;
-  border-radius: 6px; /* Softer hover background corners */
+  gap: 8px;
+  padding: 6px;
+  cursor: pointer;
+}
+.filter-row-label {
+  font-size: 13px;
+  color: #374151;
+}
+.filter-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px;
 }
 
-/* Hover effect for menu items */
-.menu-dropdown .menu-item:hover {
-  background-color: #f3f6fb;
-}
-
-/* Special styling for delete/remove actions */
-.menu-dropdown .menu-item.delete-item {
-  color: #dc2626; /* Red color for destructive actions */
-}
-
-.menu-dropdown .menu-item.delete-item:hover {
-  background-color: #fef2f2; /* Light red background on hover */
-  color: #b91c1c; /* Darker red text on hover */
+/* Divider line */
+.menu-dropdown hr {
+  border: none;
+  height: 1px;
+  background: #eceff4;
+  margin: 6px 4px;
 }

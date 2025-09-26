@@ -1,87 +1,104 @@
-// CalendarModal.jsx
-
 import React, { useState } from 'react';
 import './CalendarModal.css';
 
-// CalendarModal component - A popup that lets users pick a month and year
+/**
+ * CalendarModal - A popup window to select month and year
+ *
+ * Props:
+ * - onClose: Closes the modal
+ * - onPickDate: Called with selected month (1-12) and year
+ */
 function CalendarModal({ onClose, onPickDate }) {
-  // Array of month names for display (shortened format)
-  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-  
-  // Generate years from 2015 to 2027 (13 years total) using Array.from
-  const years = Array.from({ length: 13 }, (_, i) => 2015 + i);
+  // Month names to show on buttons
+  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", 
+                  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-  // State to track which month and year the user has selected
-  const [selectedMonth, setSelectedMonth] = useState(null);
-  const [selectedYear, setSelectedYear] = useState(null);
+  // Create array of years: [2015, ..., 2027]
+  const years = Array.from({ length: 13 }, (_, index) => 2015 + index);
 
-  // Function that runs when user clicks "Select" button
+  // React state hooks to store user selection
+  const [selectedMonth, setSelectedMonth] = useState(null); // string like "Jan"
+  const [selectedYear, setSelectedYear] = useState(null);   // number like 2024
+
+  /**
+   * When user clicks "Select" button
+   * → send selected month & year to parent
+   * → close the modal
+   */
   const handleSelect = () => {
-    // Only proceed if both month and year are selected
     if (selectedMonth && selectedYear) {
-      // Convert month name to number (Jan=1, Feb=2, etc.) and pass to parent component
-      onPickDate(months.indexOf(selectedMonth) + 1, selectedYear);
-      // Close the modal after selection
+      const monthNumber = months.indexOf(selectedMonth) + 1; // "Jan" → 1
+      onPickDate(monthNumber, selectedYear);
       onClose();
     }
   };
 
   return (
-    // Dark overlay that covers the entire screen - clicking it closes the modal
+    // Covers full screen with semi-dark background
     <div className="modal-overlay" onClick={onClose}>
-      {/* Modal content container - stopPropagation prevents closing when clicking inside */}
-      <div className="modal calendar-modal" onClick={(e) => e.stopPropagation()}>
-        {/* Header with title and close button */}
+      
+      {/* The modal itself (centered box) */}
+      <div
+        className="modal calendar-modal"
+        onClick={(e) => e.stopPropagation()} // Prevents closing when clicking inside modal
+      >
+
+        {/* Top bar: title + close button */}
         <div className="modal-header">
           <h2>Select Month & Year</h2>
-          <button className="close-button" onClick={onClose}>&times;</button>
+          <button className="close-button" onClick={onClose}>
+            &times;
+          </button>
         </div>
 
+        {/* Main content area */}
         <div className="calendar-content">
-          {/* Grid of month buttons - each month gets its own clickable button */}
+
+          {/* MONTH BUTTONS */}
           <div className="months-grid">
-            {months.map((m) => (
+            {months.map((month) => (
               <button
-                key={m}
-                // Add 'selected' class if this month is currently selected
-                className={`month-btn ${selectedMonth === m ? 'selected' : ''}`}
-                onClick={() => setSelectedMonth(m)}
+                key={month}
+                className={`month-btn ${selectedMonth === month ? 'selected' : ''}`}
+                onClick={() => setSelectedMonth(month)}
               >
-                {m}
+                {month}
               </button>
             ))}
           </div>
 
-          {/* Grid of year buttons - each year gets its own clickable button */}
+          {/* YEAR BUTTONS */}
           <div className="years-grid">
-            {years.map((y) => (
+            {years.map((year) => (
               <button
-                key={y}
-                // Add 'selected' class if this year is currently selected
-                className={`year-btn ${selectedYear === y ? 'selected' : ''}`}
-                onClick={() => setSelectedYear(y)}
+                key={year}
+                className={`year-btn ${selectedYear === year ? 'selected' : ''}`}
+                onClick={() => setSelectedYear(year)}
               >
-                {y}
+                {year}
               </button>
             ))}
           </div>
 
-          {/* Footer with selection preview and submit button */}
+          {/* FOOTER SECTION: selected info + action button */}
           <div className="calendar-footer">
-            {/* Show selected month/year only if both are selected */}
+
+            {/* Show selected values */}
             {selectedMonth && selectedYear && (
               <div className="selected-info">
                 📅 Selected: <strong>{selectedMonth} {selectedYear}</strong>
               </div>
             )}
-            {/* Submit button - disabled until both month and year are selected */}
+
+            {/* "Select" button – only works when both selected */}
             <button
               className="add-button"
               onClick={handleSelect}
-              disabled={!selectedMonth || !selectedYear}
+              disabled={!selectedMonth || !selectedYear} // Grayed out if missing
             >
               Select
             </button>
+
           </div>
         </div>
       </div>

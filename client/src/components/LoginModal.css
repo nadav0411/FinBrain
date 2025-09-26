@@ -1,279 +1,280 @@
-/* LoginModal.css */
+/* ========================================
+   LOGIN MODAL STYLES
+   ======================================== */
 
-/* Make the login modal narrower than the default modal */
-.login-modal {
-  width: 420px;
-}
-
-/* Style the "Welcome Back" title inside the modal */
-.login-modal h2 {
-  font-size: 26px;
-  font-weight: 600;
-  text-align: center;
-  color: #2c3e50;
-}
-
-/* Style the row that has the "Sign Up" and "Forgot Password" links */
-.link-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 14px;
-}
-
-/* Style for the actual text links */
-.side-link {
-  font-size: 14px;
-  color: #4da3ff;
-  text-decoration: none;
-  transition: color 0.2s ease;
-}
-
-/* Style for the text link when the user hovers over it */
-.side-link:hover {
-  font-weight: 800;
-  color: #0f487c;
-}
-
-/* Row that holds the buttons */
-.button-group {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-/* General button style */
-.main-button {
-  padding: 12px 20px;
-  font-size: 15px;
-  font-weight: 500;
-  border-radius: 8px;
-  cursor: pointer;
-  border: none;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-/* Login button – dark button */
-.login-button {
-  background-color: #5d6369;
-  color: white;
-}
-
-/* When hovering over the login button, make it darker blue and slightly bigger */
-.login-button:hover {
-  background-color: #444;
-  transform: scale(1.05);
-}
-
-/* Demo button – shiny blue gradient with glow */
-.demo-button {
-  background: linear-gradient(to right, #4da3ff, #1676d6);
-  color: white;
-  font-weight: 600;
-  box-shadow: 0 4px 12px rgba(77, 163, 255, 0.5);
-  position: relative;
-  overflow: hidden;
-}
-
-/* Before element for the demo button */
-.demo-button::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  height: 100%;
-  width: 100%;
-  background: rgba(255, 255, 255, 0.1);
-  transform: skewX(-20deg); /* make it diagonal */
-  transition: left 0.5s; /* smooth movement */
-}
-
-/* When hovering over the demo button, make the before element move to the right */
-.demo-button:hover::before {
-  left: 100%;
-}
-
-/* When hovering over the demo button, make it slightly bigger */
-.demo-button:hover {
-  transform: scale(1.06);
-}
-
-/* Style for the red error message */
-.error-msg {
-  color: #d9534f;
-  font-size: 14px;
-  margin-top: -8px;
-  margin-bottom: 12px;
-  text-align: center;
-}
-
-/* Style for the loading message */
-.loading-msg {
-  color: #555;
-  font-size: 14px;
-  font-style: italic;
-  text-align: center;
-  margin-bottom: 12px;
-}
-
-/* Spinner next to the loading text */
-.spinner {
-  display: inline-block;
-  width: 16px;
-  height: 16px;
-  border: 3px solid #ccc;
-  border-top: 3px solid #4da3ff;
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-  margin-right: 8px;
-  vertical-align: middle;
-}
-
-/* Spin animation for the spinner */
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-/* Style for the success popup */
-.success-popup {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: #e6f9e6;
-  padding: 40px 60px;
-  border-radius: 16px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-  font-size: 28px;
-  color: #2e7d32;
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  animation: fadeInScale 0.5s ease-in-out;
-  z-index: 9999; /* makes sure the success popup is on top */
-}
-
-/* Style for the checkmark */
-.checkmark {
-  font-size: 32px;
-  font-weight: bold;
-  margin-bottom: 10px;
-  animation: popIn 0.3s ease;
-}
-
-/* Style for the success text */
-.success-text {
-  font-size: 16px;
-  font-weight: 500;
-}
-
-/* Pop in animation for the checkmark */
-@keyframes popIn {
-  0% {
-    transform: scale(0.7);
-    opacity: 0;
+/* MAIN MODAL CONTAINER 
+   This is the main popup box size */
+   .login-modal {
+    width: 420px;
   }
-  100% {
-    transform: scale(1);
-    opacity: 1;
+  
+  /* MODAL TITLE 
+     Big heading text inside the modal */
+  .login-modal h2 {
+    font-size: 26px;     
+    font-weight: 600;    
+    text-align: center;  
+    color: #2c3e50;     
   }
-}
-
-/* Fade in scale animation for the success popup */
-@keyframes fadeInScale {
-  0% {
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(0.6);
+  
+  /* HEADER SECTION 
+     Row with logo + text */
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 16px;
   }
-  100% {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
+  
+  .header-text {
+    font-size: 26px;
+    font-weight: 600;
+    color: #2c3e50;
+    text-align: left;
   }
-}
-
-/* Style for the modal header */
-.modal-header {
-  display: flex;
-  justify-content: space-between; 
-  align-items: center;
-  padding: 0 16px;
-}
-
-/* Style for the header text */
-.header-text {
-  font-size: 26px;
-  font-weight: 600;
-  color: #2c3e50;
-  text-align: left;
-}
-
-/* Style for the modal logo */
-.modal-logo {
-  width: 150px;
-  height: 80%;
-  object-fit: contain; /* makes sure the logo is the same size as the header text */
-}
-
-/* Tiny popup for Forgot Password notice */
-.tiny-popup-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.35);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 10000;
-}
-
-.tiny-popup {
-  width: 360px;
-  max-width: 92vw;
-  background: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 12px 32px rgba(0,0,0,0.25);
-  padding: 18px 20px;
-  animation: tinyPopupIn 0.18s ease-out;
-  will-change: transform, opacity;
-}
-
-.tiny-popup-title {
-  font-size: 18px;
-  font-weight: 700;
-  color: #2c3e50;
-  margin-bottom: 8px;
-}
-
-.tiny-popup-body {
-  font-size: 14px;
-  color: #4a5568;
-  line-height: 1.4;
-  margin-bottom: 14px;
-}
-
-.tiny-popup-button {
-  display: inline-block;
-  padding: 8px 14px;
-  background: #1676d6;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  font-size: 14px;
-  cursor: pointer;
-}
-
-.tiny-popup-button:hover {
-  background: #0f487c;
-}
-
-@keyframes tinyPopupIn {
-  0% {
-    opacity: 0;
-    transform: scale(0.9);
+  
+  /* LOGO INSIDE HEADER */
+  .modal-logo {
+    width: 150px;
+    height: 80%;
+    object-fit: contain;
   }
-  100% {
-    opacity: 1;
-    transform: scale(1);
+  
+  /* ========================================
+     LINKS
+     ======================================== */
+  
+  /* Row with "Sign Up" + "Forgot Password" */
+  .link-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
   }
-}
+  
+  /* Styling the links */
+  .side-link {
+    font-size: 14px;
+    color: #4da3ff;
+    text-decoration: none;          
+    transition: color 0.2s ease;
+    cursor: pointer;                
+  }
+  
+  .side-link:hover {
+    font-weight: 800;               
+    color: #0f487c;                 
+  }
+  
+  /* ========================================
+     BUTTONS
+     ======================================== */
+  
+  /* Button group layout */
+  .button-group {
+    display: flex;
+    flex-direction: column;        
+    gap: 12px;                     
+  }
+  
+  /* Base button style */
+  .main-button {
+    padding: 12px 20px;
+    font-size: 15px;
+    font-weight: 500;
+    border-radius: 8px;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+  
+  /* Login button */
+  .login-button {
+    background-color: #5d6369;
+    color: white;
+  }
+  
+  .login-button:hover {
+    background-color: #444;
+    transform: scale(1.05);         
+  }
+  
+  /* Demo button with gradient */
+  .demo-button {
+    background: linear-gradient(to right, #4da3ff, #1676d6);
+    color: white;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(77, 163, 255, 0.5);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  /* Shine effect */
+  .demo-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    height: 100%;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.1);
+    transform: skewX(-20deg);
+    transition: left 0.5s;
+  }
+  
+  .demo-button:hover::before {
+    left: 100%;                     
+  }
+  
+  .demo-button:hover {
+    transform: scale(1.06);
+  }
+  
+  /* ========================================
+     MESSAGES
+     ======================================== */
+  
+  /* Error message */
+  .error-msg {
+    color: #d9534f;
+    font-size: 14px;
+    margin-top: -8px;
+    margin-bottom: 12px;
+    text-align: center;
+  }
+  
+  /* Loading message */
+  .loading-msg {
+    color: #555;
+    font-size: 14px;
+    font-style: italic;
+    text-align: center;
+    margin-bottom: 12px;
+  }
+  
+  /* Loading spinner (rotating circle) */
+  .spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 3px solid #ccc;
+    border-top: 3px solid #4da3ff;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+  
+  /* ========================================
+     SUCCESS POPUP
+     ======================================== */
+  
+  .success-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #e6f9e6;
+    padding: 40px 60px;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    font-size: 28px;
+    color: #2e7d32;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    animation: fadeInScale 0.5s ease-in-out;
+    z-index: 9999;
+  }
+  
+  .checkmark {
+    font-size: 32px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    animation: popIn 0.3s ease;
+  }
+  
+  .success-text {
+    font-size: 16px;
+    font-weight: 500;
+  }
+  
+  /* ========================================
+     FORGOT PASSWORD POPUP
+     ======================================== */
+  
+  .tiny-popup-overlay {
+    position: fixed;
+    inset: 0;                        
+    background: rgba(0, 0, 0, 0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+  }
+  
+  .tiny-popup {
+    width: 360px;
+    max-width: 92vw;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
+    padding: 18px 20px;
+    animation: tinyPopupIn 0.18s ease-out;
+    will-change: transform, opacity;
+  }
+  
+  .tiny-popup-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 8px;
+  }
+  
+  .tiny-popup-body {
+    font-size: 14px;
+    color: #4a5568;
+    line-height: 1.4;
+    margin-bottom: 14px;
+  }
+  
+  .tiny-popup-button {
+    display: inline-block;
+    padding: 8px 14px;
+    background: #1676d6;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  
+  .tiny-popup-button:hover {
+    background: #0f487c;
+  }
+  
+  /* ========================================
+     ANIMATIONS
+     ======================================== */
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+  @keyframes popIn {
+    0% { transform: scale(0.7); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  
+  @keyframes fadeInScale {
+    0% { opacity: 0; transform: translate(-50%, -50%) scale(0.6); }
+    100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  }
+  
+  @keyframes tinyPopupIn {
+    0% { opacity: 0; transform: scale(0.9); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+  
