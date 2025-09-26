@@ -1,7 +1,13 @@
-# This docker-compose file runs two services:
-# 1. Redis runs in its own container called "redis"
-# 2. Flask backend runs in a separate container called "backend"
-# They communicate over Docker's internal network using the service name "redis"
+# This docker-compose file runs three services:
+# 1. MongoDB runs in a container called "mongo"
+# 2. Redis runs in a container called "redis"
+# 3. Flask backend runs in a separate container called "backend"
+# They communicate over Docker's internal network using the service names "mongo" and "redis"
+
+
+# docker-compose.yml = Defines how to run multiple Docker containers together (e.g. backend, MongoDB, Redis).
+# It links the services, exposes ports, shares volumes, and manages dependencies.
+# Each service can use a prebuilt image or build its own using a Dockerfile.
 
 
 services:
@@ -12,31 +18,54 @@ services:
     ports:
       - "5000:5000" # Connects port 5000 inside the container (Flask Server) to port 5000 on my own computer (localhost)
     depends_on:
-      - redis # Wait for Redis to start before starting the backend
-      - mongo # Wait for MongoDB to start before starting the backend
-    
+      mongo: # Wait for MongoDB to start before starting the backend
+        condition: service_healthy
+      redis: # Wait for Redis to start before starting the backend
+        condition: service_healthy
     env_file:
       - .env.docker # Tell Docker to use the .env.docker file for environment variables (Tell Flask where to find Redis and MongoDB inside Docker network)
 
   redis:
     image: redis:7.2
     container_name: finbrain-redis # Name of the container
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"] # Test if Redis is running
+      interval: 10s # Test every 10 seconds
+      timeout: 5s # Test for 5 seconds
+      retries: 5 # Test 5 times
 
   mongo:
       image: mongo:6
       container_name: finbrain-mongo # Name of the container
-
+      healthcheck:
+        test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"] # Test if MongoDB is running
+        interval: 10s # Test every 10 seconds
+        timeout: 5s # Test for 5 seconds
+        retries: 5 # Test 5 times
+      volumes:
+        - mongo-data:/data/db # Store MongoDB data in a volume
   
-# Important Note:
-# --- Code Changes ---
-# docker compose down (stop and remove all containers)
-# docker compose up --build (build from scratch and running the containers)
-# docker compose down -v (stop and remove all containers, network and data)
-# docker compose build (build the containers)
 
-# --- Running Frequently ---
-# docker compose up (start the containers)
-# docker compose down (stop and remove all containers)
-# docker compose logs -f backend (view the logs of the backend container)
-# docker ps (view all running containers)
-# docker images (view all images)
+volumes:
+  mongo-data: # Name of the volume
+
+
+# volume = Persistent storage outside the container, used to keep MongoDB data safe.
+# MongoDB stores data in /data/db inside the container — without a volume, this is deleted when the container is removed.
+# By mapping /data/db to a named volume (mongo-data), the data survives restarts and "docker compose down".
+# This is needed only when running MongoDB inside Docker (If using an external DB like MongoDB Atlas, no volume is needed).
+
+
+# healthcheck = Docker runs MongoDB and Redis in the background and every 10 seconds it will check if they healthy
+# If they are healthy, the backend will start. If not, it will try again for 5 times before giving up and failing.
+# This prevents the backend from starting before MongoDB and Redis are ready.
+
+
+# Notes:
+# docker compose down -v       -> stop and remove all containers + volumes
+# docker compose up --build    -> build from scratch and run
+# docker compose up            -> run containers
+# docker compose down          -> stop and remove containers
+# docker compose logs -f NAME  -> view logs (NAME = backend, mongo, redis -> the name of the container of service of the logs we want to see)
+# docker ps                    -> list running containers
+# docker images                -> list all images
