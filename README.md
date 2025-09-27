@@ -190,10 +190,14 @@ These are the features and improvements currently being developed:
 
 ---
 
+## Screenshots
+
+![Dashboard Screenshot](assets/Dashboard Overview (Monthly Comparison).png)
+
 ## Author
 
 **Nadav Eshed**  
 I'm a Computer Science student at the Hebrew University, passionate about both technology and people, I'm driven by challenges, continuous learning, and the joy of turning complex problems into smart, useful solutions - always with a growth mindset, a collaborative spirit, and a smile :)
 
 I believe that in today's world, technology isn’t just a tool – it’s a powerful force that can improve lives and solve real-world problems across every field: health, finance, education, and beyond.
-[LinkedIn](https://www.linkedin.com/in/nadav-eshed-b32792363) • [GitHub](https://github.com/nadav0411)
+[LinkedIn](https://www.linkedin.com/in/nadav-eshed-b32792363) • [GitHub](https://github.com/nadav0411) • [Gmail](nadav0411@gmail.com)
