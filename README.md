@@ -77,8 +77,6 @@ I wanted to build something that could realistically serve real users — reliab
 
 ---
 
----
-
 ## 📁 Project Structure
 
 FinBrain is organized into a **clean client-server architecture**, separating the React frontend and Flask backend, while also including assets, ML models, tests, and infrastructure files.
