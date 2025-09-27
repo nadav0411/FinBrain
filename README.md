@@ -87,7 +87,7 @@ FinBrain is organized into a **clean client-server architecture**, separating th
 ```plaintext
 
 FinBrain/
-├── assets/                          **# Screenshots & visual assets for README
+├── assets/                          # Screenshots & visual assets for README
 │   ├── Add Expense Modal.png
 │   ├── Categorized Expenses Table.png
 │   ├── Change Category.png
@@ -99,9 +99,9 @@ FinBrain/
 │   ├── User Login.png
 │   └── User Registration.png
 │
-├── client/                          **# React frontend application
+├── client/                          # React frontend application
 │   ├── src/
-│   │   ├── components/              **# React Components
+│   │   ├── components/              # React Components
 │   │   │   ├── AddExpenseModal.jsx/.css
 │   │   │   ├── AllExpenses.jsx/.css
 │   │   │   ├── AuthSwitcher.jsx
@@ -119,35 +119,35 @@ FinBrain/
 │   ├── vite.config.js
 │   └── index.html
 │
-├── server/                          **# Flask backend including API, ML, DB, cache & logic
+├── server/                          # Flask backend including API, ML, DB, cache & logic
 │   ├── src/
-│   │   ├── app.py                   **# Main Flask application
-│   │   ├── db/                      **# Database layer
-│   │   │   ├── db.py                **# MongoDB connection
-│   │   │   └── cache.py             **# Redis caching
-│   │   ├── models/                  **# ML Models
+│   │   ├── app.py                   # Main Flask application
+│   │   ├── db/                      # Database layer
+│   │   │   ├── db.py                # MongoDB connection
+│   │   │   └── cache.py             # Redis caching
+│   │   ├── models/                  # ML Models
 │   │   │   ├── predictmodelloader.py
 │   │   │   └── finbrain_model/
 │   │   │       ├── model.pkl
 │   │   │       ├── vectorizer.pkl
 │   │   │       ├── training_data.csv
 │   │   │       └── user_feedback.csv
-│   │   ├── services/                **# Business Logic
-│   │   │   ├── logicconnection.py   **# Auth & sessions
-│   │   │   ├── logicexpenses.py     **# Expense management
-│   │   │   └── trainer.py           **# ML model training
+│   │   ├── services/                # Business Logic
+│   │   │   ├── logicconnection.py   # Auth & sessions
+│   │   │   ├── logicexpenses.py     # Expense management
+│   │   │   └── trainer.py           # ML model training
 │   │   └── utils/
-│   │       └── password_hashing.py  **# Argon2 security
-│   ├── tests/                       **# Test Suite (300+ tests)
-│   │   ├── test connections/        **# Auth tests
-│   │   ├── test expenses/           **# Expense tests
-│   │   └── test others/             **# General tests
-│   ├── docker-compose.yml           **# Multi-container setup
-│   ├── Dockerfile                   **# Backend container**
-│   ├── Makefile                     **# Development commands
-│   └── requirements.txt             **# Python dependencies
+│   │       └── password_hashing.py  # Argon2 security
+│   ├── tests/                       # Test Suite (300+ tests)
+│   │   ├── test connections/        # Auth tests
+│   │   ├── test expenses/           # Expense tests
+│   │   └── test others/             # General tests
+│   ├── docker-compose.yml           # Multi-container setup
+│   ├── Dockerfile                   # Backend container**
+│   ├── Makefile                     # Development commands
+│   └── requirements.txt             # Python dependencies
 │
-├── finbrain_model/                  **# Shared ML models
+├── finbrain_model/                  # Shared ML models
 │   ├── model.pkl
 │   └── vectorizer.pkl
 │
@@ -206,5 +206,3 @@ I'm a Computer Science student at the Hebrew University, passionate about both t
 
 I believe that in today's world, technology isn’t just a tool – it’s a powerful force that can improve lives and solve real-world problems across every field: health, finance, education, and beyond.
 [LinkedIn](https://www.linkedin.com/in/nadav-eshed-b32792363) • [GitHub](https://github.com/nadav0411)
-
---
