@@ -1,12 +1,8 @@
 <p align="center">
-  <img src="assets/logo.png" alt="FinBrain Logo" width="120"/>
+  <img src="https://github.com/nadav0411/FinBrain/blob/main/assets/FinBrain%20Logo.png?raw=true" alt="FinBrain Logo" width="120"/>
 </p>
 
-<h1 align="center">💰 FinBrain – Smart Expense Tracker</h1>
-
-<p align="center">
-  <b>Track • Analyze • Save • Smarter</b>
-</p>
+<h1 align="center">FinBrain – Smart Expense Tracker</h1>
 
 ---
 
