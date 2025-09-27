@@ -30,7 +30,10 @@ def test_import_succeeds_with_files(tmp_path, monkeypatch):
     monkeypatch.chdir(workdir)
 
     # Add the src directory to the path so we can import the module
-    src_path = os.path.join(os.path.dirname(__file__), '..', '..', 'src')
+    # Get the absolute path to the src directory
+    test_dir = os.path.dirname(os.path.abspath(__file__))
+    src_path = os.path.join(test_dir, '..', '..', 'src')
+    src_path = os.path.abspath(src_path)
     if src_path not in sys.path:
         sys.path.insert(0, src_path)
     
@@ -65,7 +68,10 @@ def test_import_fails_without_files(tmp_path, monkeypatch):
     monkeypatch.chdir(workdir)
 
     # Add the src directory to the path so we can import the module
-    src_path = os.path.join(os.path.dirname(__file__), '..', '..', 'src')
+    # Get the absolute path to the src directory
+    test_dir = os.path.dirname(os.path.abspath(__file__))
+    src_path = os.path.join(test_dir, '..', '..', 'src')
+    src_path = os.path.abspath(src_path)
     if src_path not in sys.path:
         sys.path.insert(0, src_path)
 
