@@ -154,6 +154,7 @@ FinBrain/
 ├── README.md                        **# Project documentation**
 ├── LICENSE                          **# MIT License**
 └── requirements.txt                 **# Root dependencies**
+```
 
 ---
 
@@ -203,6 +204,6 @@ These are the features and improvements currently being developed:
 **Nadav Eshed**  
 Second-year Computer Science student at the Hebrew University of Jerusalem  
 Passionate about backend, cloud architecture, and finance-driven software systems  
-[LinkedIn](https://www.linkedin.com/in/nadaveshed) • [GitHub](https://github.com/nadav0411)
+[LinkedIn](https://www.linkedin.com/in/nadav-eshed-b32792363) • [GitHub](https://github.com/nadav0411)
 
 --
