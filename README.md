@@ -161,26 +161,19 @@ FinBrain/
 ## Quick Start Guide
 
 - **1. Download & Start Backend:**
-    git clone https://github.com/nadav0411/FinBrain.git ->
-    cd FinBrain/server ->
-    docker compose up --build
+    git clone https://github.com/nadav0411/FinBrain.git **->** cd FinBrain/server **->** docker compose up --build
 
 - **2. Start Frontend (new terminal):**
-    cd client ->
-    npm install ->
-    npm run dev
+    cd client **->** npm install **->** npm run dev
 
 - **3. Open Browser:**
     Go to: http://localhost:5173
 
 - **4. Done!**
-    Click "Demo" to try without signing up ->
-    Or sign up and then login for real account
+    Click "Demo" to try without signing up **->** Or sign up and then login for real account
 
 - **5. To Stop:**
-    cd server ->
-    docker compose down ->
-    THATS IT!
+    cd server **->** docker compose down **->** THATS IT!
 
 ---
 
