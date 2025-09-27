@@ -192,7 +192,7 @@ These are the features and improvements currently being developed:
 
 ## Screenshots
 
-![Dashboard Screenshot](assets/Dashboard Overview (Monthly Comparison).png)
+![Dashboard Screenshot](https://github.com/nadav0411/FinBrain/blob/main/assets/Dashboard%20Overview%20(Category%20Breakdown).png?raw=true)
 
 ## Author
 
