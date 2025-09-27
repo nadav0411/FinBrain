@@ -178,10 +178,8 @@ FinBrain/
     Go to: http://localhost:5173
 
 - **4. Done!**
-    ```bash
     Click "Demo" to try without signing up
     Or sign up and then login for real account
-    ```
 
 - **5. To Stop:**
     ```bash
