@@ -7,7 +7,6 @@ from services.logicconnection import get_email_from_session_id
 from datetime import datetime
 import requests
 import re
-# Model and vectorizer will be imported when needed in classify_expense function
 import pandas as pd
 import logging
 import os
@@ -38,11 +37,11 @@ def classify_expense(text):
     if not text or not isinstance(text, str) or not text.strip():
         logger.warning(f"Invalid text input for classification | text={text}")
         # If the text is bad, we return 'other' by default
-        return "other"  
+        return "Other"  
 
     try:
-        # Import model and vectorizer here to avoid import issues at module level
-        from models.predictmodelloader import model, vectorizer
+        # Import model and vectorizer
+        from ..models.predictmodelloader import model, vectorizer
         
         # Use the saved vectorizer to turn the text into a number vector
         vector = vectorizer.transform([text])
@@ -54,7 +53,7 @@ def classify_expense(text):
         return prediction[0]
     except Exception as e:
         logger.error(f"Error during expense classification | text={text} | error={str(e)}")
-        return "other"
+        return "Other"
 
 
 def get_usd_to_ils_rate(date_str):

@@ -19,7 +19,7 @@ def test_classify_expense_invalid_input():
     Test that the classify_expense function returns "other" if the input is invalid
     """
     result = le.classify_expense(123)
-    assert result == "other"
+    assert result == "Other"
 
 
 def test_classify_expense_empty_input():
@@ -27,7 +27,7 @@ def test_classify_expense_empty_input():
     Test that the classify_expense function returns "other" if the input is empty
     """
     result = le.classify_expense("")
-    assert result == "other"
+    assert result == "Other"
 
 
 def test_classify_expense_none_input():
@@ -35,7 +35,7 @@ def test_classify_expense_none_input():
     Test that the classify_expense function returns "other" if the input is None
     """
     result = le.classify_expense(None)
-    assert result == "other"
+    assert result == "Other"
 
 
 def test_classify_expense_whitespace_only():
@@ -43,7 +43,7 @@ def test_classify_expense_whitespace_only():
     Test that the classify_expense function returns "other" if the input is only whitespace
     """
     result = le.classify_expense("   ")
-    assert result == "other"
+    assert result == "Other"
 
 
 def test_classify_expense_tab_and_newline():
@@ -51,7 +51,7 @@ def test_classify_expense_tab_and_newline():
     Test that the classify_expense function returns "other" if the input is only tabs and newlines
     """
     result = le.classify_expense("\t\n\r")
-    assert result == "other"
+    assert result == "Other"
 
 
 def test_classify_expense_boolean_input():
@@ -59,10 +59,10 @@ def test_classify_expense_boolean_input():
     Test that the classify_expense function returns "other" for boolean input
     """
     result = le.classify_expense(True)
-    assert result == "other"
+    assert result == "Other"
     
     result = le.classify_expense(False)
-    assert result == "other"
+    assert result == "Other"
 
 
 def test_classify_expense_returns_valid_category():

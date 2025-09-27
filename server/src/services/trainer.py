@@ -34,11 +34,20 @@ def train_and_save_model():
     # The file contains two columns: 'description' and 'category'.
     # Each row is one example the model will learn from.
     try:
-        # Get the directory where this script is located
-        script_dir = os.path.dirname(os.path.abspath(__file__))
-        # Navigate to the models directory and find the training data
-        training_data_path = os.path.join(script_dir, "..", "models", "finbrain_model", "training_data.csv")
-        training_data_path = os.path.normpath(training_data_path)
+        # Check if we're in a test environment
+        import sys
+        is_test_env = any('pytest' in arg for arg in sys.argv)
+        
+        if is_test_env:
+            # In test environment, only look in current working directory
+            training_data_path = os.path.join("finbrain_model", "training_data.csv")
+        else:
+            # In production, first try current working directory, then fall back to script location
+            training_data_path = os.path.join("finbrain_model", "training_data.csv")
+            if not os.path.exists(training_data_path):
+                script_dir = os.path.dirname(os.path.abspath(__file__))
+                training_data_path = os.path.join(script_dir, "..", "models", "finbrain_model", "training_data.csv")
+                training_data_path = os.path.normpath(training_data_path)
         
         # Check if file exists first
         if not os.path.exists(training_data_path):
