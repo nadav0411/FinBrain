@@ -30,13 +30,27 @@ def test_import_succeeds_with_files(tmp_path, monkeypatch):
     monkeypatch.chdir(workdir)
 
     # Add the src directory to the path so we can import the module
-    src_path = os.path.join(os.path.dirname(__file__), '..', '..', 'src', 'models')
-    sys.path.insert(0, src_path)
+    src_path = os.path.join(os.path.dirname(__file__), '..', '..', 'src')
+    if src_path not in sys.path:
+        sys.path.insert(0, src_path)
     
     # Remove the module from the sys.modules dictionary (because we dont want to use the existing one)
-    sys.modules.pop("predictmodelloader", None)
+    modules_to_remove = [key for key in sys.modules.keys() if 'predictmodelloader' in key]
+    for module_key in modules_to_remove:
+        sys.modules.pop(module_key, None)
+    
     # Run the import
-    module = importlib.import_module("predictmodelloader")
+    try:
+        module = importlib.import_module("models.predictmodelloader")
+    except ImportError:
+        # Fallback: try importing directly from the file
+        import importlib.util as util
+        spec = util.spec_from_file_location(
+            "predictmodelloader", 
+            os.path.join(src_path, "models", "predictmodelloader.py")
+        )
+        module = util.module_from_spec(spec)
+        spec.loader.exec_module(module)
 
     # Module should expose loaded objects
     assert hasattr(module, "model")
@@ -51,11 +65,14 @@ def test_import_fails_without_files(tmp_path, monkeypatch):
     monkeypatch.chdir(workdir)
 
     # Add the src directory to the path so we can import the module
-    src_path = os.path.join(os.path.dirname(__file__), '..', '..', 'src', 'models')
-    sys.path.insert(0, src_path)
+    src_path = os.path.join(os.path.dirname(__file__), '..', '..', 'src')
+    if src_path not in sys.path:
+        sys.path.insert(0, src_path)
 
     # Remove the module from the sys.modules dictionary (because we dont want to use the existing one)
-    sys.modules.pop("predictmodelloader", None)
+    modules_to_remove = [key for key in sys.modules.keys() if 'predictmodelloader' in key]
+    for module_key in modules_to_remove:
+        sys.modules.pop(module_key, None)
 
     # Mock os.path.exists to return False for model files
     def mock_exists(path):
@@ -67,7 +84,17 @@ def test_import_fails_without_files(tmp_path, monkeypatch):
 
     # Run the import and expect a FileNotFoundError
     with pytest.raises(FileNotFoundError):
-        importlib.import_module("predictmodelloader")
+        try:
+            importlib.import_module("models.predictmodelloader")
+        except ImportError:
+            # Fallback: try importing directly from the file
+            import importlib.util as util
+            spec = util.spec_from_file_location(
+                "predictmodelloader", 
+                os.path.join(src_path, "models", "predictmodelloader.py")
+            )
+            module = util.module_from_spec(spec)
+            spec.loader.exec_module(module)
     
 
 def test_pass():
