@@ -44,10 +44,22 @@ def test_import_succeeds_with_files(tmp_path, monkeypatch):
     
     # Run the import
     import importlib.util as util
-    spec = util.spec_from_file_location(
-        "predictmodelloader", 
-        os.path.join(src_path, "models", "predictmodelloader.py")
-    )
+    possible_paths = [
+        os.path.join(src_path, "models", "predictmodelloader.py"),
+        os.path.join(os.getcwd(), "src", "models", "predictmodelloader.py"),
+        os.path.join(os.path.dirname(os.getcwd()), "src", "models", "predictmodelloader.py")
+    ]
+    
+    module_file_path = None
+    for path in possible_paths:
+        if os.path.exists(path):
+            module_file_path = path
+            break
+    
+    if module_file_path is None:
+        raise FileNotFoundError(f"Could not find predictmodelloader.py in any of the expected locations: {possible_paths}")
+    
+    spec = util.spec_from_file_location("predictmodelloader", module_file_path)
     module = util.module_from_spec(spec)
     spec.loader.exec_module(module)
 
@@ -76,6 +88,23 @@ def test_import_fails_without_files(tmp_path, monkeypatch):
     for module_key in modules_to_remove:
         sys.modules.pop(module_key, None)
 
+    # Run the import
+    import importlib.util as util
+    possible_paths = [
+        os.path.join(src_path, "models", "predictmodelloader.py"),
+        os.path.join(os.getcwd(), "src", "models", "predictmodelloader.py"),
+        os.path.join(os.path.dirname(os.getcwd()), "src", "models", "predictmodelloader.py")
+    ]
+    
+    module_file_path = None
+    for path in possible_paths:
+        if os.path.exists(path):
+            module_file_path = path
+            break
+    
+    if module_file_path is None:
+        raise FileNotFoundError(f"Could not find predictmodelloader.py in any of the expected locations: {possible_paths}")
+
     # Mock os.path.exists to return False for model files
     def mock_exists(path):
         if "model.pkl" in path or "vectorizer.pkl" in path:
@@ -86,11 +115,7 @@ def test_import_fails_without_files(tmp_path, monkeypatch):
 
     # Run the import and expect a FileNotFoundError
     with pytest.raises(FileNotFoundError):
-        import importlib.util as util
-        spec = util.spec_from_file_location(
-            "predictmodelloader", 
-            os.path.join(src_path, "models", "predictmodelloader.py")
-        )
+        spec = util.spec_from_file_location("predictmodelloader", module_file_path)
         module = util.module_from_spec(spec)
         spec.loader.exec_module(module)
     
