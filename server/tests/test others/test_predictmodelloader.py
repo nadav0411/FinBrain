@@ -43,17 +43,13 @@ def test_import_succeeds_with_files(tmp_path, monkeypatch):
         sys.modules.pop(module_key, None)
     
     # Run the import
-    try:
-        module = importlib.import_module("models.predictmodelloader")
-    except ImportError:
-        # Fallback: try importing directly from the file
-        import importlib.util as util
-        spec = util.spec_from_file_location(
-            "predictmodelloader", 
-            os.path.join(src_path, "models", "predictmodelloader.py")
-        )
-        module = util.module_from_spec(spec)
-        spec.loader.exec_module(module)
+    import importlib.util as util
+    spec = util.spec_from_file_location(
+        "predictmodelloader", 
+        os.path.join(src_path, "models", "predictmodelloader.py")
+    )
+    module = util.module_from_spec(spec)
+    spec.loader.exec_module(module)
 
     # Module should expose loaded objects
     assert hasattr(module, "model")
@@ -90,17 +86,13 @@ def test_import_fails_without_files(tmp_path, monkeypatch):
 
     # Run the import and expect a FileNotFoundError
     with pytest.raises(FileNotFoundError):
-        try:
-            importlib.import_module("models.predictmodelloader")
-        except ImportError:
-            # Fallback: try importing directly from the file
-            import importlib.util as util
-            spec = util.spec_from_file_location(
-                "predictmodelloader", 
-                os.path.join(src_path, "models", "predictmodelloader.py")
-            )
-            module = util.module_from_spec(spec)
-            spec.loader.exec_module(module)
+        import importlib.util as util
+        spec = util.spec_from_file_location(
+            "predictmodelloader", 
+            os.path.join(src_path, "models", "predictmodelloader.py")
+        )
+        module = util.module_from_spec(spec)
+        spec.loader.exec_module(module)
     
 
 def test_pass():
