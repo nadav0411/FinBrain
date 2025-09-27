@@ -11,6 +11,21 @@ Built with **React (Frontend)** and **Flask (Backend)**, with **MongoDB** and **
 
 ---
 
+## Table of Contents
+
+- [Motivation & Inspiration](#motivation--inspiration)
+- [Tech Stack](#tech-stack)
+- [Beyond the Code – Thought Process](#beyond-the-code--thought-process)
+- [Project Structure](#-project-structure)
+- [Quick Start Guide](#quick-start-guide)
+- [Running Tests (300+ Tests)](#running-tests-300-tests)
+- [Screenshots](#screenshots)
+- [In Progress / Roadmap](#-in-progress--roadmap)
+- [License](#license)
+- [Author](#author)
+
+---
+
 ## Motivation & Inspiration
 
 As someone passionate about both **finance** and **backend/cloud development**, I was curious to understand what truly powers large-scale applications in the real world.  
@@ -175,6 +190,27 @@ FinBrain/
 
 ---
 
+## Running Tests (300+ Tests)
+
+- cd server **->** python -m pytest
+- **Note:** Make sure Redis is running locally since tests use the original Redis instance.
+
+---
+
+## Screenshots
+
+![Dashboard Overview (Category Breakdown) Screenshot](https://github.com/nadav0411/FinBrain/blob/main/assets/Dashboard%20Overview%20(Category%20Breakdown).png?raw=true)
+![Dashboard Overview (Monthly Comparison) Screenshot](https://github.com/nadav0411/FinBrain/blob/main/assets/Dashboard%20Overview%20(Monthly%20Comparison).png?raw=true)
+![Categorized Expenses Table Screenshot](https://github.com/nadav0411/FinBrain/blob/main/assets/Categorized%20Expenses%20Table.png?raw=true)
+![Add Expense Modal Screenshot](https://github.com/nadav0411/FinBrain/blob/main/assets/Add%20Expense%20Modal.png?raw=true)
+![Change Category Screenshot](https://github.com/nadav0411/FinBrain/blob/main/assets/Change%20Category.png?raw=true)
+![Inactive detection Screenshot](https://github.com/nadav0411/FinBrain/blob/main/assets/Inactive%20detection.png?raw=true)
+![Month Picker Modal Screenshot](https://github.com/nadav0411/FinBrain/blob/main/assets/Month%20Picker%20Modal.png?raw=true)
+![User Login Screenshot](https://github.com/nadav0411/FinBrain/blob/main/assets/User%20Login.png?raw=true)
+![User Registration Screenshot](https://github.com/nadav0411/FinBrain/blob/main/assets/User%20Registration.png?raw=true)
+
+---
+
 ##  In Progress / Roadmap
 
 These are the features and improvements currently being developed:
@@ -190,9 +226,11 @@ These are the features and improvements currently being developed:
 
 ---
 
-## Screenshots
+## License
 
-![Dashboard Screenshot](https://github.com/nadav0411/FinBrain/blob/main/assets/Dashboard%20Overview%20(Category%20Breakdown).png?raw=true)
+This project is licensed under the MIT License – see the [LICENSE](./LICENSE) file for details.
+
+---
 
 ## Author
 
