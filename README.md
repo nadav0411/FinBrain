@@ -19,9 +19,9 @@ What are the **fundamental building blocks** that allow platforms to handle **th
 
 Through FinBrain, I wanted to explore these concepts more deeply, it was an opportunity to move beyond tutorials and build something that not only works, but is also **designed to scale, adapt, and feel production-ready**.
 
-This project became an opportunity to experiment with **real engineering trade-offs**, explore **cloud architecture best practices**, and build a system that doesn’t just *work* — but is **designed to scale and evolve**.
+This project became an opportunity to experiment with **real engineering trade-offs**, explore **cloud architecture best practices**, and build a system that doesn’t just work — but is **designed to scale and evolve**.
 
-I treated FinBrain as a real-world product, not just a student app — and that mindset guided every decision I made.
+I treated FinBrain as a real-world product, not just an app to explore concepts — and that mindset guided every decision I made.
 
 ---
 
@@ -33,7 +33,8 @@ I treated FinBrain as a real-world product, not just a student app — and that 
 
 **Backend**
 - **Flask** – lightweight backend framework for REST APIs.  
-- **Gunicorn** – production-grade WSGI server for handling concurrent requests.  
+- **Gunicorn** – production-grade WSGI server for handling concurrent requests.
+- **Modular architecture** – clear separation of logic, data access, and testing layers for flexibility and maintainability.
 
 **Database & Caching**
 - **MongoDB** – primary database for storing users and expenses.  
@@ -60,3 +61,137 @@ I treated FinBrain as a real-world product, not just a student app — and that 
 ---
 
 ## Beyond the Code – Thought Process
+
+With FinBrain, I challenged myself to think beyond "getting it to work" — and instead focused on building a backend that follows real engineering practices:  
+- Modular, testable, and clean architecture  
+- Stateless sessions with Redis TTL  
+- Data caching for performance  
+- Multi-environment configuration  
+- Secure authentication by design  
+- Observability through logging  
+- Docker-based orchestration with health checks  
+- AI lifecycle that learns from users
+
+My goal was to simulate a **miniature production system** — not just to demonstrate technical implementation, but to explore how engineers think, how cloud systems scale, and how architecture supports **efficient, concurrent access by a large number of users**.  
+I wanted to build something that could realistically serve real users — reliably, securely, and at scale.
+
+---
+
+---
+
+## 📁 Project Structure
+
+FinBrain is organized into a **clean client-server architecture**, separating the React frontend and Flask backend, while also including assets, ML models, tests, and infrastructure files.
+
+
+FinBrain/
+├── assets/                          **# Screenshots & visual assets for README**
+│   ├── Add Expense Modal.png
+│   ├── Categorized Expenses Table.png
+│   ├── Change Category.png
+│   ├── Dashboard Overview (Category Breakdown).png
+│   ├── Dashboard Overview (Monthly Comparison).png
+│   ├── FinBrain Logo.png
+│   ├── Inactive detection.png
+│   ├── Month Picker Modal.png
+│   ├── User Login.png
+│   └── User Registration.png
+│
+├── client/                          **# React frontend application** 
+│   ├── src/
+│   │   ├── components/              **# React Components**
+│   │   │   ├── AddExpenseModal.jsx/.css
+│   │   │   ├── AllExpenses.jsx/.css
+│   │   │   ├── AuthSwitcher.jsx
+│   │   │   ├── CalendarModal.jsx/.css
+│   │   │   ├── DashBoard.jsx/.css
+│   │   │   ├── LoginModal.jsx/.css
+│   │   │   ├── MainScreen.jsx/.css
+│   │   │   ├── MonthPickerModal.jsx/.css
+│   │   │   ├── Settings.jsx/.css
+│   │   │   └── SignupModal.jsx/.css
+│   │   ├── App.jsx/.css
+│   │   ├── main.jsx
+│   │   └── index.css
+│   ├── package.json
+│   ├── vite.config.js
+│   └── index.html
+│
+├── server/                          **# Flask backend including API, ML, DB, cache & logic**
+│   ├── src/
+│   │   ├── app.py                   **# Main Flask application**
+│   │   ├── db/                      **# Database layer**
+│   │   │   ├── db.py                **# MongoDB connection**
+│   │   │   └── cache.py             **# Redis caching**
+│   │   ├── models/                  **# ML Models**
+│   │   │   ├── predictmodelloader.py
+│   │   │   └── finbrain_model/
+│   │   │       ├── model.pkl
+│   │   │       ├── vectorizer.pkl
+│   │   │       ├── training_data.csv
+│   │   │       └── user_feedback.csv
+│   │   ├── services/                **# Business Logic**
+│   │   │   ├── logicconnection.py   **# Auth & sessions**
+│   │   │   ├── logicexpenses.py     **# Expense management**
+│   │   │   └── trainer.py           **# ML model training**
+│   │   └── utils/
+│   │       └── password_hashing.py  **# Argon2 security**
+│   ├── tests/                       **# Test Suite (300+ tests)**
+│   │   ├── test connections/        **# Auth tests**
+│   │   ├── test expenses/           **# Expense tests**
+│   │   └── test others/             **# General tests**
+│   ├── docker-compose.yml           **# Multi-container setup**
+│   ├── Dockerfile                   **# Backend container**
+│   ├── Makefile                     **# Development commands**
+│   └── requirements.txt             **# Python dependencies**
+│
+├── finbrain_model/                  **# Shared ML models**
+│   ├── model.pkl
+│   └── vectorizer.pkl
+│
+├── README.md                        **# Project documentation**
+├── LICENSE                          **# MIT License**
+└── requirements.txt                 **# Root dependencies**
+
+---
+
+## Quick Start Guide
+
+- **1. Download & Start Backend:**
+    # git clone https://github.com/nadav0411/FinBrain.git
+    # cd FinBrain/server
+    # docker compose up --build
+
+- **2. Start Frontend (new terminal):**
+    # cd client
+    # npm install
+    # npm run dev
+
+- **3. Open Browser:**
+    # Go to: http://localhost:5173
+
+- **4. Done!**
+    # Click **"Demo"** to try without signing up
+    # Or **sign up** and then **login** for real account
+
+- **5. To Stop:**
+    # cd server
+    # docker compose down
+    # THATS IT!
+
+---
+
+##  In Progress / Roadmap
+
+These are the features and improvements currently being developed:
+
+- **Cloud Deployment**  
+  Preparing for deployment to a cloud provider to make the app accessible online.
+
+- **Forgot Password + Strong Password Enforcement**  
+  Adding password recovery via email and enforcing strong password rules for better security.
+
+- **Settings Page**  
+  User preferences, change password, email or name, default currency selection, notification settings, and more customization options.
+
+---
