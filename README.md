@@ -84,6 +84,8 @@ I wanted to build something that could realistically serve real users — reliab
 FinBrain is organized into a **clean client-server architecture**, separating the React frontend and Flask backend, while also including assets, ML models, tests, and infrastructure files.
 
 
+```plaintext
+
 FinBrain/
 ├── assets/                          **# Screenshots & visual assets for README**
 │   ├── Add Expense Modal.png
@@ -158,26 +160,26 @@ FinBrain/
 ## Quick Start Guide
 
 - **1. Download & Start Backend:**
-    # git clone https://github.com/nadav0411/FinBrain.git
-    # cd FinBrain/server
-    # docker compose up --build
+    git clone https://github.com/nadav0411/FinBrain.git
+    cd FinBrain/server
+    docker compose up --build
 
 - **2. Start Frontend (new terminal):**
-    # cd client
-    # npm install
-    # npm run dev
+    cd client
+    npm install
+    npm run dev
 
 - **3. Open Browser:**
-    # Go to: http://localhost:5173
+    Go to: http://localhost:5173
 
 - **4. Done!**
-    # Click **"Demo"** to try without signing up
-    # Or **sign up** and then **login** for real account
+    Click **"Demo"** to try without signing up
+    Or **sign up** and then **login** for real account
 
 - **5. To Stop:**
-    # cd server
-    # docker compose down
-    # THATS IT!
+    cd server
+    docker compose down
+    THATS IT!
 
 ---
 
@@ -195,3 +197,12 @@ These are the features and improvements currently being developed:
   User preferences, change password, email or name, default currency selection, notification settings, and more customization options.
 
 ---
+
+## Author
+
+**Nadav Eshed**  
+Second-year Computer Science student at the Hebrew University of Jerusalem  
+Passionate about backend, cloud architecture, and finance-driven software systems  
+[LinkedIn](https://www.linkedin.com/in/nadaveshed) • [GitHub](https://github.com/nadav0411)
+
+--
