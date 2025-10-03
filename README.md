@@ -160,13 +160,8 @@ FinBrain/
 │   ├── Makefile                     # Development commands
 │   └── requirements.txt             # Python dependencies
 │
-├── finbrain_model/                  # Shared ML models
-│   ├── model.pkl
-│   └── vectorizer.pkl
-│
 ├── README.md                        # Project documentation
-├── LICENSE                          # MIT License
-└── requirements.txt                 # Root dependencies
+└── LICENSE                          # MIT License
 ```
 
 ---
@@ -217,6 +212,9 @@ These are the features and improvements currently being developed:
 
 - **Cloud Deployment**  
   Preparing for deployment to a cloud provider to make the app accessible online.
+
+- **Performance & Efficiency Improvements**
+  Ongoing work to optimize the application for faster response times, reduced resource usage, and smoother overall performance as the project scales.
 
 - **Forgot Password + Strong Password Enforcement**  
   Adding password recovery via email and enforcing strong password rules for better security.

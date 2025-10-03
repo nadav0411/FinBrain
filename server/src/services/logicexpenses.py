@@ -11,6 +11,7 @@ import pandas as pd
 import logging
 import os
 from db import cache
+import sys
 
 
 # Create a logger for this module
@@ -542,14 +543,19 @@ def handle_update_expense_category(data, session_id):
     
     # Add the expense and the new category to user_feedback file to optimize the model
     try:
-        # Use relative path from the current file location
-        current_dir = os.path.dirname(os.path.abspath(__file__))
-        feedback_path = os.path.join(current_dir, "..", "models", "finbrain_model", "user_feedback.csv")
-        df = pd.read_csv(feedback_path)
-        new_row = pd.DataFrame([{'description': expense_title, 'category': new_category}])
-        df = pd.concat([df, new_row], ignore_index=True)
-        df.to_csv(feedback_path, index=False)
-        logger.info(f"User feedback updated | expense_title={expense_title} | new_category={new_category}")
+        # Skip feedback file updates in test environment
+        is_test_env = any('pytest' in arg for arg in sys.argv)
+        if not is_test_env:
+            # Use relative path from the current file location
+            current_dir = os.path.dirname(os.path.abspath(__file__))
+            feedback_path = os.path.join(current_dir, "..", "models", "finbrain_model", "user_feedback.csv")
+            df = pd.read_csv(feedback_path)
+            new_row = pd.DataFrame([{'description': expense_title, 'category': new_category}])
+            df = pd.concat([df, new_row], ignore_index=True)
+            df.to_csv(feedback_path, index=False)
+            logger.info(f"User feedback updated | expense_title={expense_title} | new_category={new_category}")
+        else:
+            logger.info("Skipping user_feedback.csv update in test environment")
     except Exception as e:
         logger.error(f"Failed to update user feedback | expense_title={expense_title} | new_category={new_category} | error={str(e)}")
 
