@@ -27,6 +27,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 ENV ENV=production
 
 # 7. Tell Docker that we plan to use port 5000 (Flask runs on this port by default)
+# (Render will automatically map this port to an available port on the server)
 EXPOSE 5000
 
 # 8. Run the app with Gunicorn – a production WSGI HTTP server for Python web applications.
@@ -39,12 +40,14 @@ EXPOSE 5000
 # Gunicorn is designed for production: it manages multiple worker processes,
 # handles concurrent requests efficiently, and provides better error isolation and load handling.
 #
-# -w 1             = run with 1 worker process (reduced for memory efficiency)
-# --timeout 120    = increase timeout to 120 seconds for model loading
-# --preload        = load application before forking workers (saves memory)
-# -b 0.0.0.0:5000  = bind to all network interfaces inside the Docker container on port 5000
-# app:app          = run the "app" instance from "app.py" (format: filename:Flask_instance)
-CMD ["gunicorn", "-w", "1", "--timeout", "120", "--preload", "-b", "0.0.0.0:5000", "src.app:app"]
+# sh -c                  → Run the following command in a shell, so we can use environment variables like $PORT
+# gunicorn               → Start the web server
+# -w 1                   → Use only 1 worker process to handle requests
+# --timeout 120          → Allow up to 120 seconds for a request before it’s considered stuck and killed
+# --preload              → Load the app once before starting workers – this reduces memory usage and speeds things up
+# -b 0.0.0.0:${PORT}     → Listen on all network interfaces (0.0.0.0) and use the port given by the hosting service (Render)
+# src.app:app            → This tells Gunicorn where to find your Flask app:
+CMD ["sh", "-c", "gunicorn -w 1 --timeout 120 --preload -b 0.0.0.0:${PORT} src.app:app"]
 
 
 
