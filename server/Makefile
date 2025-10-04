@@ -14,6 +14,11 @@ test:
 	@echo "Running tests..."
 	ENV=test pytest -v tests/
 
+# Run tests with coverage report
+coverage:
+	@echo "Running tests with coverage report..."
+	ENV=test pytest --cov=src tests/
+
 # Build and run Docker containers
 up:
 	@echo "Starting Docker Compose in $(ENV) mode..."
