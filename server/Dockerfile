@@ -39,10 +39,12 @@ EXPOSE 5000
 # Gunicorn is designed for production: it manages multiple worker processes,
 # handles concurrent requests efficiently, and provides better error isolation and load handling.
 #
-# -w 4             = run with 4 worker processes (parallel request handling)
+# -w 1             = run with 1 worker process (reduced for memory efficiency)
+# --timeout 120    = increase timeout to 120 seconds for model loading
+# --preload        = load application before forking workers (saves memory)
 # -b 0.0.0.0:5000  = bind to all network interfaces inside the Docker container on port 5000
 # app:app          = run the "app" instance from "app.py" (format: filename:Flask_instance)
-CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:5000", "src.app:app"]
+CMD ["gunicorn", "-w", "1", "--timeout", "120", "--preload", "-b", "0.0.0.0:5000", "src.app:app"]
 
 
 
