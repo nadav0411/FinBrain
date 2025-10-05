@@ -49,10 +49,50 @@ logger.info(f"Mongo URI in use | database={mongo_name}")
 CORS(app, resources={r"/*": {"origins": "*"}})
 
 
-# Health check route - deployment monitoring
+# Root route - check if the backend is running
+@app.route('/')
+def root():
+    return jsonify({'message': 'FinBrain Backend is live!'}), 200
+
+
+# Version route - check the version of the backend
+@app.route('/version')
+def version():
+    return jsonify({'version': '1.0.0', 'env': env}), 200
+
+
+# Health check route - deployment monitoring (check Flask + MongoDB + Redis are running)
 @app.route('/health', methods=['GET'])
 def health_check():
-    return jsonify({'status': 'healthy', 'message': 'FinBrain API is running'}), 200
+    from db import db
+    from db.cache import r
+
+    mongo_ok = False
+    redis_ok = False
+
+    # Check MongoDB connection
+    try:
+        db.command('ping')
+        mongo_ok = True
+    except Exception as e:
+        logger.error(f"[Health Check] MongoDB connection failed | error={str(e)}")
+    
+    # Check Redis connection
+    try:
+        r.ping()
+        redis_ok = True
+    except Exception as e:
+        logger.error(f"[Health Check] Redis connection failed | error={str(e)}")
+    
+    # Return the result
+    status = 'healthy' if mongo_ok and redis_ok else 'degraded'
+
+    return jsonify({
+        'status': status,
+        'mongo': mongo_ok,
+        'redis': redis_ok,
+        'message': 'FinBrain API health check'
+    }), 200
 
 
 # Signup route - This is where the user will sign up for an account
