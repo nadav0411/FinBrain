@@ -13,14 +13,12 @@ import os
 from db import cache
 import sys
 model, vectorizer = None, None
-is_github_actions = os.getenv("GITHUB_ACTIONS", "false").lower() == "true"
-is_render = bool(os.getenv("RENDER") or os.getenv("RENDER_EXTERNAL_URL"))
-if not is_github_actions:
+try:
+    from src.models.predictmodelloader import model, vectorizer
+except Exception:
     try:
-        # Prefer absolute import; Dockerfile sets PYTHONPATH=/app/src
         from models.predictmodelloader import model, vectorizer
     except Exception:
-        # Ensure /app/src (parent dir of this file) is on sys.path and retry
         current_dir = os.path.dirname(os.path.abspath(__file__))
         src_dir = os.path.abspath(os.path.join(current_dir, ".."))
         if src_dir not in sys.path:
@@ -57,8 +55,10 @@ def classify_expense(text):
 
     try:
         if model is None or vectorizer is None:
-            # Import model and vectorizer
-            from models.predictmodelloader import model, vectorizer
+            try:
+                from src.models.predictmodelloader import model, vectorizer
+            except Exception:
+                from models.predictmodelloader import model, vectorizer
         # Use the saved vectorizer to turn the text into a number vector
         vector = vectorizer.transform([text])
 
