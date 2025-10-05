@@ -12,8 +12,11 @@ import logging
 import os
 from db import cache
 import sys
-from models.predictmodelloader import model, vectorizer
 
+if os.getenv('GITHUB_ACTIONS') == 'true':
+    from src.models.predictmodelloader import model, vectorizer
+else:
+    from models.predictmodelloader import model, vectorizer
 
 
 # Create a logger for this module

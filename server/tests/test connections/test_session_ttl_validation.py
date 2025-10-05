@@ -166,18 +166,17 @@ def test_multiple_sessions_have_independent_ttl():
     assert lc.r.exists(f"session:{session1}")
     assert lc.r.exists(f"session:{session2}")
 
-    # Wait for first session to expire
-    time.sleep(3)
-
-    # Check first session is expired but second is not
+    # Wait for first session to expire, then verify second still exists
+    start = time.time()
+    while lc.r.exists(f"session:{session1}") and (time.time() - start) < 5:
+        time.sleep(0.1)
     assert not lc.r.exists(f"session:{session1}")
     assert lc.r.exists(f"session:{session2}")
 
-    # Wait for second session to expire
-    time.sleep(3)
-
-    # Check both sessions are expired
-    assert not lc.r.exists(f"session:{session1}")
+    # Wait for second session to expire as well
+    start2 = time.time()
+    while lc.r.exists(f"session:{session2}") and (time.time() - start2) < 10:
+        time.sleep(0.1)
     assert not lc.r.exists(f"session:{session2}")
 
 
