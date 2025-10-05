@@ -12,23 +12,19 @@ import logging
 import os
 from db import cache
 import sys
+model, vectorizer = None, None
 is_github_actions = os.getenv("GITHUB_ACTIONS", "false").lower() == "true"
 if not is_github_actions:
     try:
-        from ..models.predictmodelloader import model, vectorizer
+        # Prefer absolute import; Dockerfile sets PYTHONPATH=/app/src
+        from models.predictmodelloader import model, vectorizer
     except Exception:
-        try:
-            from models.predictmodelloader import model, vectorizer
-        except Exception:
-            # Ensure /app/src (parent dir of this file) is on sys.path and retry
-            current_dir = os.path.dirname(os.path.abspath(__file__))
-            src_dir = os.path.abspath(os.path.join(current_dir, ".."))
-            if src_dir not in sys.path:
-                sys.path.insert(0, src_dir)
-            from models.predictmodelloader import model, vectorizer
-else:
-    model = None
-    vectorizer = None
+        # Ensure /app/src (parent dir of this file) is on sys.path and retry
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        src_dir = os.path.abspath(os.path.join(current_dir, ".."))
+        if src_dir not in sys.path:
+            sys.path.insert(0, src_dir)
+        from models.predictmodelloader import model, vectorizer
 
 
 
@@ -59,7 +55,6 @@ def classify_expense(text):
         return "Other"  
 
     try:
-        global model, vectorizer
         if model is None or vectorizer is None:
             # Import model and vectorizer
             from models.predictmodelloader import model, vectorizer
