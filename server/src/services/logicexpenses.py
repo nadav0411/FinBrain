@@ -12,16 +12,7 @@ import logging
 import os
 from db import cache
 import sys
-
-try:
-    from models.predictmodelloader import model, vectorizer
-except ModuleNotFoundError:
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    project_root = os.path.abspath(os.path.join(current_dir, ".."))  
-    if project_root not in sys.path:
-        sys.path.insert(0, project_root)
-    sys.path.insert(0, os.path.join(os.getcwd(), "src"))
-    from models.predictmodelloader import model, vectorizer
+from models.predictmodelloader import model, vectorizer
 
 
 
@@ -52,6 +43,8 @@ def classify_expense(text):
         return "Other"  
 
     try:
+        # Import model and vectorizer
+        from models.predictmodelloader import model, vectorizer
         # Use the saved vectorizer to turn the text into a number vector
         vector = vectorizer.transform([text])
 
