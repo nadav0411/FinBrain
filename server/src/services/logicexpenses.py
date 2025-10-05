@@ -12,6 +12,8 @@ import logging
 import os
 from db import cache
 import sys
+from models.predictmodelloader import model, vectorizer
+
 
 
 # Create a logger for this module
@@ -27,19 +29,6 @@ categories = [
     'Leisure & Gifts',
     'Other'
 ]
-
-# Load model/vectorizer once at module import time with robust fallbacks
-try:
-    from models.predictmodelloader import model, vectorizer
-except ModuleNotFoundError:
-    try:
-        from src.models.predictmodelloader import model, vectorizer
-    except ModuleNotFoundError:
-        current_dir = os.path.dirname(os.path.abspath(__file__))
-        src_dir = os.path.abspath(os.path.join(current_dir, ".."))
-        if src_dir not in sys.path:
-            sys.path.insert(0, src_dir)
-        from models.predictmodelloader import model, vectorizer
 
 
 def classify_expense(text):
