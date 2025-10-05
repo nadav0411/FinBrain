@@ -42,7 +42,7 @@ def classify_expense(text):
 
     try:
         # Import model and vectorizer
-        from ..models.predictmodelloader import model, vectorizer
+        from models.predictmodelloader import model, vectorizer
         
         # Use the saved vectorizer to turn the text into a number vector
         vector = vectorizer.transform([text])
