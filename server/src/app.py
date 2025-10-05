@@ -46,7 +46,7 @@ mongo_name = getattr(mongo_db, 'name', 'unknown')
 logger.info(f"Mongo URI in use | database={mongo_name}")
 
 # Allow CORS for all origins
-CORS(app, resources={r"/*": {"origins": "*"}})
+CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 
 
 # Root route - check if the backend is running
@@ -251,10 +251,14 @@ def delete_expense():
 
 if __name__ == '__main__':
     # Get the environment from the environment variable (if not set, default to development)
-    env = os.getenv('ENV', 'development')
-    if env == 'development':
-        # host = 0.0.0.0 means the server will be accessible from any IP address
-        # port = 5000 means the server will run on port 5000
-        # In development, we want to use debug mode to see errors and changes
-        # But we set use_reloader=False to avoid the app running twice
-        app.run(host='0.0.0.0', port=5000, debug=True, use_reloader=False)
+    from os import environ
+    port = int(environ.get('PORT', 5000))
+    # host = 0.0.0.0 means the server will be accessible from any IP address
+    # port = means the server will run on 'PORT' environment variable (if not set, default to 5000)
+    # debug = False means the server will run in production mode
+    # use_reloader = False to avoid the app running twice
+    app.run(host='0.0.0.0', port=port, debug=False, use_reloader=False)
+
+
+# Render
+# Vercel
