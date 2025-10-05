@@ -260,5 +260,23 @@ if __name__ == '__main__':
     app.run(host='0.0.0.0', port=port, debug=False, use_reloader=False)
 
 
-# Render
-# Vercel
+# Render Deployment:
+# The backend of FinBrain is deployed on Render.
+# A cloud platform that automatically builds and hosts the server directly from the GitHub repository.
+# Every time I push new code to the main branch, Render detects the update, 
+# rebuilds the Flask backend using Docker, and redeploys it to production — providing a fully automated CI/CD workflow.
+# The server connects to two main managed services:
+# 1. MongoDB Atlas - The connection is securely handled through environment variables defined in Render.
+# 2. Redis (Value Keys) - Render provides a managed Redis (Value Keys) service that the Flask backend connects to via the 
+#    REDIS_URL environment variable for real-time caching and session storage.
+
+
+# Vercel Deployment:
+# The frontend of FinBrain (built with React + Vite) is deployed on Vercel.
+# Vercel automatically builds and hosts the client directly from the GitHub repository.
+# Each time I push new code to the main branch, Vercel triggers a new build,
+# compiles the React app into optimized static files, and redeploys it globally via CDN.
+# Environment variables such as VITE_API_URL are securely managed in Vercel’s dashboard,
+# allowing the frontend to communicate seamlessly with the Flask backend hosted on Render.
+# CDN = Content Delivery Network, is a global network of servers that delivers my website’s files (like images, scripts, and pages)
+# from the location closest to each user — making the site load faster and more reliably everywhere.

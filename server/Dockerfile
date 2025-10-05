@@ -50,15 +50,13 @@ EXPOSE 5000
 # Gunicorn is designed for production: it manages multiple worker processes,
 # handles concurrent requests efficiently, and provides better error isolation and load handling.
 #
-# sh -c                  → Run the following command in a shell, so we can use environment variables like $PORT
 # gunicorn               → Start the web server
 # -w 1                   → Use only 1 worker process to handle requests
 # --timeout 120          → Allow up to 120 seconds for a request before it’s considered stuck and killed
 # --preload              → Load the app once before starting workers – this reduces memory usage and speeds things up
 # -b 0.0.0.0:${PORT}     → Listen on all network interfaces (0.0.0.0) and use the port given by the hosting service (Render)
 # src.app:app            → This tells Gunicorn where to find your Flask app:
-CMD ["sh", "-c", "gunicorn -w 1 --timeout 120 --preload -b 0.0.0.0:${PORT:-5000} src.app:app"]
-
+CMD ["gunicorn", "-w", "1", "--timeout", "120", "--preload", "-b", "0.0.0.0:$PORT", "src.app:app"]
 
 
 
