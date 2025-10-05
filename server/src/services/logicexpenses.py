@@ -12,18 +12,6 @@ import logging
 import os
 from db import cache
 import sys
-model, vectorizer = None, None
-try:
-    from src.models.predictmodelloader import model, vectorizer
-except Exception:
-    try:
-        from models.predictmodelloader import model, vectorizer
-    except Exception:
-        current_dir = os.path.dirname(os.path.abspath(__file__))
-        src_dir = os.path.abspath(os.path.join(current_dir, ".."))
-        if src_dir not in sys.path:
-            sys.path.insert(0, src_dir)
-        from models.predictmodelloader import model, vectorizer
 
 
 
@@ -54,11 +42,8 @@ def classify_expense(text):
         return "Other"  
 
     try:
-        if model is None or vectorizer is None:
-            try:
-                from src.models.predictmodelloader import model, vectorizer
-            except Exception:
-                from models.predictmodelloader import model, vectorizer
+        # Import model and vectorizer
+        from models.predictmodelloader import model, vectorizer
         # Use the saved vectorizer to turn the text into a number vector
         vector = vectorizer.transform([text])
 
