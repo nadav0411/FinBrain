@@ -28,6 +28,19 @@ categories = [
     'Other'
 ]
 
+# Load model/vectorizer once at module import time with robust fallbacks
+try:
+    from models.predictmodelloader import model, vectorizer
+except ModuleNotFoundError:
+    try:
+        from src.models.predictmodelloader import model, vectorizer
+    except ModuleNotFoundError:
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        src_dir = os.path.abspath(os.path.join(current_dir, ".."))
+        if src_dir not in sys.path:
+            sys.path.insert(0, src_dir)
+        from models.predictmodelloader import model, vectorizer
+
 
 def classify_expense(text):
     """
@@ -41,9 +54,6 @@ def classify_expense(text):
         return "Other"  
 
     try:
-        # Import model and vectorizer
-        from models.predictmodelloader import model, vectorizer
-        
         # Use the saved vectorizer to turn the text into a number vector
         vector = vectorizer.transform([text])
 
