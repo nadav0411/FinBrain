@@ -15,6 +15,9 @@ import sys
 is_github_actions = os.getenv("GITHUB_ACTIONS", "false").lower() == "true"
 if not is_github_actions:
     from models.predictmodelloader import model, vectorizer
+else:
+    model = None
+    vectorizer = None
 
 
 
@@ -46,7 +49,7 @@ def classify_expense(text):
 
     try:
         global model, vectorizer
-        if is_github_actions:
+        if model is None or vectorizer is None:
             # Import model and vectorizer
             from models.predictmodelloader import model, vectorizer
         # Use the saved vectorizer to turn the text into a number vector
