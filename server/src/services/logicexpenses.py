@@ -17,7 +17,15 @@ if not is_github_actions:
     try:
         from ..models.predictmodelloader import model, vectorizer
     except Exception:
-        from models.predictmodelloader import model, vectorizer
+        try:
+            from models.predictmodelloader import model, vectorizer
+        except Exception:
+            # Ensure /app/src (parent dir of this file) is on sys.path and retry
+            current_dir = os.path.dirname(os.path.abspath(__file__))
+            src_dir = os.path.abspath(os.path.join(current_dir, ".."))
+            if src_dir not in sys.path:
+                sys.path.insert(0, src_dir)
+            from models.predictmodelloader import model, vectorizer
 else:
     model = None
     vectorizer = None
