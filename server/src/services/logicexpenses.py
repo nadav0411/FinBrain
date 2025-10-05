@@ -12,7 +12,9 @@ import logging
 import os
 from db import cache
 import sys
-#from models.predictmodelloader import model, vectorizer
+is_github_actions = os.getenv("GITHUB_ACTIONS", "false").lower() == "true"
+if not is_github_actions:
+    from models.predictmodelloader import model, vectorizer
 
 
 
