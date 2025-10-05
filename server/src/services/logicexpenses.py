@@ -12,7 +12,7 @@ import logging
 import os
 from db import cache
 import sys
-from models.predictmodelloader import model, vectorizer
+#from models.predictmodelloader import model, vectorizer
 
 
 
