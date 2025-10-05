@@ -45,8 +45,11 @@ def classify_expense(text):
         return "Other"  
 
     try:
-        # Import model and vectorizer
-        from models.predictmodelloader import model, vectorizer
+        if is_github_actions:
+            # Import model and vectorizer
+            from models.predictmodelloader import model, vectorizer
+        else:
+            from src.models.predictmodelloader import model, vectorizer
         # Use the saved vectorizer to turn the text into a number vector
         vector = vectorizer.transform([text])
 
