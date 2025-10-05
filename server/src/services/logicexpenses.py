@@ -14,7 +14,10 @@ from db import cache
 import sys
 is_github_actions = os.getenv("GITHUB_ACTIONS", "false").lower() == "true"
 if not is_github_actions:
-    from models.predictmodelloader import model, vectorizer
+    try:
+        from ..models.predictmodelloader import model, vectorizer
+    except Exception:
+        from models.predictmodelloader import model, vectorizer
 else:
     model = None
     vectorizer = None
