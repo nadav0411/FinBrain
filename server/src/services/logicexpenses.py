@@ -14,6 +14,7 @@ from db import cache
 import sys
 model, vectorizer = None, None
 is_github_actions = os.getenv("GITHUB_ACTIONS", "false").lower() == "true"
+is_render = bool(os.getenv("RENDER") or os.getenv("RENDER_EXTERNAL_URL"))
 if not is_github_actions:
     try:
         # Prefer absolute import; Dockerfile sets PYTHONPATH=/app/src
@@ -55,7 +56,7 @@ def classify_expense(text):
         return "Other"  
 
     try:
-        if model is None or vectorizer is None:
+        if model is None or vectorizer is None or is_render or is_github_actions:
             # Import model and vectorizer
             from models.predictmodelloader import model, vectorizer
         # Use the saved vectorizer to turn the text into a number vector
