@@ -12,14 +12,15 @@ import logging
 import os
 from db import cache
 import sys
+
 try:
     from models.predictmodelloader import model, vectorizer
 except ModuleNotFoundError:
-    # Ensure server/src is on sys.path, then retry standard import
     current_dir = os.path.dirname(os.path.abspath(__file__))
-    src_dir = os.path.abspath(os.path.join(current_dir, ".."))
-    if src_dir not in sys.path:
-        sys.path.insert(0, src_dir)
+    project_root = os.path.abspath(os.path.join(current_dir, ".."))  
+    if project_root not in sys.path:
+        sys.path.insert(0, project_root)
+    sys.path.insert(0, os.path.join(os.getcwd(), "src"))
     from models.predictmodelloader import model, vectorizer
 
 
