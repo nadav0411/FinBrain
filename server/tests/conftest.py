@@ -6,9 +6,13 @@ import sys
 from pathlib import Path
 
 
-# Add the current "src" directory (where this file is located) to the Python path
-server_src_dir = Path(__file__).parent.resolve()
+# Add the server/src directory to Python path for imports
+# This is needed so that when pytest runs our tests, Python can find and import our modules
+# like 'app', 'db', 'cache', etc. from the server/src directory
+server_src_dir = Path(__file__).parent.parent / "src"
 if str(server_src_dir) not in sys.path:
+    # Insert the server/src directory at the beginning of Python's module search path
+    # This tells Python: "when looking for modules, check the server/src directory first"
     sys.path.insert(0, str(server_src_dir))
 
 
