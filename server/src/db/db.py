@@ -64,7 +64,15 @@ else:
 
     try:
         # Create a real MongoDB client
-        client = MongoClient(mongo_uri, server_api=ServerApi('1'))
+        client = MongoClient(
+        mongo_uri,
+        server_api=ServerApi('1'),
+        tls=True,
+        tlsAllowInvalidCertificates=False,
+        connectTimeoutMS=20000,
+        socketTimeoutMS=20000,
+        retryWrites=True
+        )
         # Create a real database
         db = client[db_name]
         # Create a real users collection
