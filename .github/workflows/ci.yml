@@ -54,5 +54,5 @@ jobs:
       - name: Run all tests
         run: |
           cd server/src
-          export PYTHONPATH="$PWD"
+          export PYTHONPATH="$PWD:$(pwd)/.."
           python -m pytest ../tests -v
