@@ -1,3 +1,6 @@
+# FinBrain Project - ci.yml - MIT License (c) 2025 Nadav Eshed
+
+
 name: CI
 
 on:
