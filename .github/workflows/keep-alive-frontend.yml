@@ -1,6 +1,5 @@
 # FinBrain Project - keep-alive-frontend.yml - MIT License (c) 2025 Nadav Eshed
 
-
 name: Keep FinBrain Frontend Alive
 
 on:
@@ -16,7 +15,7 @@ jobs:
       - name: Ping Vercel Frontend
         run: |
           echo "Pinging frontend..."
-          RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" https://finbrain-frontend.vercel.app/ || true)
+          RESPONSE=$(curl -s --max-time 10 -o /dev/null -w "%{http_code}" https://finbrain-frontend.vercel.app/ || true)
           if [ "$RESPONSE" = "200" ]; then
             echo "Frontend is responding with 200 OK 🟢"
           else

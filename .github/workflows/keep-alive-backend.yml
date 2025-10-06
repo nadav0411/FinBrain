@@ -1,6 +1,5 @@
 # FinBrain Project - keep-alive-backend.yml - MIT License (c) 2025 Nadav Eshed
 
-
 name: Keep FinBrain Backend Alive
 
 on:
@@ -16,7 +15,7 @@ jobs:
       - name: Ping Render backend
         run: |
           echo "Pinging backend..."
-          RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" https://finbrain.onrender.com/health || true)
+          RESPONSE=$(curl -s --max-time 10 -o /dev/null -w "%{http_code}" https://finbrain-backend-rnru.onrender.com || true)
           if [ "$RESPONSE" = "200" ]; then
             echo "Backend is alive and responding with 200 OK 🟢"
           else
