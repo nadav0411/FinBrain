@@ -1,11 +1,10 @@
 # FinBrain Project - keep-alive-backend.yml - MIT License (c) 2025 Nadav Eshed
 
-
 name: Keep FinBrain Backend Alive
 
 on:
   schedule:
-    - cron: "*/5 * * * *" # Every 5 minutes
+    - cron: "*/12 * * * *" # Every 12 minutes
   workflow_dispatch:
 
 jobs:
@@ -15,20 +14,28 @@ jobs:
     steps:
       - name: Ping Render backend
         run: |
+          echo "=============================="
+          echo "Backend Workflow started at $(date '+%Y-%m-%d %H:%M:%S')"
+          echo "=============================="
+
           echo "Pinging backend..."
           URL="https://finbrain-backend-rnru.onrender.com"
           MAX_RETRIES=3
           for ((i=1; i<=MAX_RETRIES; i++)); do
+            echo "$(date '+%Y-%m-%d %H:%M:%S') | Attempt #$i..."
             RESPONSE=$(curl -s --max-time 30 -o /dev/null -w "%{http_code}" $URL || true)
             if [ "$RESPONSE" = "200" ]; then
-              echo "Backend is alive and responding with 200 OK 🟢 (attempt #$i)"
+              echo "$(date '+%Y-%m-%d %H:%M:%S') | Backend is alive and responding with 200 OK 🟢 (attempt #$i)"
               break
             else
-              echo "Ping attempt #$i failed or returned status code: $RESPONSE 🔴"
+              echo "$(date '+%Y-%m-%d %H:%M:%S') | Ping attempt #$i failed or returned status code: $RESPONSE 🔴"
               if [ "$i" -lt "$MAX_RETRIES" ]; then
                 echo "Retrying in 10 seconds..."
                 sleep 10
               fi
             fi
           done
-          echo "Ping cycle completed."
+
+          echo "------------------------------"
+          echo "Backend ping cycle completed at $(date '+%Y-%m-%d %H:%M:%S')"
+          echo "------------------------------"

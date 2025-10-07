@@ -1,6 +1,5 @@
 # FinBrain Project - keep-alive-frontend.yml - MIT License (c) 2025 Nadav Eshed
 
-
 name: Keep FinBrain Frontend Alive
 
 on:
@@ -15,20 +14,28 @@ jobs:
     steps:
       - name: Ping Vercel Frontend
         run: |
+          echo "=============================="
+          echo "Frontend Workflow started at $(date '+%Y-%m-%d %H:%M:%S')"
+          echo "=============================="
+
           echo "Pinging frontend..."
           URL="https://finbrain-frontend.vercel.app/"
           MAX_RETRIES=3
           for ((i=1; i<=MAX_RETRIES; i++)); do
+            echo "$(date '+%Y-%m-%d %H:%M:%S') | Attempt #$i..."
             RESPONSE=$(curl -s --max-time 10 -o /dev/null -w "%{http_code}" $URL || true)
             if [ "$RESPONSE" = "200" ]; then
-              echo "Frontend is responding with 200 OK 🟢 (attempt #$i)"
+              echo "$(date '+%Y-%m-%d %H:%M:%S') | Frontend is responding with 200 OK 🟢 (attempt #$i)"
               break
             else
-              echo "Frontend ping attempt #$i failed or returned status code: $RESPONSE 🔴"
+              echo "$(date '+%Y-%m-%d %H:%M:%S') | Frontend ping attempt #$i failed or returned status code: $RESPONSE 🔴"
               if [ "$i" -lt "$MAX_RETRIES" ]; then
                 echo "Retrying in 10 seconds..."
                 sleep 10
               fi
             fi
           done
-          echo "Frontend ping cycle completed."
+
+          echo "------------------------------"
+          echo "Frontend ping cycle completed at $(date '+%Y-%m-%d %H:%M:%S')"
+          echo "------------------------------"
