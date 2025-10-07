@@ -1,10 +1,11 @@
 # FinBrain Project - keep-alive-backend.yml - MIT License (c) 2025 Nadav Eshed
 
+
 name: Keep FinBrain Backend Alive
 
 on:
   schedule:
-    - cron: "*/10 * * * *" # Every 10 minutes
+    - cron: "*/5 * * * *" # Every 5 minutes
   workflow_dispatch:
 
 jobs:
@@ -15,10 +16,19 @@ jobs:
       - name: Ping Render backend
         run: |
           echo "Pinging backend..."
-          RESPONSE=$(curl -s --max-time 10 -o /dev/null -w "%{http_code}" https://finbrain-backend-rnru.onrender.com || true)
-          if [ "$RESPONSE" = "200" ]; then
-            echo "Backend is alive and responding with 200 OK 🟢"
-          else
-            echo "Ping failed or returned status code: $RESPONSE 🔴"
-            exit 1
-          fi
+          URL="https://finbrain-backend-rnru.onrender.com"
+          MAX_RETRIES=3
+          for ((i=1; i<=MAX_RETRIES; i++)); do
+            RESPONSE=$(curl -s --max-time 30 -o /dev/null -w "%{http_code}" $URL || true)
+            if [ "$RESPONSE" = "200" ]; then
+              echo "Backend is alive and responding with 200 OK 🟢 (attempt #$i)"
+              break
+            else
+              echo "Ping attempt #$i failed or returned status code: $RESPONSE 🔴"
+              if [ "$i" -lt "$MAX_RETRIES" ]; then
+                echo "Retrying in 10 seconds..."
+                sleep 10
+              fi
+            fi
+          done
+          echo "Ping cycle completed."
