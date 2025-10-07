@@ -1,10 +1,12 @@
 # FinBrain Project - predictmodelloader.py - MIT License (c) 2025 Nadav Eshed
-# Handles model loading safely across environments (local, Docker, Render, GitHub Actions)
+
 
 import joblib
 import os
 import logging
 
+
+# Create a logger for this module
 logger = logging.getLogger(__name__)
 
 def resolve_model_paths():
@@ -37,7 +39,7 @@ def resolve_model_paths():
 is_github_actions = os.getenv("GITHUB_ACTIONS", "false").lower() == "true"
 
 if is_github_actions:
-    logger.info("🏃 Detected GitHub Actions environment — using mock AI model (no .pkl files loaded).")
+    logger.info("Detected GitHub Actions environment — using mock AI model (no .pkl files loaded).")
 
     class MockModel:
         """A mock classifier used during CI tests (always returns 'Other')."""
@@ -56,15 +58,15 @@ else:
     # --- Real environment (local, Docker, Render) ---
     model_path, vectorizer_path = resolve_model_paths()
     if not model_path or not vectorizer_path:
-        logger.error("❌ Model files not found in any known location.")
+        logger.error("Model files not found in any known location.")
         raise FileNotFoundError(
-            "Model files not found. You need to run trainer.py first to train and save model.pkl/vectorizer.pkl."
+            "Model files not found. I probably need to run trainer.py first to train and save model.pkl/vectorizer.pkl."
         )
 
     try:
         model = joblib.load(model_path)
         vectorizer = joblib.load(vectorizer_path)
-        logger.info(f"✅ Model and vectorizer loaded successfully | model_path={model_path}")
+        logger.info(f"Model and vectorizer loaded successfully | model_path={model_path}")
     except Exception as e:
-        logger.error(f"❌ Failed to load model/vectorizer | error={str(e)}")
+        logger.error(f"Failed to load model/vectorizer | error={str(e)}")
         raise

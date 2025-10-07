@@ -4,7 +4,7 @@ name: Keep FinBrain Backend Alive
 
 on:
   schedule:
-    - cron: "*/12 * * * *" # Every 12 minutes
+    - cron: "*/10 * * * *" # Every 10 minutes
   workflow_dispatch:
 
 jobs:
