@@ -157,3 +157,21 @@ def clear_test_cache():
             logger.info(f"Test cache cleared | keys_cleared={len(all_keys)}")
     except Exception as e:
         logger.error(f"Error clearing test cache | error={str(e)}")
+
+
+def delete_all_user_expenses_cache(email):
+    """
+    Delete all cached user expenses for the given user across all months/years
+    """
+    try:
+        key_prefix = get_user_expenses_cache_key_prefix()
+        # Keys are in format: {prefix}user:{email}:month:YYYY-MM
+        pattern = f"{key_prefix}user:{str(email).strip().lower()}:month:*"
+        keys = r.keys(pattern)
+        if keys:
+            r.delete(*keys)
+            logger.info(f"All user expenses cache invalidated | email={str(email)} | keys_cleared={len(keys)}")
+        else:
+            logger.info(f"No user expenses cache found to invalidate | email={str(email)}")
+    except Exception as e:
+        logger.error(f"Error invalidating all user expenses cache | email={str(email)} | error={str(e)}")

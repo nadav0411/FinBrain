@@ -1,5 +1,5 @@
 # FinBrain Project - __init__.py - MIT License (c) 2025 Nadav Eshed
 
 
-from .db import users_collection, expenses_collection, db
+from .db import users_collection, expenses_collection, user_feedback_collection, db
 from .cache import r

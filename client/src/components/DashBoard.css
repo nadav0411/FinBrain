@@ -18,13 +18,14 @@
   /* === RESPONSIVE SIZING ===
      clamp() function: clamp(minimum, preferred, maximum)
      This makes elements scale smoothly between different screen sizes */
-  --container-padding: clamp(6px, 1.5vw, 15px); /* Space around main content */
-  --header-margin: clamp(10px, 2vw, 15px); /* Space below header */
+  --container-padding: clamp(0px, 1.5vw, 0px); /* Space around main content */
+  --header-margin: clamp(5px, 1vw, 8px); /* Space below header */
   --chart-padding: clamp(10px, 2vw, 15px); /* Space inside chart boxes */
   --bar-gap: clamp(8px, 1.5vw, 15px); /* Space between chart bars */
   --bar-height: clamp(14px, 2vw, 20px); /* Height of chart bars */
   --text-size: clamp(0.8rem, 1.2vw, 0.95rem); /* Text size that scales */
   --button-padding: clamp(5px, 1vw, 8px) clamp(10px, 1.5vw, 16px); /* Button spacing */
+  --bar-count: 1; /* Number of bars in the chart */
 }
 /* ========================================
    GLOBAL RESET & BASE STYLES
@@ -515,14 +516,16 @@ html, body, #root {
 
 /* COMPARISON BARS CONTAINER
    Horizontal layout for all monthly bars */
-.comparison-bars {
+  .comparison-bars {
   display: flex;
   flex-direction: row;
-  align-items: end;                
+  align-items: end;
   justify-content: center;
-  gap: 8px;
+  gap: clamp(8px, calc(500px / var(--bar-count)), 60px);
   min-height: 400px;
   padding: 20px 0;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 /* INDIVIDUAL BAR ROW

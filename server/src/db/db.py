@@ -50,6 +50,9 @@ if env == 'test' or is_ci:
     users_collection = db['users']
     # Create a mock expenses collection
     expenses_collection = db['expenses']
+    # Create a mock user_feedback collection
+    user_feedback_collection = db['user_feedback']
+
     # Create a unique index on the users collection
     users_collection.create_index('email', unique=True)
 
@@ -79,6 +82,8 @@ else:
         users_collection = db['users']
         # Create a real expenses collection
         expenses_collection = db['expenses']
+        # Create a real user_feedback collection
+        user_feedback_collection = db['user_feedback']
 
         # Create a unique index on the users collection
         users_collection.create_index('email', unique=True)

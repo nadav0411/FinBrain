@@ -2,7 +2,7 @@
 
 
 # type: ignore
-from db import users_collection, expenses_collection, db
+from db import users_collection, expenses_collection, user_feedback_collection, db
 import pytest
 from app import app
 import services.logicconnection as lc
@@ -22,6 +22,7 @@ def clean_collections():
     if db.name == 'FinBrainTest':
         users_collection.delete_many({})
         expenses_collection.delete_many({})
+        user_feedback_collection.delete_many({})
 
 
 # Clean Redis sessions before each test
@@ -119,6 +120,12 @@ def test_update_expense_category_success():
     })
     assert updated_expense is not None
     assert updated_expense['category'] == 'Housing & Bills'
+
+    # Verify a feedback document was inserted
+    feedback = list(user_feedback_collection.find({}))
+    assert len(feedback) == 1
+    assert feedback[0]['description'] == 'Pizza'
+    assert feedback[0]['category'] == 'Housing & Bills'
 
 
 def test_update_expense_category_missing_session_id():
@@ -254,6 +261,9 @@ def test_update_expense_category_expense_not_found():
     assert response.status_code == 404
     assert response.json['message'] == 'Expense not found'
 
+    # Ensure no feedback document was inserted when expense is not found
+    assert user_feedback_collection.count_documents({}) == 0
+
 
 def test_update_expense_category_invalid_new_category():
     """
@@ -284,6 +294,9 @@ def test_update_expense_category_invalid_new_category():
     assert response.status_code == 400
     assert response.json['message'] == 'Invalid category'
 
+    # Ensure no feedback document was inserted for invalid category
+    assert user_feedback_collection.count_documents({}) == 0
+
 
 def test_update_expense_category_category_already_updated():
     """
@@ -313,6 +326,9 @@ def test_update_expense_category_category_already_updated():
     # Check if the response is unsuccessful
     assert response.status_code == 400
     assert response.json['message'] == 'Category is already updated'
+
+    # Ensure no feedback document was inserted when category is already updated
+    assert user_feedback_collection.count_documents({}) == 0
 
 
 def test_update_expense_category_same_category():
@@ -434,7 +450,7 @@ def test_update_expense_category_expired_session():
     Test that the update_expense_category function returns an error for expired session
     """
     # Insert a test user
-    user = insert_test_user()
+    insert_test_user()
     
     # Create a session that will expire quickly
     email = "user@login.com"
@@ -883,6 +899,10 @@ def test_update_expense_category_multiple_expenses_same_user():
     assert expense_2['category'] == 'Health & Essentials'
     assert expense_3 is not None
     assert expense_3['category'] == 'Education & Personal Growth'
+
+    # Ensure only feedbacks corresponding to updates were inserted
+    feedback_docs = list(user_feedback_collection.find({}))
+    assert len(feedback_docs) == 3
 
 
 def test_update_expense_category_case_sensitivity():

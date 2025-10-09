@@ -9,7 +9,9 @@ import re
 import uuid
 from pymongo.errors import DuplicateKeyError
 from db.cache import r
+from db import cache
 from utils.password_hashing import hash_password, verify_password
+from dateutil.relativedelta import relativedelta
 
 
 # Session expiry in seconds (1.5 minutes of inactivity)
@@ -142,13 +144,12 @@ def handle_login(data):
         logger.exception(f"Login DB error | email={email}")
         return jsonify({'message': 'Login failed'}), 500
 
-    # For demo user, auto-provision if missing and bypass email format
-    if is_demo_user and not user:
-
+    # For demo user
+    if is_demo_user:
         try:
-            user = users_collection.find_one({'email': 'demo'})
             if not user:
                 user = create_demo_user()
+            update_demo_user_expenses_months(user)
         except Exception:
             logger.exception(f"Demo user failed | email={email}")
             return jsonify({'message': 'Login failed'}), 500
@@ -247,6 +248,46 @@ def create_demo_user():
         logger.warning(f"Failed to seed demo expenses | error={str(e)}")
 
     return user
+
+
+def update_demo_user_expenses_months(demo_user):
+    """
+    Update the demo user expenses months to match the current month
+    """
+    # Get the latest expense
+    latest_expense = expenses_collection.find_one(
+        {"user_id": demo_user["_id"]},
+        sort=[("date", -1)]
+    )
+    if not latest_expense:
+        logger.warning("No demo expenses found")
+        return
+
+    last_date = datetime.strptime(latest_expense["date"], "%Y-%m-%d")
+    # Get the current date
+    now = datetime.now()
+
+    # If the latest expense is in the current month, return
+    if last_date.year == now.year and last_date.month == now.month:
+        logger.info("Demo expenses already up to date")
+        return
+    
+    # Get the delta in months
+    delta_months = (now.year - last_date.year) * 12 + (now.month - last_date.month)
+    logger.info(f"Shifting demo expenses by {delta_months} month(s) forward")
+
+    # Shift the expenses
+    all_expenses = expenses_collection.find({"user_id": demo_user["_id"]})
+    for expense in all_expenses:
+        old_date = datetime.strptime(expense["date"], "%Y-%m-%d")
+        new_date = old_date + relativedelta(months=delta_months)
+        expenses_collection.update_one({"_id": expense["_id"]}, {"$set": {"date": new_date.strftime("%Y-%m-%d")}})
+    
+    # Delete all the caches for the demo user
+    cache.delete_all_user_expenses_cache("demo")
+    
+    logger.info(f"Demo expenses successfully shifted to match current month")
+    return 
 
 
 def get_email_from_session_id(session_id):

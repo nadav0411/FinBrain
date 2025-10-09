@@ -219,6 +219,12 @@ const Dashboard = () => {
     if (picked.length > 0) fetchMonthlyComparison(picked);
   };
 
+  const barCount = monthlyComparisonData?.data?.length || 0;
+
+  useEffect(() => {
+    document.documentElement.style.setProperty('--bar-count', barCount);
+  }, [barCount]);
+
   /* =========================
      RENDER
      ========================= */

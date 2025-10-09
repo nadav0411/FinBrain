@@ -48,8 +48,10 @@ function MainScreen() {
           }}>
             <h3 style={{ marginTop: 0 }}>🚧 Stay Tuned!</h3>
             <p style={{ margin: 0, color: '#475569' }}>
-              Always working on something new. See my latest journey on LinkedIn.
-              {' '}
+              Always working on something new. See my latest journey on LinkedIn — and feel free to reach out anytime via email or LinkedIn:
+              <br />
+              <a href="mailto:nadav0411@gmail.com">nadav0411@gmail.com</a>
+              {' '}|{' '}
               <a href="https://www.linkedin.com/in/nadav-eshed-b32792363" target="_blank" rel="noopener noreferrer">
                 www.linkedin.com/in/nadav-eshed-b32792363
               </a>
@@ -118,7 +120,7 @@ function MainScreen() {
       <main className="content">
         {localStorage.getItem('is_demo_user') === 'true' && (
           <div className="demo-banner" role="status" aria-live="polite">
-            You are in Demo Mode — adding, changing, and deleting are disabled. To upgrade to the full version, please sign up and login (FOR NOW TAKE A LOOK ONLY ON Sep - Jul 2025).
+            You are in Demo Mode — adding, changing, and deleting are disabled. To upgrade to the full version, please sign up and login.
           </div>
         )}
         <div className="page-header">
