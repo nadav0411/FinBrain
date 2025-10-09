@@ -47,13 +47,13 @@ I treated FinBrain as a real-world product, not just an app to explore concepts 
 - **CSS** – interactive, user-friendly UI for expense visualization.  
 
 **Backend**
-- **Flask** – lightweight backend framework for REST APIs.  
+- **Flask** – lightweight backend framework serving structured RESTful APIs to the frontend.
 - **Gunicorn** – production-grade WSGI server for handling concurrent requests.
 - **Modular architecture** – clear separation of logic, data access, and testing layers for flexibility and maintainability.
 
 **Database & Caching**
 - **MongoDB** – primary database for storing users and expenses.  
-- **Redis** – in-memory cache for sessions, heartbeats (TTL), currency and expenses data.  
+- **Redis** – in-memory cache handling sessions, TTL heartbeats, and frequently accessed expense and currency data.
 
 **Authentication & Security**
 - **Argon2 hashing** – secure password storage.  
@@ -72,6 +72,9 @@ I treated FinBrain as a real-world product, not just an app to explore concepts 
 - **pytest + mocking/patching** – full API coverage, simulated DB interactions.  
 - **Structured logging + exception handling** – better debugging and observability. 
 - **Multi-environment configuration** – separate `.env` files for development, testing, and production ensure clean isolation and reproducible behavior across environments.
+- **Render (Backend)** – hosts the Flask API and Redis cache using Docker containers for reliable performance.  
+- **Vercel (Frontend)** – serves the React client with optimized builds and automatic redeploys from GitHub.  
+- **Uptime Monitoring** – automated periodic pings verify backend availability and alert on potential downtime.
 
 ---
 
@@ -143,8 +146,7 @@ FinBrain/
 │   │   │   └── finbrain_model/
 │   │   │       ├── model.pkl
 │   │   │       ├── vectorizer.pkl
-│   │   │       ├── training_data.csv
-│   │   │       └── user_feedback.csv
+│   │   │       └── training_data.csv
 │   │   ├── services/                # Business Logic
 │   │   │   ├── logicconnection.py   # Auth & sessions
 │   │   │   ├── logicexpenses.py     # Expense management
@@ -210,8 +212,8 @@ FinBrain/
 
 These are the features and improvements currently being developed:
 
-- **Cloud Deployment**  
-  Preparing for deployment to a cloud provider to make the app accessible online.
+- **Next-Level Cloud Infrastructure & Deployment** 
+  Exploring and learning **Kubernetes (EKS)** on **AWS** as the next step in understanding advanced container orchestration, scalability, and automated load management.
 
 - **Performance & Efficiency Improvements**
   Ongoing work to optimize the application for faster response times, reduced resource usage, and smoother overall performance as the project scales.
@@ -233,7 +235,7 @@ This project is licensed under the MIT License – see the [LICENSE](./LICENSE) 
 ## Author
 
 **Nadav Eshed**  
-I'm a Computer Science student at the Hebrew University, passionate about both technology and people, I'm driven by challenges, continuous learning, and the joy of turning complex problems into smart, useful solutions - always with a growth mindset, a collaborative spirit, and a smile :)
+I'm a Computer Science student at the Hebrew University, passionate about both technology and people, I'm driven by challenges, continuous learning, and the joy of turning complex problems into smart, useful solutions - always with a growth mindset, a collaborative spirit, and a smile!
 
 I believe that in today's world, technology isn’t just a tool – it’s a powerful force that can improve lives and solve real-world problems across every field: health, finance, education, and beyond.
 [LinkedIn](https://www.linkedin.com/in/nadav-eshed-b32792363) • [GitHub](https://github.com/nadav0411) • nadav0411@gmail.com
