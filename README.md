@@ -14,6 +14,7 @@ Built with **React (Frontend)** and **Flask (Backend)**, with **MongoDB** and **
 ## Table of Contents
 
 - [Motivation & Inspiration](#motivation--inspiration)
+- [Architecture Diagram](architecture-diagram)
 - [Tech Stack](#tech-stack)
 - [Beyond the Code – Thought Process](#beyond-the-code--thought-process)
 - [Project Structure](#-project-structure)
@@ -37,6 +38,12 @@ Through FinBrain, I wanted to explore these concepts more deeply, it was an oppo
 This project became an opportunity to experiment with **real engineering trade-offs**, explore **cloud architecture best practices**, and build a system that doesn’t just work — but is **designed to scale and evolve**.
 
 I treated FinBrain as a real-world product, not just an app to explore concepts — and that mindset guided every decision I made.
+
+---
+
+## Architecture Diagram
+
+![FinBrain System Architecture](https://github.com/nadav0411/FinBrain/blob/main/assets/FinBrain%20System%20Architecture.png?raw=true)
 
 ---
 
