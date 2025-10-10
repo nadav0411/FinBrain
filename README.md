@@ -213,7 +213,7 @@ FinBrain/
 These are the features and improvements currently being developed:
 
 - **Next-Level Cloud Infrastructure & Deployment** 
-  Exploring and learning **Kubernetes (EKS)** on **AWS** as the next step in understanding advanced container orchestration, scalability, and automated load management.
+  Exploring and learning Kubernetes (EKS) on AWS as the next step in understanding advanced container orchestration, scalability, and automated load management.
 
 - **Performance & Efficiency Improvements**
   Ongoing work to optimize the application for faster response times, reduced resource usage, and smoother overall performance as the project scales.
