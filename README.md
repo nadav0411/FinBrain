@@ -14,14 +14,14 @@ Built with **React (Frontend)** and **Flask (Backend)**, with **MongoDB** and **
 ## Table of Contents
 
 - [Motivation & Inspiration](#motivation--inspiration)
-- [Architecture Diagram](architecture-diagram)
+- [Architecture Diagram](#architecture-diagram)
 - [Tech Stack](#tech-stack)
 - [Beyond the Code – Thought Process](#beyond-the-code--thought-process)
-- [Project Structure](#-project-structure)
+- [Project Structure](#project-structure)
 - [Quick Start Guide](#quick-start-guide)
 - [Running Tests (300+ Tests)](#running-tests-300-tests)
 - [Screenshots](#screenshots)
-- [In Progress / Roadmap](#-in-progress--roadmap)
+- [In Progress / Roadmap](#in-progress--roadmap)
 - [License](#license)
 - [Author](#author)
 
@@ -102,7 +102,7 @@ I wanted to build something that could realistically serve real users — reliab
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 FinBrain is organized into a **clean client-server architecture**, separating the React frontend and Flask backend, while also including assets, ML models, tests, and infrastructure files.
 
@@ -215,7 +215,7 @@ FinBrain/
 
 ---
 
-##  In Progress / Roadmap
+## In Progress / Roadmap
 
 These are the features and improvements currently being developed:
 
