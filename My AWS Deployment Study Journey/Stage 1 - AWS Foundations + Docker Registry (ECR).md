@@ -1,4 +1,4 @@
-# FinBrain - AWS Studies Stage 1 
+# FinBrain (Nadav Eshed) - AWS Studies Stage 1 - AWS Foundations + Docker Registry (ECR)
 # (aws-infra branch on github)
 
 
