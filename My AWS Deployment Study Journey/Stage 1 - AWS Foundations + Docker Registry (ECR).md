@@ -1,5 +1,5 @@
 # FinBrain (Nadav Eshed) - AWS Studies Stage 1 - AWS Foundations + Docker Registry (ECR)
-# (aws-infra branch on github)
+# (WATCH MORE on aws-infra branch on github)
 
 
 ## 0. AWS Introduction
@@ -56,3 +56,4 @@
 - I learned the basics of AWS and how to work with the AWS CLI.
 - I created a secure IAM user, configured access from my computer, and used ECR to store my Docker container in the cloud.
 - Now my backend image is uploaded and ready to be used by AWS services.
+- **END OF STAGE 1!**

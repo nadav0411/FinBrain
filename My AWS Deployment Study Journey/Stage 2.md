@@ -1,5 +1,5 @@
 # FinBrain (Nadav Eshed) - AWS Studies Stage 2
-# (aws-infra branch on github)
+# (WATCH MORE on aws-infra branch on github)
 
 
 # 0. Some Definitions
@@ -44,8 +44,32 @@
 - 4. Each **Pod** will run **Container** based on my **Docker image**, which is pulled from **Amazon ECR**.
 
 # 1. Installed Kubernetes CLI Tools
-- **Amazon EKS (Elastic Kubernetes Service) =** is a managed Kubernetes service. EKS lets me run my app in the cloud using Kubernetes - without having to install or manage Kubernetes. It gives me a **ready-made Kubernets setup** - like a "cloud computer" that know how to run containers automatically, reliably, and at scale. **I push my Docker image to ECR and then I use kubectl to tell EKS to run this image.**
+- **Amazon EKS (Elastic Kubernetes Service) =** is a managed Kubernetes service. EKS lets me run my app in the cloud using Kubernetes - without having to install or manage Kubernetes. It gives me a **ready-made Kubernetes setup** - like a "cloud computer" that knows how to run containers automatically, reliably, and at scale. **I push my Docker image to ECR and then I use kubectl to tell EKS to run this image.**
 - I Installed **kubectl** – Kubernetes command-line tool, **used to interact with clusters** with this command line: **kubectl version --client**
 - I Installed **eksctl** – Simplified CLI tool to **create and manage AWS EKS clusters** with this command line: eksctl version.
 
 # 2. Created EKS Cluster for FinBrain
+- Used eksctl to create a managed Kubernetes cluster in AWS with the command line: **eksctl create cluster \ --name finbrain-cluster \ --region eu-central-1 \ --nodegroup-name finbrain-nodes \ --node-type t3.micro \ --nodes 2 \ --nodes-min 1 \ --nodes-max 3 \ --managed**
+
+## Cluster Configuration
+- eksctl create cluster = Start the process of creating a new **EKS Kubernetes cluster**.
+- name = name of my cluster, this is what I will use to refer to my cluster later
+- region = Choose where to create the cluster, this is the AWS region where my cluster lives.
+- nodegroup-name = Name the **group of machines (nodes)** that will run my app inside the cluster.
+- node-type t3.micro = Pick the machine size for my nodes, **t3.micro** is a small and cheap machine that fits the AWS Free Tier.
+- nodes 2 = Start with 2 machines in my cluster
+- nodes-min 1 = Minimum number of machines allowed = 1 (If **traffic is low**, Kubernetes can scale down).
+- nodes-max 3 = Maximum number of machines allowed = 3 (If **traffic is high**, Kubernetes can scale up).
+- managed = Let AWS manage the machines for me, I don’t need to worry about updates, security, or configuration. AWS takes care of it.
+
+# 3. Checked Cluster Status
+- After creating the EKS cluster, I used the following command to verify that the cluster is active and the nodes are ready: **kubectl get nodes**
+- It lists all the **worker nodes** currently running in the **EKS cluster**.
+- Each node is an **EC2 instance** that can run my **application's containers (Pods)**.
+- If the **STATUS** is **Ready**, it means the node is **healthy** and ready to accept workloads.
+- **EC2 (Elastic Compute Cloud) =** Amazon's cloud service for running **virtual machines ("instances")**. Each **instance** is like a remote computer — with its own CPU, RAM — running in the cloud. In my Kubernetes (EKS) cluster, each **Node** is actually an EC2 instance. **"Elastic"** means I can **scale** the machines up/down, stop/start them anytime.
+
+# 4. Summary – What I learned in AWS Stage 2
+- I learned how to set up a Kubernetes environment on AWS using EKS.
+- I now have a working cluster ready to deploy my FinBrain backend from ECR.
+- **END OF STAGE 2!**
