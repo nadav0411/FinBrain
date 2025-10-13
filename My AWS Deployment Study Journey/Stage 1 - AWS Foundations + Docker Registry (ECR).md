@@ -2,6 +2,10 @@
 # (aws-infra branch on github)
 
 
+## 0. AWS Introduction
+- **AWS (Amazon Web Services)** is a cloud platform that provides services like virtual servers, storage, databases, and more.  
+- It allows developers to run applications without managing physical hardware.
+
 ## 1. Created an AWS account 
 - Signed up and access to the free tier.
 
@@ -45,6 +49,10 @@
 - Each layer was uploaded, and I received a digest confirming the push was successful.
 - **digest =** A unique, permanent fingerprint of the Docker image.
 
-
 ## 9. Verified the image in AWS Console
 - I opened the **ECR service** in **AWS web console** and I saw there my repository and image there (after switching to the correct region).
+
+## 10. Summary – What I learned in AWS Stage 1
+- I learned the basics of AWS and how to work with the AWS CLI.
+- I created a secure IAM user, configured access from my computer, and used ECR to store my Docker container in the cloud.
+- Now my backend image is uploaded and ready to be used by AWS services.
