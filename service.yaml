@@ -1,0 +1,16 @@
+# FinBrain Project - service.yaml - MIT License (c) 2025 Nadav Eshed
+
+
+apiVersion: v1 # This file is a "Service" type object from the core v1 API
+kind: Service # I created a Service (gives a stable IP for my app)
+metadata:
+  name: finbrain-backend-service # Name of the Service
+
+spec:
+  type: LoadBalancer # Expose my app to the internet (external IP)
+  selector:
+    app: finbrain-backend # Connect to pods that have this label
+  ports:
+  - protocol: TCP # TCP is a protocol for reliable, ordered delivery of packets between two devices
+    port: 80 # External port (what users connect to my app)
+    targetPort: 5000 # Internal port in the container (Flask)

@@ -1,0 +1,28 @@
+# FinBrain Project - deployment.yaml - MIT License (c) 2025 Nadav Eshed
+
+
+apiVersion: apps/v1 # This file is a "Deployment" type object from the apps/v1 API
+kind: Deployment # I created a Deployment (manages Pods for me)
+metadata:
+  name: finbrain-backend-deployment # Name of the Deployment object
+
+spec:
+  replicas: 2 # Run 2 copies (pods) of my Flask app
+  selector:
+    matchLabels:
+      app: finbrain-backend # Look for pods with this label
+  template: # This is the template for the pods it will create
+    metadata:
+      labels:
+        app: finbrain-backend # Each pod will get this label
+    spec:
+      containers:
+      - name: finbrain-backend # Name of the container
+        image: 832871077677.dkr.ecr.eu-central-1.amazonaws.com/finbrain-backend:latest # Docker image from ECR
+        ports:
+        - containerPort: 5000 # Flask runs on port 5000 inside the container
+        imagePullPolicy: Always # Always pull latest image version
+        
+        env:
+            - name: REDIS_URL
+              value: redis://redis-service:6379/0   # Internal service name of Redis inside Kubernetes

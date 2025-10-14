@@ -1,0 +1,23 @@
+# FinBrain Project - redis-deployment.yaml - MIT License (c) 2025 Nadav Eshed
+
+
+apiVersion: apps/v1 # This is a Deployment (to manage Pods)
+kind: Deployment
+metadata:
+  name: redis # Name of the deployment (used by Kubernetes)
+
+spec:
+  replicas: 1 # Run 1 copy of Redis
+  selector:
+    matchLabels:
+      app: redis # Match Pods with this label
+  template:
+    metadata:
+      labels:
+        app: redis # Give this label to the Pod
+    spec:
+      containers:
+      - name: redis # Name of the container
+        image: redis:7.2 # Use the official Redis Docker image
+        ports:
+        - containerPort: 6379 # Redis listens on port 6379

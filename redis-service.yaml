@@ -1,0 +1,14 @@
+# FinBrain Project - redis-service.yaml - MIT License (c) 2025 Nadav Eshed
+
+
+apiVersion: v1 # This is a core Kubernetes Service
+kind: Service
+metadata:
+  name: redis-service # Name of the service
+
+spec:
+  selector:
+    app: redis # This service will point to Pods with label: app=redis
+  ports:
+  - port: 6379 # Port users will use to connect to Redis
+    targetPort: 6379 # Port inside the Redis container

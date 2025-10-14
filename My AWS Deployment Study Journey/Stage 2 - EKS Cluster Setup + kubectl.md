@@ -49,14 +49,14 @@
 - I Installed **eksctl** – Simplified CLI tool to **create and manage AWS EKS clusters** with this command line: eksctl version.
 
 # 2. Created EKS Cluster for FinBrain
-- Used eksctl to create a managed Kubernetes cluster in AWS with the command line: **eksctl create cluster \ --name finbrain-cluster \ --region eu-central-1 \ --nodegroup-name finbrain-nodes \ --node-type t3.micro \ --nodes 2 \ --nodes-min 1 \ --nodes-max 3 \ --managed**
+- Used eksctl to create a managed Kubernetes cluster in AWS with the command line: **eksctl create cluster \ --name finbrain-cluster \ --region eu-central-1 \ --nodegroup-name finbrain-nodes \ --node-type t3.medium \ --nodes 2 \ --nodes-min 1 \ --nodes-max 3 \ --managed**
 
 ## Cluster Configuration
 - eksctl create cluster = Start the process of creating a new **EKS Kubernetes cluster**.
 - name = name of my cluster, this is what I will use to refer to my cluster later
 - region = Choose where to create the cluster, this is the AWS region where my cluster lives.
 - nodegroup-name = Name the **group of machines (nodes)** that will run my app inside the cluster.
-- node-type t3.micro = Pick the machine size for my nodes, **t3.micro** is a small and cheap machine that fits the AWS Free Tier.
+- node-type t3.micro = Pick the machine size for my nodes, **t3.medium** is a medium machine (has more RAM then t3.small or t3.micro).
 - nodes 2 = Start with 2 machines in my cluster
 - nodes-min 1 = Minimum number of machines allowed = 1 (If **traffic is low**, Kubernetes can scale down).
 - nodes-max 3 = Maximum number of machines allowed = 3 (If **traffic is high**, Kubernetes can scale up).
@@ -69,7 +69,13 @@
 - If the **STATUS** is **Ready**, it means the node is **healthy** and ready to accept workloads.
 - **EC2 (Elastic Compute Cloud) =** Amazon's cloud service for running **virtual machines ("instances")**. Each **instance** is like a remote computer — with its own CPU, RAM — running in the cloud. In my Kubernetes (EKS) cluster, each **Node** is actually an EC2 instance. **"Elastic"** means I can **scale** the machines up/down, stop/start them anytime.
 
-# 4. Summary – What I learned in AWS Stage 2
+# 4. How Auto-Scaling Works?
+- **CPU usage (%) -** How much CPU each Pod actually uses compared to what was allocated.
+- **Memory usage (RAM) -** How much memory is used compared to what was allocated.
+- **Pending Pods -** Pods that can't start because all nodes are full (no enougth CPU or memory), the **Cluster Autoscaler** adds a **new node** to give them space (**scale up**).
+- **Idle Nodes -** Machines that have little or no work to do (**few or no Pods running**), the **Cluster Autoscaler** removes **unused nodes** to save resources (**scale down**).
+
+# 5. Summary – What I learned in AWS Stage 2
 - I learned how to set up a Kubernetes environment on AWS using EKS.
 - I now have a working cluster ready to deploy my FinBrain backend from ECR.
 - **END OF STAGE 2!**
