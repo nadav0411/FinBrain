@@ -44,15 +44,19 @@
 - **latest** is the version tag - means this is the newest version of the image.
 - Docker needs to know where to send it - and tagging tells it exactly that.
 
-## 8. Pushed image to ECR
+## 8. Updating the Image (If I Did Code Changes)
+- After modifying my backend code, I rebuilt the Docker image locally with the command line: **docker build -t finbrain-backend .**
+- I need to make sure that my Docker Desktop app in my PC is open.
+
+## 9. Pushed image to ECR
 - I pushed my image to the cloud (ECR) using: **docker push {ecr-domain}/{repository-name}:{tag}**
 - Each layer was uploaded, and I received a digest confirming the push was successful.
 - **digest =** A unique, permanent fingerprint of the Docker image.
 
-## 9. Verified the image in AWS Console
+## 10. Verified the image in AWS Console
 - I opened the **ECR service** in **AWS web console** and I saw there my repository and image there (after switching to the correct region).
 
-## 10. Summary – What I learned in AWS Stage 1
+## 11. Summary – What I learned in AWS Stage 1
 - I learned the basics of AWS and how to work with the AWS CLI.
 - I created a secure IAM user, configured access from my computer, and used ECR to store my Docker container in the cloud.
 - Now my backend image is uploaded and ready to be used by AWS services.

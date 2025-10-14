@@ -1,4 +1,4 @@
-# FinBrain (Nadav Eshed) - AWS Studies Stage 1 - AWS Foundations + Docker Registry (ECR)
+# FinBrain (Nadav Eshed) - AWS Studies Stage 3 - EKS + Kubernetes Deployment
 # (WATCH MORE on aws-infra branch on github)
 
 # 0. Some Definitions
@@ -50,4 +50,20 @@
 - It's happen because my cluter was using **t3.micro EC2 instances**. These nodes can only run 4 to 5 pods each, and Kubernetes already uses some of them for system components so there was no room left for my Flask pod.
 - I deleted the old cluster and created a new one with **t3.medium nodes (larger EC2s)**. These have more RAM and allow 17 to 20 pods per node, so now there’s space.
 
-# 3. Update docker and push it to ecr and then click the link and check if its ok
+# 3. Commands to know
+- **kubectl rollout restart deployment {name of deployment}**. If I update my code - This command tells Kubernetes to restart all Pods under the deployment. It terminates old Pods and launches new ones — which automatically pull the latest image from ECR. 
+- **kubectl get deployments**. Lists all deployments in the current namespace, showing how many Pods are up-to-date and running.
+- I can check in AWS web about more details to search there EC2, EKS, ECR.
+
+# 4. Accessing the Application via the Service Link
+- After all Pods are running successfully, I can access my Flask application using the public link created by the Kubernetes Service.
+- To find it, I run: **kubectl get services**.
+- In the output, I look for the EXTERNAL-IP field of the Service (the one with TYPE = LoadBalancer).
+- If the link loads successfully - my server is live and running on AWS (EKS + ECR + LoadBalancer).
+
+# 5. Summary – What I learned in AWS Stage 3
+- I learned how to deploy and manage my backend on AWS EKS using Kubernetes.
+- I created and applied YAML files for Deployment, Service, and Redis.
+- I used commands like kubectl get pods, kubectl get services, and kubectl rollout restart to manage and verify my cluster.
+- Now my backend is live on AWS — fully containerized, scalable, and connected through a LoadBalancer.
+- **END OF STAGE 3!**
