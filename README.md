@@ -83,6 +83,19 @@ I treated FinBrain as a real-world product, not just an app to explore concepts 
 - **Vercel (Frontend)** – serves the React client with optimized builds and automatic redeploys from GitHub.  
 - **Uptime Monitoring** – automated periodic pings verify backend availability and alert on potential downtime.
 
+**Cloud & Infrastructure (AWS)**
+- **Amazon ECR (Elastic Container Registry)** – private Docker registry for storing backend container images.
+- **Amazon EKS (Elastic Kubernetes Service)** – managed Kubernetes cluster running FinBrain’s backend and Redis containers.
+- **Kubernetes Deployments & Services** – YAML-based configuration defining replicas, load balancing, and auto-healing for high availability.
+- **LoadBalancer Service** – exposes the Flask API securely to the internet with an external IP.
+- **AWS Secrets Manager** – centralized encrypted storage for sensitive credentials (e.g., MONGO_URI, REDIS_URL).
+- **IAM Roles for Service Accounts** (IRSA) – access control letting only authorized pods retrieve specific secrets.
+- **Secrets Store CSI Driver** – mounts secrets from AWS into pods at runtime as secure volumes.
+- **Cluster Autoscaler** – dynamically adds or removes EC2 worker nodes based on CPU and memory utilization.
+- **EC2 (Worker Nodes)** – virtual machines powering Kubernetes pods, configured with t3.medium instances for optimal performance.
+- **AWS CLI + eksctl + kubectl** – full infrastructure management and deployment automation from the terminal.
+- **AWS IAM (Identity & Access Management)** – secure authentication and role-based access for both human and service accounts.
+
 ---
 
 ## Beyond the Code – Thought Process
@@ -169,6 +182,14 @@ FinBrain/
 │   ├── Makefile                     # Development commands
 │   └── requirements.txt             # Python dependencies
 │
+├── aws                              # AWS CLI folder – contains binaries and dependencies for running AWS commands
+├── aws-provider.yaml                # Installs AWS Secrets Manager provider for Kubernetes (CSI Driver)
+├── deployment.yaml                  # Kubernetes Deployment – runs Flask backend pods from ECR image
+├── service.yaml                     # Kubernetes Service – exposes Flask backend via LoadBalancer (public IP)
+├── finbrain-secretprovider.yaml     # SecretProviderClass – mounts secrets from AWS Secrets Manager into pods
+├── redis-deployment.yaml            # Kubernetes Deployment – runs Redis pod inside the cluster
+├── redis-service.yaml               # Internal Service – allows backend pods to communicate with Redis
+│
 ├── README.md                        # Project documentation
 └── LICENSE                          # MIT License
 ```
@@ -219,8 +240,8 @@ FinBrain/
 
 These are the features and improvements currently being developed:
 
-- **Next-Level Cloud Infrastructure & Deployment** 
-  Exploring and learning Kubernetes (EKS) on AWS as the next step in understanding advanced container orchestration, scalability, and automated load management.
+- **Advanced Cloud Infrastructure Enhancements** 
+  Continuing to expand FinBrain’s AWS-based architecture — building on the existing ECR + EKS deployment with deeper Kubernetes automation, cost optimization, improved monitoring, and advanced IAM & security configurations.
 
 - **Performance & Efficiency Improvements**
   Ongoing work to optimize the application for faster response times, reduced resource usage, and smoother overall performance as the project scales.

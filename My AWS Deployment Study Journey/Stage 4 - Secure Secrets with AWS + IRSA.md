@@ -43,7 +43,7 @@
 
 # 5. Create IAM Policy to allow pods to access AWS Secrets 
 - Before pods can read secrets from Secrets Manager, they must be authorized. I created an IAM Policy that grants permission to retrieve specific secrets. I used this command: **aws iam create-policy \ --policy-name FinbrainSecretsAccessPolicy \ --description "Allow FinBrain pods to read secrets from AWS Secrets Manager" \ --policy-document '{ "Version": "2012-10-17", "Statement": [ { "Effect": "Allow", "Action": [    "secretsmanager:GetSecretValue" ], "Resource": "arn:aws:secretsmanager:eu-central-1:832871077677:secret:finbrain-secrets-*" } ] }'**
-- Grants access to call secretsmanager:GetSecretValue, Only for secrets that start with finbrain-secrets, Region = eu-central-1, Account = 832871077677 (I can get my account number with the command: **aws sts get-caller-identity**),
+- Grants access to call secretsmanager:GetSecretValue, Only for secrets that start with finbrain-secrets, Region = eu-central-1, Account = 832871077677 (I can get my account number with the command: **aws sts get-caller-identity**).
 
 # 6. Enable IAM OIDC Provider on the cluster 
 - I used this command: **eksctl utils associate-iam-oidc-provider \ --region eu-central-1 \ --cluster finbrain-cluster \ --approve**.
@@ -73,7 +73,7 @@
 - The container now "sees" a file inside /mnt/secrets-store/mongo_uri and /mnt/secrets-store/redis_url at runtime.
 - These files are automatically created by the CSI driver when the pod starts.
 - They contain the real values from AWS Secrets Manager.
-- - To update it I ran the command: **kubectl apply -f deployment.yaml**.
+- To update it I ran the command: **kubectl apply -f deployment.yaml**.
 
 # 11. Updated cache.py and db.py to Support "File-based Secrets"
 - I modified the code so that if REDIS_URL or MONGO_URI is actually a file path (not a URL), it reads the contents of the file.
