@@ -28,11 +28,35 @@ else:
     # Load the default .env file
     load_dotenv('configs/.env.development')
 
-# Re-fetch the environment variables after loading .env
+# Get the environment from the environment variable (if not set, default to development)
 env = os.getenv('ENV', 'development')
-mongo_uri = os.getenv('MONGO_URI')
+
+# Get the DB name from environment
 db_name = os.getenv('DB_NAME', 'FinBrain')
-redis_url = os.getenv('REDIS_URL', 'redis://localhost:6379/0')  
+
+# Get the Redis URL from environment
+raw_redis_url = os.getenv('REDIS_URL', 'redis://localhost:6379/0')
+# If it's a file path (e.g. from AWS Secrets Store), read the secret from the file
+if raw_redis_url and os.path.isfile(raw_redis_url):
+    try:
+        with open(raw_redis_url, 'r') as f:
+            redis_url = f.read().strip()
+    except Exception as e:
+        raise RuntimeError(f"Failed to read REDIS_URL from file: {raw_redis_url}") from e
+else:
+    redis_url = raw_redis_url
+
+# Get the MongoDB URI from environment
+raw_mongo_uri = os.getenv('MONGO_URI')
+# If it's a file path (e.g. from AWS Secrets Store), read the secret from the file
+if raw_mongo_uri and os.path.isfile(raw_mongo_uri):
+    try:
+        with open(raw_mongo_uri, 'r') as f:
+            mongo_uri = f.read().strip()
+    except Exception as e:
+        raise RuntimeError(f"Failed to read MONGO_URI from file: {raw_mongo_uri}") from e
+else:
+    mongo_uri = raw_mongo_uri
 
 
 # Test mode - use mongomock

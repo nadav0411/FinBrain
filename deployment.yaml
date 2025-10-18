@@ -1,28 +1,49 @@
 # FinBrain Project - deployment.yaml - MIT License (c) 2025 Nadav Eshed
 
 
-apiVersion: apps/v1 # This file is a "Deployment" type object from the apps/v1 API
-kind: Deployment # I created a Deployment (manages Pods for me)
+apiVersion: apps/v1
+kind: Deployment
 metadata:
-  name: finbrain-backend-deployment # Name of the Deployment object
+  name: finbrain-backend-deployment # The name of this Deployment in Kubernetes
+  namespace: default # The namespace where the app will run 
 
 spec:
-  replicas: 2 # Run 2 copies (pods) of my Flask app
+  replicas: 2 # Run 2 copies of the Flask app for high availability
   selector:
     matchLabels:
-      app: finbrain-backend # Look for pods with this label
-  template: # This is the template for the pods it will create
+      app: finbrain-backend # This selects the pods that this Deployment will manage
+
+  template:
     metadata:
       labels:
-        app: finbrain-backend # Each pod will get this label
+        app: finbrain-backend # Each pod created will be labeled with 'app: finbrain-backend'
+
     spec:
+      serviceAccountName: finbrain-sa # This ServiceAccount has IAM permissions to read secrets from AWS
+
       containers:
-      - name: finbrain-backend # Name of the container
-        image: 832871077677.dkr.ecr.eu-central-1.amazonaws.com/finbrain-backend:latest # Docker image from ECR
+      - name: finbrain-backend
+        image: 832871077677.dkr.ecr.eu-central-1.amazonaws.com/finbrain-backend:latest # Pull image from ECR
+        imagePullPolicy: Always # Always pull the latest image version
         ports:
         - containerPort: 5000 # Flask runs on port 5000 inside the container
-        imagePullPolicy: Always # Always pull latest image version
-        
+
+        # Environment variable (points to a file that contains the secret value)
         env:
-            - name: REDIS_URL
-              value: redis://redis-service:6379/0   # Internal service name of Redis inside Kubernetes
+        - name: REDIS_URL
+          value: /mnt/secrets-store/redis_url # This points to the file where REDIS_URL will be mounted
+
+        # This tells Kubernetes to mount the secrets from AWS as files inside the container
+        volumeMounts:
+        - name: secrets-store
+          mountPath: "/mnt/secrets-store" # This is the directory inside the container where secrets will appear
+          readOnly: true # Make the secrets read-only for safety
+
+      # Define the volume that will be mounted (volume = directory inside the container where secrets will appear)
+      volumes:
+      - name: secrets-store
+        csi: # This tells Kubernetes to use the CSI driver (Secrets Store Plugin)
+          driver: secrets-store.csi.k8s.io # This is the official driver for secrets-store
+          readOnly: true
+          volumeAttributes:
+            secretProviderClass: finbrain-secrets-provider # This tells which SecretProviderClass to use

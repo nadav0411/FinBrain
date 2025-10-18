@@ -19,8 +19,18 @@ if env == 'test':
 else:
     load_dotenv('configs/.env.development')
 
-# Get the Redis URL from environment or default to localhost
-REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")
+# Get the raw Redis URL (can be a string or path to file)
+raw_redis_url = os.getenv("REDIS_URL", "/mnt/secrets-store/redis_url")
+
+# If it's a path to a file (e.g., from AWS Secrets Manager), read the contents
+if raw_redis_url and os.path.isfile(raw_redis_url):
+    try:
+        with open(raw_redis_url, 'r') as f:
+            REDIS_URL = f.read().strip()
+    except Exception as e:
+        raise RuntimeError(f"Failed to read Redis URL from file: {raw_redis_url}") from e
+else:
+    REDIS_URL = raw_redis_url
 
 # Use test-specific key prefix to avoid conflicts with production data
 def get_cache_key_prefix():

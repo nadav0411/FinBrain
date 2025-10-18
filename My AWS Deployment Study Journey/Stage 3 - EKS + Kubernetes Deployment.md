@@ -40,14 +40,14 @@
 - **kubectl apply -f service.yaml**. Tells Kubernetes: "Create a Service to expose my app — so users can access it using a public IP."
 
 # 2. Checked Resources and a Problem I Faced
-- I used to commands lines to check if everything work.
+- I used this commands lines to check if everything work.
 - **kubectl get pods**. Lists all the pods currently running (or trying to run) in my Kubernetes cluster.
 - **kubectl get svc**. Lists all the Services running in my cluster — and shows how my app is exposed.
 - **kubectl logs {name of the pod}**. Shows the logs (output) from inside the container.
 
 ## What Error Did I Get?
 - When I ran my Deployment, the pod stayed in **Pending state**.
-- It's happen because my cluter was using **t3.micro EC2 instances**. These nodes can only run 4 to 5 pods each, and Kubernetes already uses some of them for system components so there was no room left for my Flask pod.
+- It's happen because my cluster was using **t3.micro EC2 instances**. These nodes can only run 4 to 5 pods each, and Kubernetes already uses some of them for system components so there was no room left for my Flask pod.
 - I deleted the old cluster and created a new one with **t3.medium nodes (larger EC2s)**. These have more RAM and allow 17 to 20 pods per node, so now there’s space.
 
 # 3. Commands to know
