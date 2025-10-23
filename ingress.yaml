@@ -1,0 +1,27 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: finbrain-ingress # Name of the ingress rule
+  namespace: default # Namespace where the app runs
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+    # Rewrites /api/... to /... so Flask can handle it without the /api prefix
+    cert-manager.io/cluster-issuer: "letsencrypt-production"
+    # Tells cert-manager which issuer to use to generate the TLS certificate
+spec:
+  ingressClassName: nginx # Using the NGINX ingress controller
+  tls:
+  - hosts:
+    - api.finbrain.uk # My domain
+    secretName: finbrain-tls # Where the TLS (= HTTPS) certificate will be saved
+  rules:
+  - host: api.finbrain.uk
+    http:
+      paths:
+      - path: /api
+        pathType: Prefix # Accepts paths like /api/login, /api/users
+        backend:
+          service:
+            name: finbrain-backend-service # My backend service name in Kubernetes
+            port:
+              number: 80 # Port exposed by the service
