@@ -78,7 +78,7 @@ a7.....k8.eu-central-1.elb.amazonaws.com, That’s not friendly or professional.
 - I’ll see a LoadBalancer with an EXTERNAL-IP — this is the gateway to my cluster.
 
 # 2. Creating the Ingress Rule 
-- I created an ingress.yaml file that tekk the Kubernetes: "if someone visits /api, send them to my Flask backend".
+- I created an ingress.yaml file that tell the Kubernetes: "if someone visits /api, send them to my Flask backend".
 - After writing this file I applied it with the command: **kubectl apply -f ingress.yaml**.
 
 # 3. Buying a Domain + DNS Setup (Cloudflare)
