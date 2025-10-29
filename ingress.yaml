@@ -4,7 +4,7 @@ metadata:
   name: finbrain-ingress # Name of the ingress rule
   namespace: default # Namespace where the app runs
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /$1
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
     # Rewrites /api/... to /... so Flask can handle it without the /api prefix
     cert-manager.io/cluster-issuer: "letsencrypt-production"
     # Tells cert-manager which issuer to use to generate the TLS certificate
@@ -18,8 +18,8 @@ spec:
   - host: api.finbrain.uk
     http:
       paths:
-      - path: /api
-        pathType: Prefix # Accepts paths like /api/login, /api/users
+      - path: /api(/|$)(.*)
+        pathType: ImplementationSpecific # Accepts paths like /api/login, /api/users
         backend:
           service:
             name: finbrain-backend-service # My backend service name in Kubernetes
