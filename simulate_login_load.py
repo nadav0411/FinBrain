@@ -17,7 +17,6 @@ API_URL = "https://api.finbrain.uk/api/login"
 # Email and password for the login request
 EMAIL = os.getenv("EMAIL")
 PASSWORD = os.getenv("PASSWORD")
-print(EMAIL, PASSWORD)
 
 # Total number of login attempts
 TOTAL_REQUESTS = 100000     
