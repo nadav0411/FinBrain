@@ -64,16 +64,16 @@ I can choose from built-in dashboards or create custom ones.
 ## Panel 1: FinBrain Backend - CPU RATE
 - I used the query: **rate(container_cpu_usage_seconds_total{namespace="default", container="finbrain-backend"}[5m])**.
 - First, **CPU (Central Processing Unit)** is the "brain" of the server. It performs all calculations and runs the code of my app. When CPU usage is high, it means my app is busy or working hard.
-- The rate(...) function calculates how fast something is changing over time.
-- container_cpu_usage_seconds_total counts how many seconds the CPU was used by my container.
+- **The rate(...)** function calculates how fast something is changing over time.
+- **container_cpu_usage_seconds_total** counts how many seconds the CPU was used by my container.
 - So overall, this panel shows: how much CPU the Finbrain backend is using every second, based on the last 5 minutes.
 - It helps me know if the app is under heavy load or if something is wrong (like an infinite loop or a spike in usage).
 
 ## Panel 2: Finbrain Backend - Container Restarts Rate
 - I used the query: **rate(kube_pod_container_status_restarts_total{container="finbrain-backend"}[5m])**.
 - This query tells me if my container is crashing or restarting often.
-- kube_pod_container_status_restarts_total is a counter — it goes up every time the container restarts.
-- rate(...) here checks how many times per second (on average) the container restarted over the last 5 minutes.
+- **kube_pod_container_status_restarts_total** is a counter — it goes up every time the container restarts.
+- **rate(...)** here checks how many times per second (on average) the container restarted over the last 5 minutes.
 - So this panel shows: "Is my Finbrain backend crashing or restarting frequently?"
 - If I see this number above 0, it means something is wrong — maybe the app crashed, or there was a bug or misconfiguration.
 
@@ -84,7 +84,7 @@ I can choose from built-in dashboards or create custom ones.
 - C = Expression: $A - $B
 - Uptime = current time - container start time
 - The container start time stays the same (it’s fixed — the moment the container was started).
-- The current time keeps increasing — every second that passes, time() goes up and the result is a straight diagonal line going up in the graph.
+- The current time keeps increasing - every second that passes, time() goes up and the result is a straight diagonal line going up in the graph.
 - If the line suddenly drops back to zero (or a low number), it means: The container restarted or redeployed - it got a new start time.
 
 # 6. Testing Dashboard Graph Reactions to Load
@@ -96,9 +96,9 @@ I can choose from built-in dashboards or create custom ones.
 - This helped me simulate real load, like many users using the app at the same time, and made sure my panels respond in real-time.
 - I attached screenshots below to show what the graphs looked like during the test.
 
-## Screensohts
-![Before Test](...)
-![After Test](...)
+## Screenshots
+![Before Test](https://github.com/nadav0411/FinBrain/blob/main/assets/Grafana%20-%20My%20Dashboard%20(Start).png?raw=true)
+![After Test](https://github.com/nadav0411/FinBrain/blob/main/assets/Grafana%20-%20My%20Dashboard%20(End).png?raw=true)
 
 # 7. Summary – What I learned in AWS Stage 6
 - In this stage, I added monitoring to my Kubernetes (EKS) cluster using Prometheus and Grafana.

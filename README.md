@@ -82,19 +82,24 @@ I treated FinBrain as a real-world product, not just an app to explore concepts 
 - **Render (Backend)** – hosts the Flask API and Redis cache using Docker containers for reliable performance.  
 - **Vercel (Frontend)** – serves the React client with optimized builds and automatic redeploys from GitHub.  
 - **Uptime Monitoring** – automated periodic pings verify backend availability and alert on potential downtime.
+- **Helm** – simplified deployment and upgrade of Prometheus, Grafana, and Ingress controllers.
+- **Grafana + Prometheus** – real-time monitoring stack visualizing CPU, memory, restarts, and uptime trends.
+- **Custom Grafana Dashboards** – tailored panels for FinBrain (CPU rate, restart rate, uptime, request load).
+- **Load Simulation Script** – Python-based concurrent request test (ThreadPoolExecutor) to verify performance under heavy load.
 
 **Cloud & Infrastructure (AWS)**
-- **Amazon ECR (Elastic Container Registry)** – private Docker registry for storing backend container images.
-- **Amazon EKS (Elastic Kubernetes Service)** – managed Kubernetes cluster running FinBrain’s backend and Redis containers.
-- **Kubernetes Deployments & Services** – YAML-based configuration defining replicas, load balancing, and auto-healing for high availability.
-- **LoadBalancer Service** – exposes the Flask API securely to the internet with an external IP.
-- **AWS Secrets Manager** – centralized encrypted storage for sensitive credentials (e.g., MONGO_URI, REDIS_URL).
-- **IAM Roles for Service Accounts** (IRSA) – access control letting only authorized pods retrieve specific secrets.
-- **Secrets Store CSI Driver** – mounts secrets from AWS into pods at runtime as secure volumes.
-- **Cluster Autoscaler** – dynamically adds or removes EC2 worker nodes based on CPU and memory utilization.
-- **EC2 (Worker Nodes)** – virtual machines powering Kubernetes pods, configured with t3.medium instances for optimal performance.
-- **AWS CLI + eksctl + kubectl** – full infrastructure management and deployment automation from the terminal.
-- **AWS IAM (Identity & Access Management)** – secure authentication and role-based access for both human and service accounts.
+- **Amazon ECR (Elastic Container Registry) –** private registry storing Docker images.
+- **Amazon EKS (Elastic Kubernetes Service) –** managed Kubernetes cluster hosting FinBrain backend + Redis.
+- **Kubernetes Deployments & Services –** YAML-based definitions for replicas, load balancing, and self-healing.
+- **Ingress + NGINX Controller –** routes incoming traffic to the correct service inside the cluster.
+- **Cloudflare DNS –** custom domain (api.finbrain.uk) connecting to the AWS LoadBalancer.
+- **TLS + cert-manager (Let’s Encrypt)** – automatic HTTPS certificates for secure communication.
+- **AWS Secrets Manager + CSI Driver + IRSA** – encrypted, role-based secret injection directly into pods.
+- **Cluster Autoscaler –** scales EC2 nodes based on CPU/memory usage.
+- **EC2 Worker Nodes –** t3.medium instances running pods efficiently.
+- **AWS CLI + eksctl + kubectl –** full CLI-based cluster and resource management.
+- **AWS IAM (Roles & Policies) –** granular access for human and service accounts.
+- **Monitoring Namespace –** dedicated Kubernetes namespace isolating monitoring tools for reliability and performance.
 
 ---
 
@@ -189,6 +194,10 @@ FinBrain/
 ├── finbrain-secretprovider.yaml     # SecretProviderClass – mounts secrets from AWS Secrets Manager into pods
 ├── redis-deployment.yaml            # Kubernetes Deployment – runs Redis pod inside the cluster
 ├── redis-service.yaml               # Internal Service – allows backend pods to communicate with Redis
+├── cluster-issuer.yaml              # Cert-Manager – configures Let's Encrypt for automatic HTTPS crtificates
+├── ingress.yaml                     # Ingress resource – routes external traffic to backend service through NGINX
+│
+├── simulate_login_load.py           # Load-testing script - sends parallel login requests to test backend performance
 │
 ├── README.md                        # Project documentation
 └── LICENSE                          # MIT License
